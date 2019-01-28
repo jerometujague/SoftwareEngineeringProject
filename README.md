@@ -11,7 +11,7 @@ CommerceBankProject
 ## Local development
 ```
 // Build
-Mvn clean install
+mvn clean install
 
 // Run
 java -jar target/commercebank-0.0.1-SNAPSHOT.jar
