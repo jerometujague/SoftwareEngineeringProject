@@ -5,9 +5,8 @@
 
 ```
 // Install the JSX compiler
-npm init -y
-npm install babel-cli@6 babel-preset-react-app@3
+npm install
 
 // Run the compiler
-npx babel --watch src --out-dir scripts --preset react-app/prod
+npm start
 ```
