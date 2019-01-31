@@ -1,15 +1,20 @@
 # SoftwareEngineeringProject
 CommerceBankProject
 
+Check out the [wiki](https://github.com/jerometujague/SoftwareEngineeringProject/wiki) for the project roadmap.
+
 ## Development tools
 * Amazon Corretto 8 OpenJDK - https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/downloads-list.html
 * Apache Maven (Project management) - https://maven.apache.org/download.cgi
-* NodeJS (Front end)- https://nodejs.org/en/download/
+* NodeJS (Front end/ReactJS compiler)- https://nodejs.org/en/download/
 * Xampp (For MariaDB SQL database) - https://www.apachefriends.org/download.html
 * Git - https://git-scm.com/downloads
 
 ## Local development
 ```
+// Clone the repository
+git clone https://github.com/jerometujague/SoftwareEngineeringProject.git
+
 // Build
 mvn clean install
 
