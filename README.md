@@ -1,7 +1,7 @@
 # SoftwareEngineeringProject
 CommerceBankProject
 
-Check out the [wiki](https://github.com/jerometujague/SoftwareEngineeringProject/wiki) for the project roadmap.
+Check out the wiki for the [project roadmap](https://github.com/jerometujague/SoftwareEngineeringProject/wiki) and the [git workflow](https://github.com/jerometujague/SoftwareEngineeringProject/wiki/Git-Workflow)
 
 ## Development tools
 * Amazon Corretto 8 OpenJDK - https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/downloads-list.html
