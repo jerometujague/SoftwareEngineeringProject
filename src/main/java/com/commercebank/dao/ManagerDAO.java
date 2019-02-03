@@ -21,7 +21,7 @@ public class ManagerDAO {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public List<Manager> list(){
         return this.jdbcTemplate.query("SELECT * FROM managers", new ManagerMapper());
     }

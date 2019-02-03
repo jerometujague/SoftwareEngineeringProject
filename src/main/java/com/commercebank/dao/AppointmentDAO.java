@@ -21,7 +21,7 @@ public class AppointmentDAO {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public List<Appointment> list(){
         return this.jdbcTemplate.query("SELECT * FROM appointments", new AppointmentMapper());
     }
