@@ -21,7 +21,7 @@ public class BranchDAO {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     public List<Branch> list(){
         return this.jdbcTemplate.query("SELECT * FROM branches", new BranchMapper());
     }
