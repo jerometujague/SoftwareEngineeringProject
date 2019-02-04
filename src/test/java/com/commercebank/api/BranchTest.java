@@ -1,9 +1,13 @@
 package com.commercebank.api;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.*;
-
+@RunWith(SpringRunner.class)
+@SpringBootTest
                                     // This class only tests the Branch class
 public class BranchTest {
 
