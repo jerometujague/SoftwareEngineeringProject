@@ -9,6 +9,7 @@ import java.sql.SQLException;
 public class ManagerMapper implements RowMapper<Manager> {
     @Override
     public Manager mapRow(ResultSet rs, int rowNum) throws SQLException {
+        // Create a new manager object that is mapped to the SQL Result rs
         return new Manager(
                 rs.getInt("id"),
                 rs.getString("firstName"),

@@ -2,6 +2,7 @@ package com.commercebank.api;
 
 import java.util.Date;
 
+// Basic object with getters and setters that matches the database row
 public class Appointment {
     private int id;
     private Date date;

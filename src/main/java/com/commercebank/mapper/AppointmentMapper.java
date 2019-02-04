@@ -10,6 +10,7 @@ import java.sql.SQLException;
 public class AppointmentMapper implements RowMapper<Appointment> {
     @Override
     public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
+        // Create a new appointment object that is mapped to the SQL Result rs
         return new Appointment(
                 rs.getInt("id"),
                 rs.getDate("date"),
