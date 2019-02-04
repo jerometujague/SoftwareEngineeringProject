@@ -9,6 +9,10 @@ DROP DATABASE IF EXISTS cb_db;
 CREATE DATABASE cb_db;
 USE cb_db;
 
+# Create the service account and grant it admin permissions on the database
+CREATE OR REPLACE USER `admin`@`%` IDENTIFIED BY 'admin';
+GRANT ALL PRIVILEGES ON vd_db.* TO `admin`@`%` WITH GRANT OPTION;
+
 CREATE TABLE branch (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	address SMALLINT UNSIGNED NOT NULL,
