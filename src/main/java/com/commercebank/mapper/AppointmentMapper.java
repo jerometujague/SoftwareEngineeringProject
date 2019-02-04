@@ -13,9 +13,10 @@ public class AppointmentMapper implements RowMapper<Appointment> {
         // Create a new appointment object that is mapped to the SQL Result rs
         return new Appointment(
                 rs.getInt("id"),
-                rs.getDate("date"),
-                rs.getInt("branch"),
-                rs.getInt("managerId"),
-                rs.getInt("customerId"));
+                rs.getInt("date_id"),
+                rs.getInt("time_id"),
+                rs.getInt("branch_id"),
+                rs.getInt("manager_id"),
+                rs.getInt("customer_id"));
     }
 }

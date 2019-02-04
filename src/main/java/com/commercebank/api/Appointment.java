@@ -1,18 +1,18 @@
 package com.commercebank.api;
 
-import java.util.Date;
-
 // Basic object with getters and setters that matches the database row
 public class Appointment {
     private int id;
-    private Date date;
+    private int dateId;
+    private int timeId;
     private int branchId;
     private int managerId;
     private int customerId;
 
-    public Appointment(int id, Date date, int branchId, int managerId, int customerId) {
+    public Appointment(int id, int dateId, int timeId, int branchId, int managerId, int customerId) {
         this.id = id;
-        this.date = date;
+        this.dateId = dateId;
+        this.timeId = timeId;
         this.branchId = branchId;
         this.managerId = managerId;
         this.customerId = customerId;
@@ -22,12 +22,20 @@ public class Appointment {
         return id;
     }
 
-    public Date getDate() {
-        return date;
+    public int getDateId() {
+        return dateId;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDateId(int dateId) {
+        this.dateId = dateId;
+    }
+
+    public int getTimeId() {
+        return timeId;
+    }
+
+    public void setTimeId(int timeId) {
+        this.timeId = timeId;
     }
 
     public int getBranchId() {

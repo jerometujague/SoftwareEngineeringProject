@@ -27,6 +27,6 @@ public class ManagerDAO {
     @RequestMapping(method = RequestMethod.GET) // This method will be called when there is a GET request made to this url
     public List<Manager> list(){
         // Run the SQL query on the database to select all managers and return a List of Manager objects
-        return this.jdbcTemplate.query("SELECT * FROM managers", new ManagerMapper());
+        return this.jdbcTemplate.query("SELECT * FROM manager", new ManagerMapper());
     }
 }

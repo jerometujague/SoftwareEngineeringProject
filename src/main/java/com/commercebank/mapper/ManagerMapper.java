@@ -12,9 +12,10 @@ public class ManagerMapper implements RowMapper<Manager> {
         // Create a new manager object that is mapped to the SQL Result rs
         return new Manager(
                 rs.getInt("id"),
-                rs.getString("firstName"),
-                rs.getString("lastName"),
+                rs.getString("f_name"),
+                rs.getString("l_name"),
+                rs.getString("phone_num"),
                 rs.getString("email"),
-                rs.getInt("branchId"));
+                rs.getInt("branch_id"));
     }
 }

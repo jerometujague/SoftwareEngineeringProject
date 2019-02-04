@@ -5,13 +5,15 @@ public class Manager {
     private int id;
     private String firstName;
     private String lastName;
+    private String phoneNumber;
     private String email;
     private int branchId;
 
-    public Manager(int id, String firstName, String lastName, String email, int branchId) {
+    public Manager(int id, String firstName, String lastName, String phoneNumber, String email, int branchId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
         this.email = email;
         this.branchId = branchId;
     }

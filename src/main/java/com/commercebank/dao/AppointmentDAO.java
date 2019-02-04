@@ -27,6 +27,6 @@ public class AppointmentDAO {
     @RequestMapping(method = RequestMethod.GET) // This method will be called when there is a GET request made to this url
     public List<Appointment> list(){
         // Run the SQL query on the database to select all appointments and return a List of Appointment objects
-        return this.jdbcTemplate.query("SELECT * FROM appointments", new AppointmentMapper());
+        return this.jdbcTemplate.query("SELECT * FROM appointment", new AppointmentMapper());
     }
 }
