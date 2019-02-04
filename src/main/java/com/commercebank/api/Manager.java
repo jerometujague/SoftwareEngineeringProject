@@ -1,5 +1,6 @@
 package com.commercebank.api;
 
+// Basic object with getters and setters that matches the database row
 public class Manager {
     private int id;
     private String firstName;
