@@ -1,10 +1,11 @@
 {
-  "name": "assets",
+  "name": "SoftwareEngineeringProject",
   "version": "1.0.0",
   "description": "* NodeJS\r * ReactJS",
   "main": "index.js",
   "scripts": {
-    "start": "npx babel --watch src --out-dir scripts --presets react-app/prod",
+    "start": "npx babel --watch src/main/resources/assets/src --out-dir src/main/resources/assets/scripts --presets react-app/prod",
+    "compiler": "npx babel src/main/resources/assets/src --out-dir src/main/resources/assets/scripts --presets react-app/prod",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
