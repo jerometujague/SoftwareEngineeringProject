@@ -14,8 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
         // Map the localhost / domain to the assets folder
         // This routes localhost:8080/ to the assets/ folders
         registry.addResourceHandler("/**")
-                .addResourceLocations("classpath:/assets/")
-                .setCachePeriod(31556926);
+                .addResourceLocations("classpath:/assets/");
     }
 
     @Override

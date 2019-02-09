@@ -24,3 +24,20 @@ java -jar target/commercebank-0.0.1-SNAPSHOT.jar
 // Test
 Open `http://localhost:8080` in your browser
 ```
+
+## Database
+Start your local Xammp MySQL server
+
+## Front end development
+**Start the React compiler to compile your JavaScript files**
+```
+// Install the JSX compiler
+npm install
+
+// Run the compiler
+npm start
+```
+
+Or compile the source files once
+
+`npm run compiler`
