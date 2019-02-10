@@ -5,6 +5,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 
@@ -18,5 +19,11 @@ public class CommerceBankApplicationConfig {
     public DataSource dataSource(){
         // Builds the data source with those properties
         return DataSourceBuilder.create().build();
+    }
+
+    // Create the JDBC database connection object
+    @Bean
+    public JdbcTemplate jdbcTemplate(){
+        return new JdbcTemplate(dataSource());
     }
 }

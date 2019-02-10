@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.sql.DataSource;
 import java.util.List;
 
 // @RestController means Spring will automatically create and manager and instance of this class
@@ -17,16 +16,18 @@ import java.util.List;
 public class BranchDAO {
     // The JdbcTemplate is the class that interfaces with the database
     private final JdbcTemplate jdbcTemplate;
+    private final BranchMapper branchMapper;
 
-    @Autowired // This tells Spring to use the DataSource Bean we created in the configuration class
-    public BranchDAO(final DataSource dataSource){
-        // Set up the jdbcTemplate with the dataSource
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    @Autowired // This tells Spring to use the JdbcTemplate Bean we created in the configuration class
+    BranchDAO(final JdbcTemplate jdbcTemplate, final BranchMapper branchMapper){
+        // Set up the dependencies from Spring
+        this.jdbcTemplate = jdbcTemplate;
+        this.branchMapper = branchMapper;
     }
 
     @RequestMapping(method = RequestMethod.GET) // This method will be called when there is a GET request made to this url
     public List<Branch> list(){
         // Run the SQL query on the database to select all branches and return a List of Branch objects
-        return this.jdbcTemplate.query("SELECT * FROM branch", new BranchMapper());
+        return this.jdbcTemplate.query("SELECT * FROM branch", branchMapper);
     }
 }
