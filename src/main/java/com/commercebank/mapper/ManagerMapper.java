@@ -2,10 +2,12 @@ package com.commercebank.mapper;
 
 import com.commercebank.api.Manager;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Component
 public class ManagerMapper implements RowMapper<Manager> {
     @Override
     public Manager mapRow(ResultSet rs, int rowNum) throws SQLException {

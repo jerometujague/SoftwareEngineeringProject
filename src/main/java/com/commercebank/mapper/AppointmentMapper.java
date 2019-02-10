@@ -2,11 +2,12 @@ package com.commercebank.mapper;
 
 import com.commercebank.api.Appointment;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
+@Component
 public class AppointmentMapper implements RowMapper<Appointment> {
     @Override
     public Appointment mapRow(ResultSet rs, int rowNum) throws SQLException {
