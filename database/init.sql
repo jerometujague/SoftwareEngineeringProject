@@ -4,7 +4,6 @@
 #######################################################################
 ## Create database schema
 #######################################################################
-
 DROP DATABASE IF EXISTS cb_db;
 CREATE DATABASE cb_db;
 USE cb_db;
@@ -13,6 +12,7 @@ USE cb_db;
 CREATE OR REPLACE USER `admin`@`localhost` IDENTIFIED BY 'admin';
 GRANT ALL PRIVILEGES ON cb_db.* TO `admin`@`localhost` WITH GRANT OPTION;
 
+ 
 CREATE TABLE branch (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	street_address VARCHAR(50) NOT NULL,
@@ -49,7 +49,9 @@ CREATE TABLE manager (
 
 CREATE TABLE appointment_time (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	time TIME NOT NULL,
+	open_time TIME NOT NULL,
+	close_time TIME NOT NULL,
+	branch_id SMALLINT UNSIGNED NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -78,7 +80,7 @@ CREATE TABLE appointment (
 CREATE TABLE unavailable (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	date_id SMALLINT UNSIGNED NOT NULL,
-	time_id SMALLINT UNSIGNED NOT NULL,
+	time TIME NOT NULL,
 	branch_id SMALLINT UNSIGNED NOT NULL,
 	manager_id SMALLINT UNSIGNED NOT NULL,
 	service_id SMALLINT UNSIGNED NOT NULL,
@@ -108,11 +110,6 @@ ALTER TABLE appointment
 	ON DELETE CASCADE;
 
 ALTER TABLE appointment
-	ADD FOREIGN KEY (time_id)
-	REFERENCES appointment_time (id)
-	ON DELETE CASCADE;
-
-ALTER TABLE appointment
 	ADD FOREIGN KEY (branch_id)
 	REFERENCES branch (id)
 	ON DELETE CASCADE;
@@ -133,11 +130,6 @@ ALTER TABLE unavailable
 	ON DELETE CASCADE;
 
 ALTER TABLE unavailable
-	ADD FOREIGN KEY (time_id)
-	REFERENCES appointment_time (id)
-	ON DELETE CASCADE;
-
-ALTER TABLE unavailable
 	ADD FOREIGN KEY (branch_id)
 	REFERENCES branch (id)
 	ON DELETE CASCADE;
@@ -152,15 +144,19 @@ ALTER TABLE unavailable
 	REFERENCES service (id)
 	ON DELETE CASCADE;
 
+ALTER TABLE appointment_time
+	ADD FOREIGN KEY(branch_id)
+	REFERENCES branch (id)
+	ON DELETE CASCADE;
 #######################################################################
 ## Populate database
 #######################################################################
 
-INSERT INTO branch (address, street_name, city, state)
+INSERT INTO branch (street_address, city, state, zip)
 	VALUES
-		(1234, "Main Street", "Warrensburg", "Missouri"),
-		(4444, "South Street", "Warrensburg", "Missouri"),
-		(9876, "North Street", "Warrensburg", "Missouri");
+		("1234 Main Street", "Warrensburg", "Missouri", 66446),
+		("4444 South Street", "Warrensburg", "Missouri", 66446),
+		("9876 North Street", "Warrensburg", "Missouri", 66446);
 
 INSERT INTO service (service)
 	VALUES
@@ -180,9 +176,9 @@ INSERT INTO manager (f_name, l_name, phone_num, email, branch_id)
 		("Tom", "Brady", "6608888888", "tbrady@ucmo.edu", 2),
 		("Steph", "Curry", "9137777777", "scurry@ucmo.edu", 3);
 
-INSERT INTO appointment_time (time)
+INSERT INTO appointment_time (open_time, close_time, branch_id)
 	VALUES
-		("12:00:00");
+		("12:00:00", "1:00:00", 2);
 
 INSERT INTO appointment_date (date)
 	VALUES
