@@ -12,7 +12,7 @@ import java.util.List;
 
 // @RestController means Spring will automatically create and manager and instance of this class
 @RestController // Make this class a REST controller that accept HTTP requests
-@RequestMapping(value = "/api/manager") // Map any HTTP requests at this url to this class
+@RequestMapping(value = "/api/managers") // Map any HTTP requests at this url to this class
 public class ManagerDAO {
     // The JdbcTemplate is the class that interfaces with the database
     private final JdbcTemplate jdbcTemplate;

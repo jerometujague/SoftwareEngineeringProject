@@ -14,6 +14,9 @@ public class BranchMapper implements RowMapper<Branch> {
         // Create a new branch object that is mapped to the SQL Result rs
         return new Branch(
                 rs.getInt("id"),
-                rs.getString("address"));
+                rs.getString("street_address"),
+                rs.getString("city"),
+                rs.getString("state"),
+                rs.getInt("zip"));
     }
 }

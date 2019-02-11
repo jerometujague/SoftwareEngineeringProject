@@ -10,6 +10,13 @@ Check out the wiki for the [project roadmap](https://github.com/jerometujague/So
 * Xampp (For MariaDB SQL database) - https://www.apachefriends.org/download.html
 * Git - https://git-scm.com/downloads
 
+## API usage
+* List branches: `/api/branches`
+* List appointments: `/api/appointments`
+* List available appointment slots: `/api/appointmentSlots/{branchId}`
+* List managers: `/api/managers`
+* List services: `/api/services`
+
 ## Local development
 ```
 // Clone the repository
@@ -26,7 +33,16 @@ Open `http://localhost:8080` in your browser
 ```
 
 ## Database
-Start your local Xammp MySQL server
+Start your local Xammp MySQL server. 
+You can do this through the Xammp interface or from the command line.
+
+```
+// Start the database
+START /B C:\xampp\mysql_start.bat
+
+// Init the database
+mysql -u root -p < database\init.sql
+```
 
 ## Front end development
 **Start the React compiler to compile your JavaScript files**
