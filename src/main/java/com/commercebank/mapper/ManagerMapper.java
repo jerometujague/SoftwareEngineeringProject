@@ -1,6 +1,6 @@
 package com.commercebank.mapper;
 
-import com.commercebank.api.Manager;
+import com.commercebank.model.Manager;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 

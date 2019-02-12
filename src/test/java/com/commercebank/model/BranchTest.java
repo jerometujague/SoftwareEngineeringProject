@@ -1,4 +1,4 @@
-package com.commercebank.api;
+package com.commercebank.model;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

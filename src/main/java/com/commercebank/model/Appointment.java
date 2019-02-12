@@ -1,4 +1,4 @@
-package com.commercebank.api;
+package com.commercebank.model;
 
 // Basic object with getters and setters that matches the database row
 public class Appointment {
