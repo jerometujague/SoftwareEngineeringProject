@@ -1,11 +1,11 @@
 package com.commercebank.model;
 
 // Basic object with getters and setters that matches the database row
-public class Skills {
+public class Skill {
     private int managerId;
     private int serviceId;
 
-    public Skills(int managerId, int serviceId) {
+    public Skill(int managerId, int serviceId) {
         this.managerId = managerId;
         this.serviceId = serviceId;
     }
