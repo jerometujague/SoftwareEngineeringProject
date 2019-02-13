@@ -1,6 +1,6 @@
 package com.commercebank.model;
 
-// Basic object with getters and setters that matches the database row
+// Basic object with getters and setters
 public class AppointmentSlot {
     private int calendarId;
     private String day;
@@ -56,5 +56,5 @@ public class AppointmentSlot {
 
     public Boolean getTaken() {return taken; }
 
-    public void setTake(Boolean taken) {this.taken = taken; }
+    public void setTaken(Boolean taken) {this.taken = taken; }
 }
