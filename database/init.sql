@@ -76,12 +76,12 @@ CREATE TABLE appointment (
 
 CREATE TABLE unavailable (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	date_ INT UNSIGNED,
+	date_ DATE,
 	time TIME NOT NULL,
 	branch_id SMALLINT UNSIGNED,
 	manager_id SMALLINT UNSIGNED,
 	service_id SMALLINT UNSIGNED,
-	day_name VARCHAR(9),
+	day_name INT UNSIGNED,
 	PRIMARY KEY (id)
 );
 
