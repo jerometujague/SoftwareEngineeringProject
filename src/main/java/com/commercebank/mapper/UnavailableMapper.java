@@ -4,8 +4,11 @@ import com.commercebank.model.Unavailable;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Component
 public class UnavailableMapper implements RowMapper<Unavailable> {
@@ -14,10 +17,11 @@ public class UnavailableMapper implements RowMapper<Unavailable> {
         // Create a new branch object that is mapped to the SQL Result rs
         return new Unavailable(
                 rs.getInt("id"),
-                rs.getInt("date_id"),
-                rs.getInt("time_id"),
-                rs.getInt("branch_id"),
-                rs.getInt("manager_id"),
-                rs.getInt("service_id"));
+                rs.getDate("date").toLocalDate(),
+                rs.getTime("time").toLocalTime(),
+                (Integer)rs.getObject("branch_id"),
+                (Integer)rs.getObject("manager_id"),
+                (Integer)rs.getObject("service_id"),
+                (Integer)rs.getObject("day_name"));
     }
 }

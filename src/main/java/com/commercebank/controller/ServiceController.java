@@ -25,4 +25,5 @@ public class ServiceController {
     List<Service> getServices(){
         return serviceDAO.list();
     }
+
 }

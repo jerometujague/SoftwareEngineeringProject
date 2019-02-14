@@ -1,56 +1,73 @@
 package com.commercebank.model;
 
-// Basic object with getters and setters that matches the database row
+import org.apache.tomcat.jni.Local;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+// Basic object with getters and setters that match the database rows
 public class Unavailable {
     private int id;
-    private int dateId;
-    private int timeId;
-    private int branchId;
-    private int managerId;
-    private int serviceId;
+    private LocalDate date;
+    private LocalTime time;
+    private Integer branchId;
+    private Integer managerId;
+    private Integer serviceId;
+    private Integer dayOfWeek;
 
-    public Unavailable(int id, int dateId, int timeId, int branchId, int managerId, int serviceId) {
+    public Unavailable(int id, LocalDate date, LocalTime time, Integer branchId, Integer managerId, Integer serviceId, Integer dayOfWeek) {
         this.id = id;
-        this.dateId = dateId;
-        this.timeId = timeId;
+        this.date = date;
+        this.time = time;
         this.branchId = branchId;
         this.managerId = managerId;
         this.serviceId = serviceId;
+        this.dayOfWeek = dayOfWeek;
     }
 
     public int getId() {
         return id;
     }
 
-    public int getDateId() {
-        return dateId;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setDateId(int dateId) {
-        this.dateId = dateId;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
-    public int getTimeId() {
-        return timeId;
+    public LocalTime getTime() {
+        return time;
     }
 
-    public void setTimeId(int timeId) {
-        this.timeId = timeId;
+    public void setTime(LocalTime time) {
+        this.time = time;
     }
 
-    public int getBranchId() {
+    public Integer getBranchId() {
         return branchId;
     }
 
-    public void setBranchId(int branchId) {
+    public void setBranchId(Integer branchId) {
         this.branchId = branchId;
     }
 
-    public int getManagerId() { return managerId; }
+    public Integer getManagerId() { return managerId; }
 
-    public void setManagerId(int managerId) { this.managerId = managerId; }
+    public void setManagerId(Integer managerId) { this.managerId = managerId; }
 
-    public int getServiceId() { return serviceId; }
+    public Integer getServiceId() { return serviceId; }
 
-    public void setServiceId(int serviceId) { this.serviceId = serviceId; }
+    public void setServiceId(Integer serviceId) { this.serviceId = serviceId; }
+
+    public Integer getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(Integer dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
 }

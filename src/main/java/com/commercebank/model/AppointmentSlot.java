@@ -4,12 +4,12 @@ package com.commercebank.model;
 public class AppointmentSlot {
     private int calendarId;
     private String day;
-    private int date;
+    private String date;
     private String month;
-    private int time;
+    private String time;
     private boolean taken;
 
-    public AppointmentSlot(int calendarId, String day, int date, String month, int time, boolean taken) {
+    public AppointmentSlot(int calendarId, String day, String date, String month, String time, boolean taken) {
         this.calendarId = calendarId;
         this.day = day;
         this.date = date;
@@ -32,11 +32,11 @@ public class AppointmentSlot {
 
     public void setDay(String day) { this.day = day; }
 
-    public int getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(int date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
@@ -46,11 +46,11 @@ public class AppointmentSlot {
 
     public void setMonth(String month) { this.month = month; }
 
-    public int getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
