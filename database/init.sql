@@ -19,6 +19,7 @@ CREATE TABLE branch (
 	city VARCHAR(30) NOT NULL,
 	state VARCHAR(30) NOT NULL,
 	zip SMALLINT UNSIGNED NOT NULL,
+	name VARCHAR(50) NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -52,6 +53,7 @@ CREATE TABLE branch_hours (
 	open_time TIME NOT NULL,
 	close_time TIME NOT NULL,
 	branch_id SMALLINT UNSIGNED NOT NULL,
+	day_of_week VARCHAR(9) NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -64,12 +66,11 @@ CREATE TABLE skills (
 CREATE TABLE appointment (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	date_id INT UNSIGNED NOT NULL,
-	time_id SMALLINT UNSIGNED NOT NULL,
-	branch_id SMALLINT UNSIGNED,
-	manager_id SMALLINT UNSIGNED,
+	time TIME NOT NULL,
+	branch_id SMALLINT UNSIGNED NOT NULL,
+	manager_id SMALLINT UNSIGNED NOT NULL,
 	customer_id SMALLINT UNSIGNED NOT NULL,
-	service_id SMALLINT UNSIGNED,
-	day_name VARCHAR(9) NOT NULL,
+	service_id SMALLINT UNSIGNED NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -77,9 +78,10 @@ CREATE TABLE unavailable (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	date_id INT UNSIGNED NOT NULL,
 	time TIME NOT NULL,
-	branch_id SMALLINT UNSIGNED NOT NULL,
-	manager_id SMALLINT UNSIGNED NOT NULL,
-	service_id SMALLINT UNSIGNED NOT NULL,
+	branch_id SMALLINT UNSIGNED,
+	manager_id SMALLINT UNSIGNED,
+	service_id SMALLINT UNSIGNED,
+	day_name VARCHAR(9) NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -365,11 +367,11 @@ ALTER TABLE branch_hours
 ## Populate database
 #######################################################################
 
-INSERT INTO branch (street_address, city, state, zip)
+INSERT INTO branch (street_address, city, state, zip, name)
 	VALUES
-		("1234 Main Street", "Warrensburg", "Missouri", 66446),
-		("4444 South Street", "Warrensburg", "Missouri", 66446),
-		("9876 North Street", "Warrensburg", "Missouri", 66446);
+		("1234 Main Street", "Warrensburg", "Missouri", 66446, "First Branch"),
+		("4444 South Street", "Warrensburg", "Missouri", 66446, "Second Branch"),
+		("9876 North Street", "Warrensburg", "Missouri", 66446, "Third Branch");
 
 INSERT INTO service (service)
 	VALUES
@@ -389,9 +391,9 @@ INSERT INTO manager (f_name, l_name, phone_num, email, branch_id)
 		("Tom", "Brady", "6608888888", "tbrady@ucmo.edu", 2),
 		("Steph", "Curry", "9137777777", "scurry@ucmo.edu", 3);
 
-INSERT INTO branch_hours (open_time, close_time, branch_id)
+INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week)
 	VALUES
-		("12:00:00", "1:00:00", 2);
+		("12:00:00", "1:00:00", 2, 'Monday');
 
 
 
