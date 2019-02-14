@@ -53,7 +53,7 @@ CREATE TABLE branch_hours (
 	open_time TIME NOT NULL,
 	close_time TIME NOT NULL,
 	branch_id SMALLINT UNSIGNED NOT NULL,
-	day_of_week VARCHAR(9) NOT NULL,
+	day_of_week INT NOT NULL,
 	PRIMARY KEY (id)
 );
 
