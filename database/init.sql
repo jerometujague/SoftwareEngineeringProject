@@ -76,12 +76,12 @@ CREATE TABLE appointment (
 
 CREATE TABLE unavailable (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	date_id INT UNSIGNED NOT NULL,
+	date_ INT UNSIGNED,
 	time TIME NOT NULL,
 	branch_id SMALLINT UNSIGNED,
 	manager_id SMALLINT UNSIGNED,
 	service_id SMALLINT UNSIGNED,
-	day_name VARCHAR(9) NOT NULL,
+	day_name VARCHAR(9),
 	PRIMARY KEY (id)
 );
 
@@ -337,11 +337,6 @@ ALTER TABLE appointment
 ALTER TABLE appointment
 	ADD FOREIGN KEY (service_id)
 	REFERENCES service (id)
-	ON DELETE CASCADE;
-
-ALTER TABLE unavailable
-	ADD FOREIGN KEY (date_id)
-	REFERENCES calendar (calendar_id)
 	ON DELETE CASCADE;
 
 ALTER TABLE unavailable
