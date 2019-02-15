@@ -11,10 +11,10 @@ public class Appointment {
     private int managerId;
     private int customerId;
 
-    public Appointment(int id, int dateId, LocalTime timeId, int branchId, int managerId, int customerId) {
+    public Appointment(int id, int dateId, LocalTime time, int branchId, int managerId, int customerId) {
         this.id = id;
         this.dateId = dateId;
-        this.time = timeId;
+        this.time = time;
         this.branchId = branchId;
         this.managerId = managerId;
         this.customerId = customerId;
