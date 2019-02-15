@@ -1,17 +1,16 @@
 package com.commercebank.model;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 
 // Basic object with getters and setters that match the database rows
 public class Unavailable {
     private int id;
-    private LocalDate date;
+    private int dateId;
     private LocalTime time;
 
-    public Unavailable(int id, LocalDate date, LocalTime time) {
+    public Unavailable(int id, int dateId, LocalTime time) {
         this.id = id;
-        this.date = date;
+        this.dateId = dateId;
         this.time = time;
     }
 
@@ -19,12 +18,12 @@ public class Unavailable {
         return id;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public int getDateId() {
+        return dateId;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setDateId(int dateId) {
+        this.dateId = dateId;
     }
 
     public LocalTime getTime() {
