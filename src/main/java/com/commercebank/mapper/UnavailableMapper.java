@@ -17,10 +17,7 @@ public class UnavailableMapper implements RowMapper<Unavailable> {
         // Create a new unavailable object that is mapped to the SQL Result rs
         return new Unavailable(
                 rs.getInt("id"),
-                rs.getDate("date_").toLocalDate(),
-                rs.getTime("time").toLocalTime(),
-                (Integer)rs.getObject("branch_id"),
-                (Integer)rs.getObject("manager_id"),
-                (Integer)rs.getObject("day_name"));
+                rs.getDate("date_id").toLocalDate(),
+                rs.getTime("time").toLocalTime());
     }
 }
