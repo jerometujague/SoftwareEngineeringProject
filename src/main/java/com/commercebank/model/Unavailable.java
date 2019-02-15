@@ -1,9 +1,5 @@
 package com.commercebank.model;
 
-import org.apache.tomcat.jni.Local;
-
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -12,17 +8,11 @@ public class Unavailable {
     private int id;
     private LocalDate date;
     private LocalTime time;
-    private Integer branchId;
-    private Integer managerId;
-    private Integer dayOfWeek;
 
-    public Unavailable(int id, LocalDate date, LocalTime time, Integer branchId, Integer managerId, Integer dayOfWeek) {
+    public Unavailable(int id, LocalDate date, LocalTime time) {
         this.id = id;
         this.date = date;
         this.time = time;
-        this.branchId = branchId;
-        this.managerId = managerId;
-        this.dayOfWeek = dayOfWeek;
     }
 
     public int getId() {
@@ -43,25 +33,5 @@ public class Unavailable {
 
     public void setTime(LocalTime time) {
         this.time = time;
-    }
-
-    public Integer getBranchId() {
-        return branchId;
-    }
-
-    public void setBranchId(Integer branchId) {
-        this.branchId = branchId;
-    }
-
-    public Integer getManagerId() { return managerId; }
-
-    public void setManagerId(Integer managerId) { this.managerId = managerId; }
-
-    public Integer getDayOfWeek() {
-        return dayOfWeek;
-    }
-
-    public void setDayOfWeek(Integer dayOfWeek) {
-        this.dayOfWeek = dayOfWeek;
     }
 }
