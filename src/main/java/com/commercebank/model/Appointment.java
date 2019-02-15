@@ -1,15 +1,19 @@
 package com.commercebank.model;
 
+import org.apache.tomcat.jni.Local;
+
+import java.time.LocalTime;
+
 // Basic object with getters and setters that matches the database row
 public class Appointment {
     private int id;
     private int dateId;
-    private int timeId;
+    private LocalTime timeId;
     private int branchId;
     private int managerId;
     private int customerId;
 
-    public Appointment(int id, int dateId, int timeId, int branchId, int managerId, int customerId) {
+    public Appointment(int id, int dateId, LocalTime timeId, int branchId, int managerId, int customerId) {
         this.id = id;
         this.dateId = dateId;
         this.timeId = timeId;
@@ -30,11 +34,11 @@ public class Appointment {
         this.dateId = dateId;
     }
 
-    public int getTimeId() {
+    public LocalTime getTimeId() {
         return timeId;
     }
 
-    public void setTimeId(int timeId) {
+    public void setTimeId(LocalTime timeId) {
         this.timeId = timeId;
     }
 

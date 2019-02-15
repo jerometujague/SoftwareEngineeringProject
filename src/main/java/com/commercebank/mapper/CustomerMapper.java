@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class CustomerMapper implements RowMapper<Customer> {
     @Override
     public Customer mapRow(ResultSet rs, int rowNum) throws SQLException {
-        // Create a new branch object that is mapped to the SQL Result rs
+        // Create a new customer object that is mapped to the SQL Result rs
         return new Customer(
                 rs.getInt("id"),
                 rs.getString("f_name"),

@@ -57,4 +57,15 @@ public class AppointmentSlot {
     public Boolean getTaken() {return taken; }
 
     public void setTaken(Boolean taken) {this.taken = taken; }
+
+    @Override
+    public String toString() {
+        return "AppointmentSlot{" +
+                "day='" + day + '\'' +
+                ", date='" + date + '\'' +
+                ", month='" + month + '\'' +
+                ", time='" + time + '\'' +
+                ", taken=" + taken +
+                '}';
+    }
 }

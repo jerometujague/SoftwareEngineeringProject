@@ -14,10 +14,10 @@ import java.time.LocalTime;
 public class UnavailableMapper implements RowMapper<Unavailable> {
     @Override
     public Unavailable mapRow(ResultSet rs, int rowNum) throws SQLException {
-        // Create a new branch object that is mapped to the SQL Result rs
+        // Create a new unavailable object that is mapped to the SQL Result rs
         return new Unavailable(
                 rs.getInt("id"),
-                rs.getDate("date").toLocalDate(),
+                rs.getDate("date_").toLocalDate(),
                 rs.getTime("time").toLocalTime(),
                 (Integer)rs.getObject("branch_id"),
                 (Integer)rs.getObject("manager_id"),
