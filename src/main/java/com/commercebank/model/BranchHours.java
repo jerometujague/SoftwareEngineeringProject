@@ -9,10 +9,10 @@ public class BranchHours {
     private int id;
     private LocalTime openTime;
     private LocalTime closeTime;
-    private Integer branchId;
-    private Integer dayOfWeek;
+    private int branchId;
+    private int dayOfWeek;
 
-    public BranchHours(int id, LocalTime openTime, LocalTime closeTime, Integer branchId, Integer dayOfWeek) {
+    public BranchHours(int id, LocalTime openTime, LocalTime closeTime, int branchId, int dayOfWeek) {
         this.id = id;
         this.openTime = openTime;
         this.closeTime = closeTime;
@@ -40,19 +40,19 @@ public class BranchHours {
         this.closeTime = closeTime;
     }
 
-    public Integer getBranchId() {
+    public int getBranchId() {
         return branchId;
     }
 
-    public void setBranchId(Integer branchId) {
+    public void setBranchId(int branchId) {
         this.branchId = branchId;
     }
 
-    public Integer getDayOfWeek() {
+    public int getDayOfWeek() {
         return dayOfWeek;
     }
 
-    public void setDayOfWeek(Integer dayOfWeek) {
+    public void setDayOfWeek(int dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
     }
 }

@@ -16,7 +16,7 @@ public class BranchHoursMapper implements RowMapper<BranchHours> {
                 rs.getInt("id"),
                 rs.getTime("open_time").toLocalTime(),
                 rs.getTime("close_time").toLocalTime(),
-                (Integer)rs.getObject("branch_id"),
-                (Integer)rs.getObject("day_of_week"));
+                rs.getInt("branch_id"),
+                rs.getInt("day_of_week"));
     }
 }

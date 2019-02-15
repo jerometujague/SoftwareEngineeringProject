@@ -17,6 +17,7 @@ public class BranchMapper implements RowMapper<Branch> {
                 rs.getString("street_address"),
                 rs.getString("city"),
                 rs.getString("state"),
-                rs.getInt("zip"));
+                rs.getInt("zip"),
+                rs.getString("name"));
     }
 }
