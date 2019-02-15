@@ -7,13 +7,15 @@ public class Branch {
     private String city;
     private String state;
     private int zipCode;
+    private String name;
 
-    public Branch(int id, String streetAddress, String city, String state, int zipCode) {
+    public Branch(int id, String streetAddress, String city, String state, int zipCode, String name) {
         this.id = id;
         this.streetAddress = streetAddress;
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
+        this.name = name;
     }
 
     public int getId() {
@@ -50,5 +52,13 @@ public class Branch {
 
     public void setZipCode(int zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

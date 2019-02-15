@@ -14,16 +14,14 @@ public class Unavailable {
     private LocalTime time;
     private Integer branchId;
     private Integer managerId;
-    private Integer serviceId;
     private Integer dayOfWeek;
 
-    public Unavailable(int id, LocalDate date, LocalTime time, Integer branchId, Integer managerId, Integer serviceId, Integer dayOfWeek) {
+    public Unavailable(int id, LocalDate date, LocalTime time, Integer branchId, Integer managerId, Integer dayOfWeek) {
         this.id = id;
         this.date = date;
         this.time = time;
         this.branchId = branchId;
         this.managerId = managerId;
-        this.serviceId = serviceId;
         this.dayOfWeek = dayOfWeek;
     }
 
@@ -58,10 +56,6 @@ public class Unavailable {
     public Integer getManagerId() { return managerId; }
 
     public void setManagerId(Integer managerId) { this.managerId = managerId; }
-
-    public Integer getServiceId() { return serviceId; }
-
-    public void setServiceId(Integer serviceId) { this.serviceId = serviceId; }
 
     public Integer getDayOfWeek() {
         return dayOfWeek;

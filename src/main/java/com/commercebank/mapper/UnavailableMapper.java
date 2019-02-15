@@ -21,7 +21,6 @@ public class UnavailableMapper implements RowMapper<Unavailable> {
                 rs.getTime("time").toLocalTime(),
                 (Integer)rs.getObject("branch_id"),
                 (Integer)rs.getObject("manager_id"),
-                (Integer)rs.getObject("service_id"),
                 (Integer)rs.getObject("day_name"));
     }
 }

@@ -15,7 +15,7 @@ public class AppointmentMapper implements RowMapper<Appointment> {
         return new Appointment(
                 rs.getInt("id"),
                 rs.getInt("date_id"),
-                rs.getTime("time_id").toLocalTime(),
+                rs.getTime("time").toLocalTime(),
                 rs.getInt("branch_id"),
                 rs.getInt("manager_id"),
                 rs.getInt("customer_id"));

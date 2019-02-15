@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class BranchTest {
 
                                     // Create an instance of the Branch object
-    Branch someBranch = new Branch(3,"123 Main St.", "Warrensburg", "Missouri", 64093);
+    Branch someBranch = new Branch(3,"123 Main St.", "Warrensburg", "Missouri", 64093, "Best Branch");
 
     @Test                           // Create a test method for the getID method
     public void testGetID() {
