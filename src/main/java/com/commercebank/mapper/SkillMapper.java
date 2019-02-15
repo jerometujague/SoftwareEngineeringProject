@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class SkillMapper implements RowMapper<Skill> {
     @Override
     public Skill mapRow(ResultSet rs, int rowNum) throws SQLException {
-        // Create a new branch object that is mapped to the SQL Result rs
+        // Create a new skill object that is mapped to the SQL Result rs
         return new Skill(
                 rs.getInt("manager_id"),
                 rs.getInt("service_id"));

@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class ServiceMapper implements RowMapper<Service> {
     @Override
     public Service mapRow(ResultSet rs, int rowNum) throws SQLException {
-        // Create a new branch object that is mapped to the SQL Result rs
+        // Create a new service object that is mapped to the SQL Result rs
         return new Service(
                 rs.getInt("id"),
                 rs.getString("service"));
