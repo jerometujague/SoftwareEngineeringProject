@@ -25,4 +25,12 @@ public class CustomerDAO {
         // Run the SQL query on the database to select all customers and return a List of Customer objects
         return this.jdbcTemplate.query("SELECT * FROM customer", customerMapper);
     }
+
+    public void add(Customer customer){
+        this.jdbcTemplate.update("INSERT INTO customers (f_name, l_name, email. phone_number) VALUES (?, ?, ?, ?)",
+                customer.getFirstName(),
+                customer.getLastName(),
+                customer.getEmail(),
+                customer.getPhoneNumber());
+    }
 }
