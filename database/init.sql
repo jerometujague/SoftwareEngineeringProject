@@ -290,7 +290,7 @@ CREATE TABLE unavailable (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
 	calendar_id INT UNSIGNED NOT NULL,
 	time TIME NOT NULL,
-	PRIMARY KEY (id)
+	PRIMARY KEY (id, calendar_id, time)
 );
 
 CREATE TABLE branch_unavailable (
@@ -379,13 +379,14 @@ ALTER TABLE manager_unavailable
 
 DROP PROCEDURE IF EXISTS future_unavailable;
 DELIMITER //
-CREATE PROCEDURE future_unavailable (IN unavailable_id SMALLINT UNSIGNED)
+CREATE PROCEDURE future_unavailable (IN unavailable_id SMALLINT UNSIGNED, IN b_id SMALLINT UNSIGNED, IN m_id SMALLINT UNSIGNED)
 BEGIN
 	DECLARE date_counter DATE;
 	DECLARE end_date DATE;
 	DECLARE day_of_week VARCHAR(10);
 	DECLARE id_update INT UNSIGNED;
 	DECLARE set_time TIME;
+	DECLARE unavail_id SMALLINT;
 
 	SELECT calendar_id INTO id_update
 	FROM unavailable
@@ -403,8 +404,8 @@ BEGIN
 			WHERE id = unavailable_id);
 	
 	SET day_of_week = DAYNAME(date_counter);
-	SET date_counter = DATE_ADD(date_counter, INTERVAL 1 DAY);
-	SET id_update = id_update + 1;
+	-- SET date_counter = DATE_ADD(date_counter, INTERVAL 1 DAY);
+	-- SET id_update = id_update + 1;
 	SELECT Calendar_date INTO end_date
 	FROM calendar
 	WHERE calendar_id = (
@@ -415,9 +416,23 @@ BEGIN
 
 	WHILE date_counter <= end_date DO
 		IF DAYNAME(date_counter) = day_of_week THEN
-			INSERT INTO unavailable (calendar_id, time)
-				VALUES
-					(id_update, set_time);
+			IF EXISTS(SELECT id FROM unavailable WHERE calendar_id=id_update AND time = set_time) THEN
+				SELECT id INTO unavail_id FROM unavailable WHERE calendar_id=id_update AND time = set_time;
+			ELSE
+				INSERT INTO unavailable (calendar_id, time)
+					VALUES
+						(id_update, set_time);
+				SET unavail_id = LAST_INSERT_ID();
+			END IF;
+			IF m_id > 0 THEN
+				INSERT INTO manager_unavailable (unavailable_id, manager_id)
+					VALUES
+						(unavail_id, m_id);
+			ELSEIF b_id > 0 THEN
+				INSERT INTO branch_unavailable (unavailable_id, branch_id)
+					VALUES
+						(unavail_id, b_id);
+			END IF;
 		END IF;
 		SET date_counter = DATE_ADD(date_counter, INTERVAL 1 DAY);
 		SET id_update = id_update + 1;
@@ -515,7 +530,9 @@ INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week)
 		("8:00:00", "17:00:00", 3, 5),
 		("8:00:00", "17:00:00", 3, 6);
 
-CALL future_unavailable(1);
+CALL future_unavailable(1, 0, 1);
+
+CALL future_unavailable(1, 1, 0);
 
 
 
