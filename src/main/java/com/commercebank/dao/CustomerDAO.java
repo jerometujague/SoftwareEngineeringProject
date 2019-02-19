@@ -27,7 +27,7 @@ public class CustomerDAO {
     }
 
     public void add(Customer customer){
-        this.jdbcTemplate.update("INSERT INTO customers (f_name, l_name, email. phone_number) VALUES (?, ?, ?, ?)",
+        this.jdbcTemplate.update("INSERT INTO customers (f_name, l_name, email, phone_number) VALUES (?, ?, ?, ?)",
                 customer.getFirstName(),
                 customer.getLastName(),
                 customer.getEmail(),

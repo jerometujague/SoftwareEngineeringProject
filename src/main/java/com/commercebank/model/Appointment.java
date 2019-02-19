@@ -5,15 +5,15 @@ import java.time.LocalTime;
 // Basic object with getters and setters that matches the database row
 public class Appointment {
     private int id;
-    private int dateId;
+    private int calendarId;
     private LocalTime time;
     private int branchId;
     private int managerId;
     private int customerId;
 
-    public Appointment(int id, int dateId, LocalTime time, int branchId, int managerId, int customerId) {
+    public Appointment(int id, int calendarId, LocalTime time, int branchId, int managerId, int customerId) {
         this.id = id;
-        this.dateId = dateId;
+        this.calendarId = calendarId;
         this.time = time;
         this.branchId = branchId;
         this.managerId = managerId;
@@ -24,12 +24,12 @@ public class Appointment {
         return id;
     }
 
-    public int getDateId() {
-        return dateId;
+    public int getCalendarId() {
+        return calendarId;
     }
 
-    public void setDateId(int dateId) {
-        this.dateId = dateId;
+    public void setCalendarId(int calendarId) {
+        this.calendarId = calendarId;
     }
 
     public LocalTime getTime() {

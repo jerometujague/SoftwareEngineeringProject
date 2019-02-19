@@ -23,6 +23,25 @@ public class UnavailableDAO {
 
     public List<Unavailable> list(){
         // Run the SQL query on the database to select all unavailables and return a List of Unavailable objects
-        return this.jdbcTemplate.query("SELECT * FROM unavailable", unavailableMapper);
+        return this.jdbcTemplate.query("SELECT id, calendar_id, time, NULL AS refer_id FROM unavailable", unavailableMapper);
+    }
+
+    public List<Unavailable> listBranches(){
+        // Run the SQL query on the database to select unavailables that have matching branches
+        return this.jdbcTemplate.query(
+            "SELECT id, calendar_id, time, branch_id AS refer_id " +
+                "FROM branch_unavailable " +
+                "JOIN unavailable " +
+                "ON branch_unavailable.unavailable_id = unavailable.id", unavailableMapper);
+
+    }
+
+    public List<Unavailable> listManagers(){
+        // Run the SQL query on the database to select unavailables that have matching managers
+        return this.jdbcTemplate.query(
+            "SELECT id, calendar_id, time, manager_id AS refer_id " +
+                "FROM manager_unavailable " +
+                "JOIN unavailable " +
+                "ON manager_unavailable.unavailable_id = unavailable.id", unavailableMapper);
     }
 }
