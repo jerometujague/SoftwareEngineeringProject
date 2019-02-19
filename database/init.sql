@@ -25,7 +25,7 @@ CREATE TABLE branch (
 
 CREATE TABLE service (
 	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	service VARCHAR(50),
+	service VARCHAR(100),
 	PRIMARY KEY (id)
 );
 
@@ -61,28 +61,6 @@ CREATE TABLE skills (
 	manager_id SMALLINT UNSIGNED NOT NULL,
 	service_id SMALLINT UNSIGNED NOT NULL,
 	PRIMARY KEY (manager_id, service_id)
-);
-
-CREATE TABLE appointment (
-	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	date_id INT UNSIGNED NOT NULL,
-	time TIME NOT NULL,
-	branch_id SMALLINT UNSIGNED NOT NULL,
-	manager_id SMALLINT UNSIGNED NOT NULL,
-	customer_id SMALLINT UNSIGNED NOT NULL,
-	service_id SMALLINT UNSIGNED NOT NULL,
-	PRIMARY KEY (id)
-);
-
-CREATE TABLE unavailable (
-	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
-	date_ DATE,
-	time TIME NOT NULL,
-	branch_id SMALLINT UNSIGNED,
-	manager_id SMALLINT UNSIGNED,
-	service_id SMALLINT UNSIGNED,
-	day_name INT UNSIGNED,
-	PRIMARY KEY (id)
 );
 
 CREATE TABLE cb_db.calendar
@@ -297,6 +275,36 @@ DELIMITER ;
 
 CALL Populate_calendar ('2019-01-01', '2019-12-31');
 
+CREATE TABLE appointment (
+	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	calendar_id INT UNSIGNED NOT NULL,
+	time TIME NOT NULL,
+	branch_id SMALLINT UNSIGNED NOT NULL,
+	manager_id SMALLINT UNSIGNED NOT NULL,
+	customer_id SMALLINT UNSIGNED NOT NULL,
+	service_id SMALLINT UNSIGNED NOT NULL,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE unavailable (
+	id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	calendar_id INT UNSIGNED NOT NULL,
+	time TIME NOT NULL,
+	PRIMARY KEY (id)
+);
+
+CREATE TABLE branch_unavailable (
+	unavailable_id SMALLINT UNSIGNED NOT NULL,
+	branch_id SMALLINT UNSIGNED NOT NULL,
+	PRIMARY KEY (unavailable_id, branch_id)
+);
+
+CREATE TABLE manager_unavailable (
+	unavailable_id SMALLINT UNSIGNED NOT NULL,
+	manager_id SMALLINT UNSIGNED NOT NULL,
+	PRIMARY KEY (unavailable_id, manager_id)
+);
+
 #Add Foreign Key Constraints
 
 ALTER TABLE manager
@@ -315,7 +323,7 @@ ALTER TABLE skills
 	ON DELETE CASCADE;
 
 ALTER TABLE appointment
-	ADD FOREIGN KEY (date_id)
+	ADD FOREIGN KEY (calendar_id)
 	REFERENCES calendar (calendar_id)
 	ON DELETE CASCADE;
 
@@ -340,24 +348,126 @@ ALTER TABLE appointment
 	ON DELETE CASCADE;
 
 ALTER TABLE unavailable
-	ADD FOREIGN KEY (branch_id)
-	REFERENCES branch (id)
-	ON DELETE CASCADE;
-
-ALTER TABLE unavailable
-	ADD FOREIGN KEY (manager_id)
-	REFERENCES manager (id)
-	ON DELETE CASCADE;
-
-ALTER TABLE unavailable
-	ADD FOREIGN KEY (service_id)
-	REFERENCES service (id)
+	ADD FOREIGN KEY (calendar_id)
+	REFERENCES calendar (calendar_id)
 	ON DELETE CASCADE;
 
 ALTER TABLE branch_hours
 	ADD FOREIGN KEY(branch_id)
 	REFERENCES branch (id)
 	ON DELETE CASCADE;
+
+ALTER TABLE branch_unavailable
+	ADD FOREIGN KEY(branch_id)
+	REFERENCES branch (id)
+	ON DELETE CASCADE;
+
+ALTER TABLE branch_unavailable
+	ADD FOREIGN KEY(unavailable_id)
+	REFERENCES unavailable (id)
+	ON DELETE CASCADE;
+
+ALTER TABLE manager_unavailable
+	ADD FOREIGN KEY(manager_id)
+	REFERENCES manager (id)
+	ON DELETE CASCADE;
+
+ALTER TABLE manager_unavailable
+	ADD FOREIGN KEY(unavailable_id)
+	REFERENCES unavailable (id)
+	ON DELETE CASCADE;
+
+DROP PROCEDURE IF EXISTS future_unavailable;
+DELIMITER //
+CREATE PROCEDURE future_unavailable (IN unavailable_id SMALLINT UNSIGNED)
+BEGIN
+	DECLARE date_counter DATE;
+	DECLARE end_date DATE;
+	DECLARE day_of_week VARCHAR(10);
+	DECLARE id_update INT UNSIGNED;
+	DECLARE set_time TIME;
+
+	SELECT calendar_id INTO id_update
+	FROM unavailable
+	WHERE unavailable.id = unavailable_id;
+
+	SELECT time INTO set_time
+	FROM unavailable
+	WHERE unavailable.id = unavailable_id;
+
+	SELECT Calendar_date INTO date_counter
+	FROM calendar 
+	WHERE calendar_id = (
+			SELECT calendar_id 
+			FROM unavailable 
+			WHERE id = unavailable_id);
+	
+	SET day_of_week = DAYNAME(date_counter);
+	SET date_counter = DATE_ADD(date_counter, INTERVAL 1 DAY);
+	SELECT Calendar_date INTO end_date
+	FROM calendar
+	WHERE calendar_id = (
+		SELECT calendar_id 
+		FROM calendar
+		ORDER BY calendar_id DESC
+		LIMIT 0,1);
+
+	WHILE date_counter <= end_date DO
+		IF DAYNAME(date_counter) = day_of_week THEN
+			INSERT INTO unavailable (calendar_id, time)
+				VALUES
+					(id_update, set_time);
+		END IF;
+		SET date_counter = DATE_ADD(date_counter, INTERVAL 1 DAY);
+		SET id_update = id_update + 1;
+		
+	END WHILE;
+END;
+//
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS set_default_times;
+DELIMITER //
+CREATE PROCEDURE set_default_times()
+BEGIN
+	DECLARE base_time TIME;
+	DECLARE counter INT UNSIGNED;
+	DECLARE var_time TIME;
+	DECLARE bank_id SMALLINT UNSIGNED;
+	DECLARE max_bank_id SMALLINT UNSIGNED;
+
+	SELECT id INTO bank_id
+	FROM branch
+	WHERE id = 1
+	LIMIT 0, 1;
+
+	SELECT id INTO max_bank_id
+	FROM branch
+	WHERE id = (
+		SELECT id 
+		FROM branch
+		ORDER BY id DESC
+		LIMIT 0,1);
+
+	SET base_time = "8:00:00";
+	
+	WHILE bank_id <= max_bank_id DO
+		SET counter = 0;
+		WHILE counter < 5 DO
+			SET var_time = base_time;
+			WHILE var_time < "17:00:00" DO
+				INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week)
+					VALUES
+						(var_time, ADDTIME(var_time, "1:00:00"), bank_id, counter);
+				SET var_time = ADDTIME(var_time, "1:00:00");
+			END WHILE;
+			SET counter = counter +1; 
+		END WHILE;
+		SET bank_id = bank_id + 1;
+	END WHILE;
+END;
+//
+DELIMITER ;
 #######################################################################
 ## Populate database
 #######################################################################
@@ -370,15 +480,25 @@ INSERT INTO branch (street_address, city, state, zip, name)
 
 INSERT INTO service (service)
 	VALUES
-		("Financial Advisor"),
-		("Debt Advisor"),
-		("Retirement Planner");
+		("Checking Account"),
+		("Savings Account"),
+		("Money Market Account"),
+		("Student Banking"),
+		("Auto Loans"),
+		("Home Equity"),
+		("Mortgage"),
+		("Student Loans"),
+		("Saving for Retirement"),
+		("Investment Account"),
+		("Credit Card"),
+		("Other");
 
 INSERT INTO customer (f_name, l_name, phone_num, email)
 	VALUES
 		("John", "Doe", "9135555555", "jdoe@ucmo.edu"),
 		("Jane", "Doe", "8165555555", "jadoe@ucmo.edu"),
-		("Bob", "Smith", "6605555555", "bsmith@ucmo.edu");
+		("Bob", "Smith", "6605555555", "bsmith@ucmo.edu"),
+		("Larry", "Jones", "9905555555", "ljones@ucmo.edu");
 
 INSERT INTO manager (f_name, l_name, phone_num, email, branch_id)
 	VALUES
@@ -386,9 +506,41 @@ INSERT INTO manager (f_name, l_name, phone_num, email, branch_id)
 		("Tom", "Brady", "6608888888", "tbrady@ucmo.edu", 2),
 		("Steph", "Curry", "9137777777", "scurry@ucmo.edu", 3);
 
-INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week)
+INSERT INTO unavailable (calendar_id, time)
 	VALUES
-		("12:00:00", "1:00:00", 2, 'Monday');
+		(3, "12:00:00");
+
+INSERT INTO appointment (calendar_id, time, branch_id, manager_id, customer_id, service_id)
+	VALUES
+		(5, "10:00:00", 1, 1, 1, 1),
+		(27, "13:00:00", 2, 3, 2, 2);
+
+INSERT INTO skills (manager_id, service_id)
+	VALUES
+		(1, 1),
+		(1, 2),
+		(1, 3),
+		(1, 4),
+		(1, 5),
+		(1, 6),
+		(1, 7),
+		(1, 8),
+		(1, 9),
+		(1, 10),
+		(1, 11),
+		(1, 12),
+		(2, 3),
+		(2, 7),
+		(2, 9),
+		(2, 12),
+		(3, 4),
+		(3, 7),
+		(3, 1),
+		(3, 11);
+
+CALL future_unavailable(1);
+
+CALL set_default_times();
 
 
 
