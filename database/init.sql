@@ -404,6 +404,7 @@ BEGIN
 	
 	SET day_of_week = DAYNAME(date_counter);
 	SET date_counter = DATE_ADD(date_counter, INTERVAL 1 DAY);
+	SET id_update = id_update + 1;
 	SELECT Calendar_date INTO end_date
 	FROM calendar
 	WHERE calendar_id = (
@@ -426,48 +427,6 @@ END;
 //
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS set_default_times;
-DELIMITER //
-CREATE PROCEDURE set_default_times()
-BEGIN
-	DECLARE base_time TIME;
-	DECLARE counter INT UNSIGNED;
-	DECLARE var_time TIME;
-	DECLARE bank_id SMALLINT UNSIGNED;
-	DECLARE max_bank_id SMALLINT UNSIGNED;
-
-	SELECT id INTO bank_id
-	FROM branch
-	WHERE id = 1
-	LIMIT 0, 1;
-
-	SELECT id INTO max_bank_id
-	FROM branch
-	WHERE id = (
-		SELECT id 
-		FROM branch
-		ORDER BY id DESC
-		LIMIT 0,1);
-
-	SET base_time = "8:00:00";
-	
-	WHILE bank_id <= max_bank_id DO
-		SET counter = 0;
-		WHILE counter < 5 DO
-			SET var_time = base_time;
-			WHILE var_time < "17:00:00" DO
-				INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week)
-					VALUES
-						(var_time, ADDTIME(var_time, "1:00:00"), bank_id, counter);
-				SET var_time = ADDTIME(var_time, "1:00:00");
-			END WHILE;
-			SET counter = counter +1; 
-		END WHILE;
-		SET bank_id = bank_id + 1;
-	END WHILE;
-END;
-//
-DELIMITER ;
 #######################################################################
 ## Populate database
 #######################################################################
@@ -538,9 +497,25 @@ INSERT INTO skills (manager_id, service_id)
 		(3, 1),
 		(3, 11);
 
-CALL future_unavailable(1);
+INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week)
+	VALUES
+		("8:00:00", "17:00:00", 1, 2),
+		("8:00:00", "17:00:00", 1, 3),
+		("8:00:00", "17:00:00", 1, 4),
+		("8:00:00", "17:00:00", 1, 5),
+		("8:00:00", "17:00:00", 1, 6),
+		("8:00:00", "17:00:00", 2, 2),
+		("8:00:00", "17:00:00", 2, 3),
+		("8:00:00", "17:00:00", 2, 4),
+		("8:00:00", "17:00:00", 2, 5),
+		("8:00:00", "17:00:00", 2, 6),
+		("8:00:00", "17:00:00", 3, 2),
+		("8:00:00", "17:00:00", 3, 3),
+		("8:00:00", "17:00:00", 3, 4),
+		("8:00:00", "17:00:00", 3, 5),
+		("8:00:00", "17:00:00", 3, 6);
 
-CALL set_default_times();
+CALL future_unavailable(1);
 
 
 
