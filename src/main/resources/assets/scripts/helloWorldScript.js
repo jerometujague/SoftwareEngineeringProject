@@ -62,10 +62,45 @@ var App = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
+            var divs = [];
+
+            this.state.branches.forEach(function (branch) {
+                divs.push(React.createElement(
+                    "p",
+                    null,
+                    branch.name
+                ));
+                divs.push(React.createElement(
+                    "p",
+                    null,
+                    branch.id
+                ));
+                divs.push(React.createElement(
+                    "p",
+                    null,
+                    branch.streetAddress
+                ));
+                divs.push(React.createElement(
+                    "p",
+                    null,
+                    branch.city
+                ));
+                divs.push(React.createElement(
+                    "p",
+                    null,
+                    branch.state
+                ));
+                divs.push(React.createElement(
+                    "p",
+                    null,
+                    branch.zipCode
+                ));
+            });
+
             return React.createElement(
                 "div",
                 null,
-                "Hello world!"
+                divs
             );
         }
     }]);

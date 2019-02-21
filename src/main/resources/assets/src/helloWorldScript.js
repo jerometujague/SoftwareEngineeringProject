@@ -9,8 +9,8 @@ class App extends React.Component {
         }
     }
 
-    loadBranches(){
-        var url = host + "/api/branches"; 
+    loadBranches() {
+        let url = host + "/api/branches";
 
         $.getJSON(url, (branchList) => {
             const newBranches = [];
@@ -24,14 +24,14 @@ class App extends React.Component {
         });
     }
 
-    updateBranch(){
-        var branchID = 4;
+    updateBranch() {
+        let branchID = 4;
 
         $.ajax({
             type: 'POST',
-            headers: { 
+            headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json' 
+                'Content-Type': 'application/json'
             },
 
             url: host + '/api/branch/' + branchID,
@@ -42,8 +42,45 @@ class App extends React.Component {
         });
     }
 
+
     render() {
-        return <div>Hello world!</div>;
+        const divs = [];
+
+        this.state.branches.forEach((branch) => {
+            divs.push(<p>
+                {
+                    branch.name
+                }
+            </p>);
+            divs.push(<p>
+                {
+                    branch.id
+                }
+            </p>);
+            divs.push(<p>
+                {
+                    branch.streetAddress
+                }
+            </p>);
+            divs.push(<p>
+                {
+                    branch.city
+                }
+            </p>);
+            divs.push(<p>
+                {
+                    branch.state
+                }
+            </p>);
+            divs.push(<p>
+                {
+                    branch.zipCode
+                }
+            </p>);
+
+        });
+
+        return <div>{divs}</div>;
     }
 }
 
