@@ -38,6 +38,7 @@ public class BranchController {
     List<Branch> getBranches(@PathVariable("serviceId") int serviceId){
         List<Branch> branches =  branchDAO.list();
 
+        // Set hasService to true for branches that have the service
         for(Branch b : branches){
             if(hasService(b.getId(), serviceId)){
                 b.setHasService(true);
@@ -56,7 +57,6 @@ public class BranchController {
                         && managerDAO.list()
                         .stream()
                         .anyMatch(m -> m.getId() == s.getManagerId()
-                                && m.getBranchId() == branchId)
-                );
+                                && m.getBranchId() == branchId));
     }
 }
