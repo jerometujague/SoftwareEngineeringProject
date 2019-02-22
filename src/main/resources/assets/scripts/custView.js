@@ -17,7 +17,8 @@ var CustomerView = function (_React$Component) {
         _this.state = {
             branches: [],
             services: [],
-            appointmentSlots: []
+            appointmentSlots: [],
+            serviceId: 0
         };
 
         _this.loadServices();
@@ -25,7 +26,7 @@ var CustomerView = function (_React$Component) {
     }
 
     _createClass(CustomerView, [{
-        key: 'loadServices',
+        key: "loadServices",
         value: function loadServices() {
             var _this2 = this;
 
@@ -43,7 +44,25 @@ var CustomerView = function (_React$Component) {
             });
         }
     }, {
-        key: 'scheduleAppointment',
+        key: "loadBranches",
+        value: function loadBranches(id) {
+            var _this3 = this;
+
+            var url = "/api/branches/" + id;
+
+            $.getJSON(url, function (branchesList) {
+                var newBranches = [];
+                branchesList.forEach(function (branch) {
+                    newBranches.push(branch);
+                });
+
+                _this3.setState({
+                    branches: newBranches
+                });
+            });
+        }
+    }, {
+        key: "scheduleAppointment",
         value: function scheduleAppointment() {
             // Send the schedule request
             $.ajax({
@@ -60,38 +79,68 @@ var CustomerView = function (_React$Component) {
                     branchId: 1,
                     managerId: 1,
                     customerId: 1,
-                    serviceId: 1
+                    serviceId: this.state.serviceId
                 })
             });
         }
     }, {
-        key: 'render',
+        key: "handleServiceClicked",
+        value: function handleServiceClicked(id) {
+            this.setState({
+                serviceId: id
+            });
+
+            // Load the branches based on this service
+            this.loadBranches(id);
+        }
+    }, {
+        key: "render",
         value: function render() {
+            var _this4 = this;
+
             return React.createElement(
-                'div',
+                "div",
                 null,
                 React.createElement(
-                    'h1',
+                    "h1",
                     null,
-                    'What can we help you with?'
+                    "What can we help you with?"
                 ),
                 React.createElement(
-                    'p',
+                    "p",
                     null,
-                    'Choose as many topics as you need.'
+                    "Choose as many topics as you need."
                 ),
                 React.createElement(
-                    'div',
-                    null,
+                    "div",
+                    { id: "services" },
                     this.state.services.map(function (service) {
                         return React.createElement(
-                            'button',
-                            { key: service.id },
+                            "button",
+                            { key: service.id, onClick: _this4.handleServiceClicked.bind(_this4, service.id) },
                             service.service
                         );
                     })
                 ),
-                React.createElement('input', { type: 'submit', value: 'Schedule Appointment', id: 'scheduleButton', onClick: this.scheduleAppointment.bind(this) })
+                React.createElement(
+                    "div",
+                    { id: "branches" },
+                    this.state.branches.map(function (branch) {
+                        return React.createElement(
+                            "div",
+                            { className: "branch", key: branch.id },
+                            React.createElement(
+                                "p",
+                                null,
+                                "Name: ",
+                                branch.name,
+                                " "
+                            ),
+                            React.createElement("input", { type: "submit", value: "Choose branch", disabled: !branch.hasService })
+                        );
+                    })
+                ),
+                React.createElement("input", { type: "submit", value: "Schedule Appointment", id: "scheduleButton", onClick: this.scheduleAppointment.bind(this) })
             );
         }
     }]);

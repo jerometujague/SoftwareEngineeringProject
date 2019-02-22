@@ -7,6 +7,7 @@ class CustomerView extends React.Component {
             branches: [],
             services: [],
             appointmentSlots: [],
+            serviceId: 0,
         }
 
         this.loadServices();
@@ -27,6 +28,21 @@ class CustomerView extends React.Component {
         });
     }
 
+    loadBranches(id){
+        let url = "/api/branches/" + id;
+
+        $.getJSON(url, (branchesList) => {
+            const newBranches = [];
+            branchesList.forEach(branch => {
+                newBranches.push(branch);
+            });
+
+            this.setState({
+                branches: newBranches,
+            });
+        });
+    }
+
     scheduleAppointment(){
         // Send the schedule request
         $.ajax({
@@ -43,9 +59,18 @@ class CustomerView extends React.Component {
                 branchId: 1,
                 managerId: 1,
                 customerId: 1,
-                serviceId: 1
+                serviceId: this.state.serviceId
             })
         });
+    }
+
+    handleServiceClicked(id){
+        this.setState({
+            serviceId: id,
+        });
+
+        // Load the branches based on this service
+        this.loadBranches(id);
     }
 
     render(){
@@ -53,14 +78,25 @@ class CustomerView extends React.Component {
             <h1>What can we help you with?</h1>
             <p>Choose as many topics as you need.</p>
 
-            <div>
+            <div id="services">
                 {
                     this.state.services.map(service => {
-                        return <button key={service.id}>{service.service}</button>
+                        return <button key={service.id} onClick={this.handleServiceClicked.bind(this, service.id)}>{service.service}</button>
                     })
                 }
             </div>
-
+            <div id="branches">
+                {
+                    this.state.branches.map(branch => {
+                        return (
+                            <div className="branch" key={branch.id}>
+                                <p>Name: {branch.name} </p>
+                                <input type="submit" value="Choose branch" disabled={!branch.hasService}/>
+                            </div>
+                        );
+                    })
+                }
+            </div>
             
             <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.scheduleAppointment.bind(this)}/>
         </div>);
