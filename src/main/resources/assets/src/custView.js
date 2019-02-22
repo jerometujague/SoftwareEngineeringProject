@@ -8,10 +8,23 @@ class CustomerView extends React.Component {
             services: [],
             appointmentSlots: [],
         }
+
+        this.loadServices();
     }
 
-    loadData(){
+    loadServices(){
+        let url = "/api/services";
 
+        $.getJSON(url, (servicesList) => {
+            const newServices = [];
+            servicesList.forEach(service => {
+                newServices.push(service);
+            });
+
+            this.setState({
+                services: newServices,
+            });
+        });
     }
 
     scheduleAppointment(){
@@ -41,18 +54,11 @@ class CustomerView extends React.Component {
             <p>Choose as many topics as you need.</p>
 
             <div>
-                <button>Checking Account</button>
-                <button>Savings Account</button>
-                <button>CDs/Money Market Accounts</button>
-                <button>Student Banking</button>
-                <button>Auto Loans</button>
-                <button>Home Equity</button>
-                <button>Mortgage</button>
-                <button>Student Loans</button>
-                <button>Saving for Retirement</button>
-                <button>Investment Account</button>
-                <button>Credit Card</button>
-                <button>Other</button>
+                {
+                    this.state.services.map(service => {
+                        return <button key={service.id}>{service.service}</button>
+                    })
+                }
             </div>
 
             
