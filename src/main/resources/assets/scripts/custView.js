@@ -19,12 +19,29 @@ var CustomerView = function (_React$Component) {
             services: [],
             appointmentSlots: []
         };
+
+        _this.loadServices();
         return _this;
     }
 
     _createClass(CustomerView, [{
-        key: 'loadData',
-        value: function loadData() {}
+        key: 'loadServices',
+        value: function loadServices() {
+            var _this2 = this;
+
+            var url = "/api/services";
+
+            $.getJSON(url, function (servicesList) {
+                var newServices = [];
+                servicesList.forEach(function (service) {
+                    newServices.push(service);
+                });
+
+                _this2.setState({
+                    services: newServices
+                });
+            });
+        }
     }, {
         key: 'scheduleAppointment',
         value: function scheduleAppointment() {
@@ -66,66 +83,13 @@ var CustomerView = function (_React$Component) {
                 React.createElement(
                     'div',
                     null,
-                    React.createElement(
-                        'button',
-                        null,
-                        'Checking Account'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Savings Account'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'CDs/Money Market Accounts'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Student Banking'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Auto Loans'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Home Equity'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Mortgage'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Student Loans'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Saving for Retirement'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Investment Account'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Credit Card'
-                    ),
-                    React.createElement(
-                        'button',
-                        null,
-                        'Other'
-                    )
+                    this.state.services.map(function (service) {
+                        return React.createElement(
+                            'button',
+                            { key: service.id },
+                            service.service
+                        );
+                    })
                 ),
                 React.createElement('input', { type: 'submit', value: 'Schedule Appointment', id: 'scheduleButton', onClick: this.scheduleAppointment.bind(this) })
             );
