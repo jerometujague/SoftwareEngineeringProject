@@ -6,6 +6,32 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+function fixTime(oldTime) {
+    // Get AM or PM
+    var t = oldTime.slice(-2);
+
+    // Cut off AM or PM
+    var time = oldTime.slice(0, oldTime.length - 2);
+
+    // Add 12 to hour if PM
+    if (t == "PM") {
+        var _array = time.split(":");
+        if (_array[0] != 12) {
+            var newHour = Number(_array[0]) + 12;
+            time = newHour + ":00";
+        }
+    }
+
+    var array = time.split(":");
+
+    // Check if hour is single digit
+    if (array[0] < 10) {
+        time = "0" + array[0] + ":00";
+    }
+
+    return time;
+}
+
 var CustomerView = function (_React$Component) {
     _inherits(CustomerView, _React$Component);
 
@@ -18,7 +44,9 @@ var CustomerView = function (_React$Component) {
             branches: [],
             services: [],
             appointmentSlots: [],
-            serviceId: 0
+            serviceId: 0,
+            branchId: 0,
+            appointmentSlot: null
         };
 
         _this.loadServices();
@@ -62,6 +90,24 @@ var CustomerView = function (_React$Component) {
             });
         }
     }, {
+        key: "loadAppointmentSlots",
+        value: function loadAppointmentSlots(branchId, serviceId) {
+            var _this4 = this;
+
+            var url = "/api/appointment-slots/" + branchId + "/" + serviceId;
+
+            $.getJSON(url, function (appointmentSlotsList) {
+                var newAppointmentSlots = [];
+                appointmentSlotsList.forEach(function (appointmentSlot) {
+                    newAppointmentSlots.push(appointmentSlot);
+                });
+
+                _this4.setState({
+                    appointmentSlots: newAppointmentSlots
+                });
+            });
+        }
+    }, {
         key: "scheduleAppointment",
         value: function scheduleAppointment() {
             // Send the schedule request
@@ -74,10 +120,9 @@ var CustomerView = function (_React$Component) {
 
                 url: '/api/appointments/add',
                 data: JSON.stringify({
-                    calendarId: 60,
-                    time: "12:00",
-                    branchId: 1,
-                    managerId: 1,
+                    calendarId: this.state.appointmentSlot.calendarId,
+                    time: fixTime(this.state.appointmentSlot.time),
+                    branchId: this.state.branchId,
                     customerId: 1,
                     serviceId: this.state.serviceId
                 })
@@ -94,9 +139,25 @@ var CustomerView = function (_React$Component) {
             this.loadBranches(id);
         }
     }, {
+        key: "handleBranchClicked",
+        value: function handleBranchClicked(id) {
+            this.setState({
+                branchId: id
+            });
+
+            this.loadAppointmentSlots(id, this.state.serviceId);
+        }
+    }, {
+        key: "handleAppointmentSlotClicked",
+        value: function handleAppointmentSlotClicked(slot) {
+            this.setState({
+                appointmentSlot: slot
+            });
+        }
+    }, {
         key: "render",
         value: function render() {
-            var _this4 = this;
+            var _this5 = this;
 
             return React.createElement(
                 "div",
@@ -117,7 +178,7 @@ var CustomerView = function (_React$Component) {
                     this.state.services.map(function (service) {
                         return React.createElement(
                             "button",
-                            { key: service.id, onClick: _this4.handleServiceClicked.bind(_this4, service.id) },
+                            { key: service.id, onClick: _this5.handleServiceClicked.bind(_this5, service.id) },
                             service.service
                         );
                     })
@@ -136,8 +197,15 @@ var CustomerView = function (_React$Component) {
                                 branch.name,
                                 " "
                             ),
-                            React.createElement("input", { type: "submit", value: "Choose branch", disabled: !branch.hasService })
+                            React.createElement("input", { type: "submit", value: "Choose branch", disabled: !branch.hasService, onClick: _this5.handleBranchClicked.bind(_this5, branch.id) })
                         );
+                    })
+                ),
+                React.createElement(
+                    "div",
+                    { id: "appointmentSlots" },
+                    this.state.appointmentSlots.map(function (slot, i) {
+                        return React.createElement("input", { key: i, type: "submit", value: slot.day + " " + slot.month + " " + slot.date + " at " + slot.time, disabled: slot.taken, onClick: _this5.handleAppointmentSlotClicked.bind(_this5, slot) });
                     })
                 ),
                 React.createElement("input", { type: "submit", value: "Schedule Appointment", id: "scheduleButton", onClick: this.scheduleAppointment.bind(this) })

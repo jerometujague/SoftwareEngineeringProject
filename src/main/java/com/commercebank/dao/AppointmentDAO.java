@@ -27,7 +27,6 @@ public class AppointmentDAO {
     }
 
     public void insert(Appointment appointment){
-        System.out.println(appointment.getServiceId());
         this.jdbcTemplate.update("INSERT INTO appointment (calendar_id, time, branch_id, manager_id, customer_id, service_id) VALUES (?, ?, ?, ?, ?, ?)",
                 appointment.getCalendarId(),
                 appointment.getTime(),

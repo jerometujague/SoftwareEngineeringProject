@@ -30,6 +30,8 @@ public class AppointmentController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     void scheduleAppointment(@RequestBody Appointment appointment){
+        // TODO: Select a manager that has the appropriate skill
+        appointment.setManagerId(1);
         appointmentDAO.insert(appointment);
     }
 }
