@@ -8,6 +8,7 @@ public class Branch {
     private String state;
     private int zipCode;
     private String name;
+    private boolean hasService;
 
     public Branch(int id, String streetAddress, String city, String state, int zipCode, String name) {
         this.id = id;
@@ -16,6 +17,7 @@ public class Branch {
         this.state = state;
         this.zipCode = zipCode;
         this.name = name;
+        this.hasService = false;
     }
 
     public int getId() {
@@ -60,5 +62,26 @@ public class Branch {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isHasService() {
+        return hasService;
+    }
+
+    public void setHasService(boolean hasService) {
+        this.hasService = hasService;
+    }
+
+    @Override
+    public String toString() {
+        return "Branch{" +
+                "id=" + id +
+                ", streetAddress='" + streetAddress + '\'' +
+                ", city='" + city + '\'' +
+                ", state='" + state + '\'' +
+                ", zipCode=" + zipCode +
+                ", name='" + name + '\'' +
+                ", hasService=" + hasService +
+                '}';
     }
 }
