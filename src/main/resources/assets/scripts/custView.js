@@ -6,16 +6,48 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var One = function (_React$Component) {
-    _inherits(One, _React$Component);
+var CustomerView = function (_React$Component) {
+    _inherits(CustomerView, _React$Component);
 
-    function One(props) {
-        _classCallCheck(this, One);
+    function CustomerView(props) {
+        _classCallCheck(this, CustomerView);
 
-        return _possibleConstructorReturn(this, (One.__proto__ || Object.getPrototypeOf(One)).call(this, props));
+        var _this = _possibleConstructorReturn(this, (CustomerView.__proto__ || Object.getPrototypeOf(CustomerView)).call(this, props));
+
+        _this.state = {
+            branches: [],
+            services: [],
+            appointmentSlots: []
+        };
+        return _this;
     }
 
-    _createClass(One, [{
+    _createClass(CustomerView, [{
+        key: 'loadData',
+        value: function loadData() {}
+    }, {
+        key: 'scheduleAppointment',
+        value: function scheduleAppointment() {
+            // Send the schedule request
+            $.ajax({
+                type: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+
+                url: '/api/appointments/add',
+                data: JSON.stringify({
+                    calendarId: 60,
+                    time: "12:00",
+                    branchId: 1,
+                    managerId: 1,
+                    customerId: 1,
+                    serviceId: 1
+                })
+            });
+        }
+    }, {
         key: 'render',
         value: function render() {
             return React.createElement(
@@ -94,12 +126,13 @@ var One = function (_React$Component) {
                         null,
                         'Other'
                     )
-                )
+                ),
+                React.createElement('input', { type: 'submit', value: 'Schedule Appointment', id: 'scheduleButton', onClick: this.scheduleAppointment.bind(this) })
             );
         }
     }]);
 
-    return One;
+    return CustomerView;
 }(React.Component);
 
-ReactDOM.render(React.createElement(One, null), document.getElementById('test'));
+ReactDOM.render(React.createElement(CustomerView, null), document.getElementById('root'));

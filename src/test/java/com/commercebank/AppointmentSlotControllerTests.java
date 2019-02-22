@@ -126,7 +126,7 @@ public class AppointmentSlotControllerTests {
                 .get()
                 .getTaken();
 
-        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1));
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
 
         boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, 1)
                 .stream()
