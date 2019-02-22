@@ -76,4 +76,17 @@ public class Appointment {
     public void setServiceId(int serviceId) {
         this.serviceId = serviceId;
     }
+
+    @Override
+    public String toString() {
+        return "Appointment{" +
+                "id=" + id +
+                ", calendarId=" + calendarId +
+                ", time=" + time +
+                ", branchId=" + branchId +
+                ", managerId=" + managerId +
+                ", customerId=" + customerId +
+                ", serviceId=" + serviceId +
+                '}';
+    }
 }
