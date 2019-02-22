@@ -10,15 +10,20 @@ public class Appointment {
     private int branchId;
     private int managerId;
     private int customerId;
+    private int serviceId;
 
-    public Appointment(int id, int calendarId, LocalTime time, int branchId, int managerId, int customerId) {
+    public Appointment(int id, int calendarId, LocalTime time, int branchId, int managerId, int customerId, int serviceId) {
         this.id = id;
         this.calendarId = calendarId;
         this.time = time;
         this.branchId = branchId;
         this.managerId = managerId;
         this.customerId = customerId;
+        this.serviceId = serviceId;
     }
+
+    // Default constructor used when a post request is made
+    public Appointment() { }
 
     public int getId() {
         return id;
@@ -62,5 +67,13 @@ public class Appointment {
 
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
+    }
+
+    public int getServiceId() {
+        return serviceId;
+    }
+
+    public void setServiceId(int serviceId) {
+        this.serviceId = serviceId;
     }
 }

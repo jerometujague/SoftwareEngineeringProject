@@ -25,4 +25,15 @@ public class AppointmentDAO {
         // Run the SQL query on the database to select all appointments and return a List of Appointment objects
         return this.jdbcTemplate.query("SELECT * FROM appointment", appointmentMapper);
     }
+
+    public void insert(Appointment appointment){
+        System.out.println(appointment.getServiceId());
+        this.jdbcTemplate.update("INSERT INTO appointment (calendar_id, time, branch_id, manager_id, customer_id, service_id) VALUES (?, ?, ?, ?, ?, ?)",
+                appointment.getCalendarId(),
+                appointment.getTime(),
+                appointment.getBranchId(),
+                appointment.getManagerId(),
+                appointment.getCustomerId(),
+                appointment.getServiceId());
+    }
 }

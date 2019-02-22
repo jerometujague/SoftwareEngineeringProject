@@ -3,6 +3,7 @@ package com.commercebank.controller;
 import com.commercebank.dao.AppointmentDAO;
 import com.commercebank.model.Appointment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +26,10 @@ public class AppointmentController {
     @RequestMapping(method = RequestMethod.GET) // This method will be called when there is a GET request made to this url
     List<Appointment> getAppointments(){
         return appointmentDAO.list();
+    }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    void scheduleAppointment(@RequestBody Appointment appointment){
+        appointmentDAO.insert(appointment);
     }
 }
