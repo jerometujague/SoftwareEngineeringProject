@@ -80,7 +80,7 @@ var CustomerView = function (_React$Component) {
                     'Content-Type': 'application/json'
                 },
 
-                url: '/api/customer/add',
+                url: '/api/customers/add',
                 data: JSON.stringify({
                     firstName: this.state.firstName,
                     lastName: this.state.lastName,
