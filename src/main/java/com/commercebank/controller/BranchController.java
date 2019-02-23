@@ -35,7 +35,7 @@ public class BranchController {
     }
 
     @RequestMapping(value = "/{serviceId}", method = RequestMethod.GET)
-    List<Branch> getBranches(@PathVariable("serviceId") int serviceId){
+    public List<Branch> getBranches(@PathVariable("serviceId") int serviceId){
         List<Branch> branches =  branchDAO.list();
 
         // Set hasService to true for branches that have the service
@@ -48,7 +48,7 @@ public class BranchController {
         return branches;
     }
 
-    boolean hasService(int branchId, int serviceId){
+    public boolean hasService(int branchId, int serviceId){
         // Check if the skill is for this service
         // Check if manager who has the skill works at this branch
         return skillDAO.list()

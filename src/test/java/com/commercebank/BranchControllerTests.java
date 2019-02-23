@@ -1,0 +1,121 @@
+package com.commercebank;
+
+import com.commercebank.controller.BranchController;
+import com.commercebank.dao.*;
+import com.commercebank.model.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class BranchControllerTests {
+
+    // Dependencies
+    private SkillDAO skillDAO;
+    private ManagerDAO managerDAO;
+
+    @Autowired
+    private BranchDAO branchDAO;
+
+    private BranchController branchController;
+
+    private List<Skill> skills = new ArrayList<>();
+    private List<Manager> managers = new ArrayList<>();
+
+    @Before
+    @Autowired
+    public void initDataAccess() {
+        this.skillDAO = mock(SkillDAO.class);
+        this.managerDAO = mock(ManagerDAO.class);
+
+        when(skillDAO.list()).thenReturn(skills);
+        when(managerDAO.list()).thenReturn(managers);
+
+        branchController = new BranchController(branchDAO, skillDAO, managerDAO);
+    }
+
+    @Before
+    public void initTestData(){
+        // Add managers at branch 1
+        managers.add(new Manager(1,"John", "Doe", "1234", "email", 1));
+        managers.add(new Manager(2,"John", "Doe", "1234", "email", 1));
+        managers.add(new Manager(3,"John", "Doe", "1234", "email", 1));
+        managers.add(new Manager(4,"John", "Doe", "1234", "email", 2));
+        managers.add(new Manager(5,"John", "Doe", "1234", "email", 2));
+    }
+
+    @Test
+    public void testBranchHasService(){
+        // Manager 1 at branch 1 has service 1
+        skills.add(new Skill(1, 1));
+
+        // Manager 4 at branch 2 has service 2
+        skills.add(new Skill(4, 2));
+
+        boolean hasService1 = branchController.hasService(1, 1);
+        boolean hasService2 = branchController.hasService(1, 2);
+
+        assertTrue(hasService1);
+        assertFalse(hasService2);
+
+        // Clear the skills
+        skills.clear();
+    }
+
+    @Test
+    public void testGetBranchesWithService(){
+        // Manager 1 at branch 1 has service 1
+        skills.add(new Skill(1, 1));
+
+        // Manager 4 at branch 2 has service 2
+        skills.add(new Skill(4, 2));
+
+        boolean branch1hasService1 = branchController.getBranches(1)
+                .stream()
+                .filter(b -> b.getId() == 1)
+                .findFirst()
+                .get()
+                .isHasService();
+
+        boolean branch1hasService2 = branchController.getBranches(2)
+                .stream()
+                .filter(b -> b.getId() == 1)
+                .findFirst()
+                .get()
+                .isHasService();
+
+        boolean branch2hasService1 = branchController.getBranches(1)
+                .stream()
+                .filter(b -> b.getId() == 2)
+                .findFirst()
+                .get()
+                .isHasService();
+
+        boolean branch2hasService2 = branchController.getBranches(2)
+                .stream()
+                .filter(b -> b.getId() == 2)
+                .findFirst()
+                .get()
+                .isHasService();
+
+        assertTrue(branch1hasService1);
+        assertFalse(branch1hasService2);
+        assertFalse(branch2hasService1);
+        assertTrue(branch2hasService2);
+
+        // Clear the skills
+        skills.clear();
+    }
+}
