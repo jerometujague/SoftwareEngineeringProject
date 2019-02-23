@@ -36,12 +36,12 @@ class CustomerView extends React.Component {
             appointmentSlot: null,
             firstName: '',
             lastName: '',
-            phoneNum: '1',
+            phoneNumber: '1',
             email: '1',
         }
 
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        //this.handleSubmit = this.handleSubmit.bind(this);
         this.loadServices();
     }
 
@@ -65,9 +65,9 @@ class CustomerView extends React.Component {
 
             url: '/api/customer/add',
             data: JSON.stringify({
-                f_name: this.state.firstName,
-                l_name: this.state.lastName,
-                phone_num: this.state.phoneNum,
+                firstName: this.state.firstName,
+                lastName: this.state.lastName,
+                phoneNumber: this.state.phoneNumber,
                 email: this.state.email
             })
         });
@@ -167,12 +167,12 @@ class CustomerView extends React.Component {
             <form>
                 <label>
                     First Name
-                    <input type="text" name="firstName" value={this.state.value} onChange={this.handleChange} />
+                    <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
                 </label>
                 <br />
                 <label>
                     Last Name
-                    <input type="text" name="lastName" value={this.state.value} onChange={this.handleChange} />
+                    <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
                 </label>
                     <input type="submit" value="Submit" onClick={this.handleSubmit.bind(this)}/>
             </form>

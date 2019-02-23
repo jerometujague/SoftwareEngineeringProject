@@ -26,11 +26,11 @@ public class CustomerDAO {
         return this.jdbcTemplate.query("SELECT * FROM customer", customerMapper);
     }
 
-    public void add(Customer customer){
-        this.jdbcTemplate.update("INSERT INTO customers (f_name, l_name, email, phone_number) VALUES (?, ?, ?, ?)",
+    public void insert(Customer customer){
+        this.jdbcTemplate.update("INSERT INTO customer (f_name, l_name, phone_num, email) VALUES (?, ?, ?, ?)",
                 customer.getFirstName(),
                 customer.getLastName(),
-                customer.getEmail(),
-                customer.getPhoneNumber());
+                customer.getPhoneNumber(),
+                customer.getEmail());
     }
 }

@@ -51,12 +51,12 @@ var CustomerView = function (_React$Component) {
             appointmentSlot: null,
             firstName: '',
             lastName: '',
-            phoneNum: '1',
+            phoneNumber: '1',
             email: '1'
         };
 
         _this.handleChange = _this.handleChange.bind(_this);
-        _this.handleSubmit = _this.handleSubmit.bind(_this);
+        //this.handleSubmit = this.handleSubmit.bind(this);
         _this.loadServices();
         return _this;
     }
@@ -82,9 +82,9 @@ var CustomerView = function (_React$Component) {
 
                 url: '/api/customer/add',
                 data: JSON.stringify({
-                    f_name: this.state.firstName,
-                    l_name: this.state.lastName,
-                    phone_num: this.state.phoneNum,
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    phoneNumber: this.state.phoneNumber,
                     email: this.state.email
                 })
             });
@@ -210,14 +210,14 @@ var CustomerView = function (_React$Component) {
                         "label",
                         null,
                         "First Name",
-                        React.createElement("input", { type: "text", name: "firstName", value: this.state.value, onChange: this.handleChange })
+                        React.createElement("input", { type: "text", name: "firstName", value: this.state.firstName, onChange: this.handleChange })
                     ),
                     React.createElement("br", null),
                     React.createElement(
                         "label",
                         null,
                         "Last Name",
-                        React.createElement("input", { type: "text", name: "lastName", value: this.state.value, onChange: this.handleChange })
+                        React.createElement("input", { type: "text", name: "lastName", value: this.state.lastName, onChange: this.handleChange })
                     ),
                     React.createElement("input", { type: "submit", value: "Submit", onClick: this.handleSubmit.bind(this) })
                 ),
