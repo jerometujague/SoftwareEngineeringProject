@@ -286,6 +286,77 @@ public class AppointmentSlotControllerTests {
         skills.clear();
     }
 
+    @Test
+    public void testAppointmentMakesManagerUnavailableForAnotherService(){
+        skills.add(new Skill(1, 1));
+        skills.add(new Skill(1, 2));
+
+        boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, 2)
+                .stream()
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .findFirst()
+                .get()
+                .getTaken();
+
+        // Add an appointment with manager 1 and service 1
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
+
+        boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, 2)
+                .stream()
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .findFirst()
+                .get()
+                .getTaken();
+
+        assertFalse(isTakenBefore);
+        assertTrue(isTakenAfter);
+
+        // Reset appointments and skills list
+        appointments.clear();
+        skills.clear();
+    }
+
+    @Test
+    public void testAppointmentBlocksSlotWhenAnotherManagerAvailable(){
+        skills.add(new Skill(1, 1));
+        skills.add(new Skill(2, 1));
+
+        boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, 1)
+                .stream()
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .findFirst()
+                .get()
+                .getTaken();
+
+        // Add an appointment with manager 1 and service 1
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
+
+        boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, 1)
+                .stream()
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .findFirst()
+                .get()
+                .getTaken();
+
+        // Add an appointment with manager 2 and service 1
+        appointments.add(new Appointment(2, calendarId, LocalTime.of(12, 0), 1, 2, 2, 1));
+
+        boolean isTakenFinally = appointmentSlotController.getAppointmentSlots(1, 1)
+                .stream()
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .findFirst()
+                .get()
+                .getTaken();
+
+        assertFalse(isTakenBefore);
+        assertFalse(isTakenAfter);
+        assertTrue(isTakenFinally);
+
+        // Reset appointments and skills list
+        appointments.clear();
+        skills.clear();
+    }
+
     public int getNextDay(){
         // Get id of next day
         return calendarDAO.list()
