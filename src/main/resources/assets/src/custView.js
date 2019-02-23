@@ -34,10 +34,44 @@ class CustomerView extends React.Component {
             serviceId: 0,
             branchId: 0,
             appointmentSlot: null,
+            firstName: '',
+            lastName: '',
+            phoneNum: '1',
+            email: '1',
         }
 
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.loadServices();
     }
+
+     handleChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        this.setState({
+              [name]: value
+        });
+      }
+
+     handleSubmit(event) {
+     // Send the customer data
+        $.ajax({
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+        },
+
+            url: '/api/customer/add',
+            data: JSON.stringify({
+                f_name: this.state.firstName,
+                l_name: this.state.lastName,
+                phone_num: this.state.phoneNum,
+                email: this.state.email
+            })
+        });
+      }
 
     loadServices(){
         let url = "/api/services";
@@ -129,9 +163,21 @@ class CustomerView extends React.Component {
 
     render(){
         return (<div>
+            <h2>Please enter your information.</h2>
+            <form>
+                <label>
+                    First Name
+                    <input type="text" name="firstName" value={this.state.value} onChange={this.handleChange} />
+                </label>
+                <br />
+                <label>
+                    Last Name
+                    <input type="text" name="lastName" value={this.state.value} onChange={this.handleChange} />
+                </label>
+                    <input type="submit" value="Submit" onClick={this.handleSubmit.bind(this)}/>
+            </form>
             <h1>What can we help you with?</h1>
             <p>Choose as many topics as you need.</p>
-
             <div id="services">
                 {
                     this.state.services.map(service => {

@@ -1,5 +1,7 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -46,14 +48,48 @@ var CustomerView = function (_React$Component) {
             appointmentSlots: [],
             serviceId: 0,
             branchId: 0,
-            appointmentSlot: null
+            appointmentSlot: null,
+            firstName: '',
+            lastName: '',
+            phoneNum: '1',
+            email: '1'
         };
 
+        _this.handleChange = _this.handleChange.bind(_this);
+        _this.handleSubmit = _this.handleSubmit.bind(_this);
         _this.loadServices();
         return _this;
     }
 
     _createClass(CustomerView, [{
+        key: "handleChange",
+        value: function handleChange(event) {
+            var target = event.target;
+            var value = target.value;
+            var name = target.name;
+            this.setState(_defineProperty({}, name, value));
+        }
+    }, {
+        key: "handleSubmit",
+        value: function handleSubmit(event) {
+            // Send the customer data
+            $.ajax({
+                type: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+
+                url: '/api/customer/add',
+                data: JSON.stringify({
+                    f_name: this.state.firstName,
+                    l_name: this.state.lastName,
+                    phone_num: this.state.phoneNum,
+                    email: this.state.email
+                })
+            });
+        }
+    }, {
         key: "loadServices",
         value: function loadServices() {
             var _this2 = this;
@@ -162,6 +198,29 @@ var CustomerView = function (_React$Component) {
             return React.createElement(
                 "div",
                 null,
+                React.createElement(
+                    "h2",
+                    null,
+                    "Please enter your information."
+                ),
+                React.createElement(
+                    "form",
+                    null,
+                    React.createElement(
+                        "label",
+                        null,
+                        "First Name",
+                        React.createElement("input", { type: "text", name: "firstName", value: this.state.value, onChange: this.handleChange })
+                    ),
+                    React.createElement("br", null),
+                    React.createElement(
+                        "label",
+                        null,
+                        "Last Name",
+                        React.createElement("input", { type: "text", name: "lastName", value: this.state.value, onChange: this.handleChange })
+                    ),
+                    React.createElement("input", { type: "submit", value: "Submit", onClick: this.handleSubmit.bind(this) })
+                ),
                 React.createElement(
                     "h1",
                     null,
