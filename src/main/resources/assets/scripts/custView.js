@@ -51,12 +51,11 @@ var CustomerView = function (_React$Component) {
             appointmentSlot: null,
             firstName: '',
             lastName: '',
-            phoneNumber: '1',
-            email: '1'
+            phoneNumber: '',
+            email: ''
         };
 
         _this.handleChange = _this.handleChange.bind(_this);
-        //this.handleSubmit = this.handleSubmit.bind(this);
         _this.loadServices();
         return _this;
     }
@@ -70,29 +69,47 @@ var CustomerView = function (_React$Component) {
             this.setState(_defineProperty({}, name, value));
         }
     }, {
-        key: "handleSubmit",
-        value: function handleSubmit(event) {
-            // Send the customer data
-            $.ajax({
-                type: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
+        key: "addCustomer",
+        value: function addCustomer() {
+            var _this2 = this;
 
-                url: '/api/customers/add',
-                data: JSON.stringify({
-                    firstName: this.state.firstName,
-                    lastName: this.state.lastName,
-                    phoneNumber: this.state.phoneNumber,
-                    email: this.state.email
-                })
+            var url = "/api/customers/" + this.state.email + "/";
+
+            // Check if the customer already exists
+            $.getJSON(url, function (customer) {
+                if (customer.id > 0) {
+                    // Customer already exists, schedule appointment with that id
+                    _this2.scheduleAppointment(customer.id);
+                } else {
+                    // Create a new customer
+                    $.ajax({
+                        type: 'POST',
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        },
+                        url: '/api/customers/add',
+                        data: JSON.stringify({
+                            firstName: _this2.state.firstName,
+                            lastName: _this2.state.lastName,
+                            phoneNumber: _this2.state.phoneNumber,
+                            email: _this2.state.email
+                        }),
+                        success: function success() {
+                            // Get the id of the customer just created
+                            $.getJSON(url, function (customer) {
+                                // Call schedule appointment with the new id
+                                _this2.scheduleAppointment(customer.id);
+                            });
+                        }
+                    });
+                }
             });
         }
     }, {
         key: "loadServices",
         value: function loadServices() {
-            var _this2 = this;
+            var _this3 = this;
 
             var url = "/api/services";
 
@@ -102,7 +119,7 @@ var CustomerView = function (_React$Component) {
                     newServices.push(service);
                 });
 
-                _this2.setState({
+                _this3.setState({
                     services: newServices
                 });
             });
@@ -110,7 +127,7 @@ var CustomerView = function (_React$Component) {
     }, {
         key: "loadBranches",
         value: function loadBranches(id) {
-            var _this3 = this;
+            var _this4 = this;
 
             var url = "/api/branches/" + id;
 
@@ -120,7 +137,7 @@ var CustomerView = function (_React$Component) {
                     newBranches.push(branch);
                 });
 
-                _this3.setState({
+                _this4.setState({
                     branches: newBranches
                 });
             });
@@ -128,7 +145,7 @@ var CustomerView = function (_React$Component) {
     }, {
         key: "loadAppointmentSlots",
         value: function loadAppointmentSlots(branchId, serviceId) {
-            var _this4 = this;
+            var _this5 = this;
 
             var url = "/api/appointment-slots/" + branchId + "/" + serviceId;
 
@@ -138,14 +155,15 @@ var CustomerView = function (_React$Component) {
                     newAppointmentSlots.push(appointmentSlot);
                 });
 
-                _this4.setState({
+                _this5.setState({
                     appointmentSlots: newAppointmentSlots
                 });
             });
         }
     }, {
         key: "scheduleAppointment",
-        value: function scheduleAppointment() {
+        value: function scheduleAppointment(customerId) {
+            console.log(customerId);
             // Send the schedule request
             $.ajax({
                 type: 'POST',
@@ -153,13 +171,12 @@ var CustomerView = function (_React$Component) {
                     'Accept': 'application/json',
                     'Content-Type': 'application/json'
                 },
-
                 url: '/api/appointments/add',
                 data: JSON.stringify({
                     calendarId: this.state.appointmentSlot.calendarId,
                     time: fixTime(this.state.appointmentSlot.time),
                     branchId: this.state.branchId,
-                    customerId: 1,
+                    customerId: customerId,
                     serviceId: this.state.serviceId
                 })
             });
@@ -193,11 +210,57 @@ var CustomerView = function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var _this5 = this;
+            var _this6 = this;
 
             return React.createElement(
                 "div",
                 null,
+                React.createElement(
+                    "h1",
+                    null,
+                    "What can we help you with?"
+                ),
+                React.createElement(
+                    "p",
+                    null,
+                    "Choose as many topics as you need."
+                ),
+                React.createElement(
+                    "div",
+                    { id: "services" },
+                    this.state.services.map(function (service) {
+                        return React.createElement(
+                            "button",
+                            { key: service.id, onClick: _this6.handleServiceClicked.bind(_this6, service.id) },
+                            service.service
+                        );
+                    })
+                ),
+                React.createElement(
+                    "div",
+                    { id: "branches" },
+                    this.state.branches.map(function (branch) {
+                        return React.createElement(
+                            "div",
+                            { className: "branch", key: branch.id },
+                            React.createElement(
+                                "p",
+                                null,
+                                "Name: ",
+                                branch.name,
+                                " "
+                            ),
+                            React.createElement("input", { type: "submit", value: "Choose branch", disabled: !branch.hasService, onClick: _this6.handleBranchClicked.bind(_this6, branch.id) })
+                        );
+                    })
+                ),
+                React.createElement(
+                    "div",
+                    { id: "appointmentSlots" },
+                    this.state.appointmentSlots.map(function (slot, i) {
+                        return React.createElement("input", { key: i, type: "submit", value: slot.day + " " + slot.month + " " + slot.date + " at " + slot.time, disabled: slot.taken, onClick: _this6.handleAppointmentSlotClicked.bind(_this6, slot) });
+                    })
+                ),
                 React.createElement(
                     "h2",
                     null,
@@ -219,55 +282,15 @@ var CustomerView = function (_React$Component) {
                         "Last Name",
                         React.createElement("input", { type: "text", name: "lastName", value: this.state.lastName, onChange: this.handleChange })
                     ),
-                    React.createElement("input", { type: "submit", value: "Submit", onClick: this.handleSubmit.bind(this) })
+                    React.createElement("br", null),
+                    React.createElement(
+                        "label",
+                        null,
+                        "Email",
+                        React.createElement("input", { type: "email", name: "email", value: this.state.email, onChange: this.handleChange })
+                    )
                 ),
-                React.createElement(
-                    "h1",
-                    null,
-                    "What can we help you with?"
-                ),
-                React.createElement(
-                    "p",
-                    null,
-                    "Choose as many topics as you need."
-                ),
-                React.createElement(
-                    "div",
-                    { id: "services" },
-                    this.state.services.map(function (service) {
-                        return React.createElement(
-                            "button",
-                            { key: service.id, onClick: _this5.handleServiceClicked.bind(_this5, service.id) },
-                            service.service
-                        );
-                    })
-                ),
-                React.createElement(
-                    "div",
-                    { id: "branches" },
-                    this.state.branches.map(function (branch) {
-                        return React.createElement(
-                            "div",
-                            { className: "branch", key: branch.id },
-                            React.createElement(
-                                "p",
-                                null,
-                                "Name: ",
-                                branch.name,
-                                " "
-                            ),
-                            React.createElement("input", { type: "submit", value: "Choose branch", disabled: !branch.hasService, onClick: _this5.handleBranchClicked.bind(_this5, branch.id) })
-                        );
-                    })
-                ),
-                React.createElement(
-                    "div",
-                    { id: "appointmentSlots" },
-                    this.state.appointmentSlots.map(function (slot, i) {
-                        return React.createElement("input", { key: i, type: "submit", value: slot.day + " " + slot.month + " " + slot.date + " at " + slot.time, disabled: slot.taken, onClick: _this5.handleAppointmentSlotClicked.bind(_this5, slot) });
-                    })
-                ),
-                React.createElement("input", { type: "submit", value: "Schedule Appointment", id: "scheduleButton", onClick: this.scheduleAppointment.bind(this) })
+                React.createElement("input", { type: "submit", value: "Schedule Appointment", id: "scheduleButton", onClick: this.addCustomer.bind(this) })
             );
         }
     }]);
