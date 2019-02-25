@@ -26,6 +26,10 @@ public class CustomerDAO {
         return this.jdbcTemplate.query("SELECT * FROM customer", customerMapper);
     }
 
+    public List<Customer> list(String email){
+        return this.jdbcTemplate.query("SELECT * FROM customer WHERE email=?", customerMapper, email);
+    }
+
     public void insert(Customer customer){
         this.jdbcTemplate.update("INSERT INTO customer (f_name, l_name, phone_num, email) VALUES (?, ?, ?, ?)",
                 customer.getFirstName(),

@@ -36,40 +36,55 @@ class CustomerView extends React.Component {
             appointmentSlot: null,
             firstName: '',
             lastName: '',
-            phoneNumber: '1',
-            email: '1',
+            phoneNumber: '',
+            email: '',
         }
 
         this.handleChange = this.handleChange.bind(this);
-        //this.handleSubmit = this.handleSubmit.bind(this);
         this.loadServices();
     }
 
-     handleChange(event) {
+    handleChange(event) {
         const target = event.target;
         const value = target.value;
         const name = target.name;
         this.setState({
-              [name]: value
+            [name]: value
         });
-      }
+    }
 
-     handleSubmit(event) {
-     // Send the customer data
-        $.ajax({
-            type: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-        },
+    addCustomer() {
+        let url = "/api/customers/" + this.state.email + "/";
 
-            url: '/api/customers/add',
-            data: JSON.stringify({
-                firstName: this.state.firstName,
-                lastName: this.state.lastName,
-                phoneNumber: this.state.phoneNumber,
-                email: this.state.email
-            })
+        // Check if the customer already exists
+        $.getJSON(url, (customer) => {
+            if(customer.id > 0){
+                // Customer already exists, schedule appointment with that id
+                this.scheduleAppointment(customer.id);
+            } else {
+                // Create a new customer
+                $.ajax({
+                    type: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    url: '/api/customers/add',
+                    data: JSON.stringify({
+                        firstName: this.state.firstName,
+                        lastName: this.state.lastName,
+                        phoneNumber: this.state.phoneNumber,
+                        email: this.state.email
+                    }),
+                    success: () => {
+                        // Get the id of the customer just created
+                        $.getJSON(url, (customer) => {
+                            // Call schedule appointment with the new id
+                            this.scheduleAppointment(customer.id);
+                        });
+                    }
+                });
+            }
         });
       }
 
@@ -118,7 +133,8 @@ class CustomerView extends React.Component {
         });
     }
 
-    scheduleAppointment(){
+    scheduleAppointment(customerId){
+        console.log(customerId);
         // Send the schedule request
         $.ajax({
             type: 'POST',
@@ -126,13 +142,12 @@ class CustomerView extends React.Component {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-
             url: '/api/appointments/add',
             data: JSON.stringify({
                 calendarId: this.state.appointmentSlot.calendarId,
                 time: fixTime(this.state.appointmentSlot.time),
                 branchId: this.state.branchId,
-                customerId: 1,
+                customerId: customerId,
                 serviceId: this.state.serviceId
             })
         });
@@ -163,19 +178,6 @@ class CustomerView extends React.Component {
 
     render(){
         return (<div>
-            <h2>Please enter your information.</h2>
-            <form>
-                <label>
-                    First Name
-                    <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
-                </label>
-                <br />
-                <label>
-                    Last Name
-                    <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
-                </label>
-                    <input type="submit" value="Submit" onClick={this.handleSubmit.bind(this)}/>
-            </form>
             <h1>What can we help you with?</h1>
             <p>Choose as many topics as you need.</p>
             <div id="services">
@@ -205,7 +207,25 @@ class CustomerView extends React.Component {
                 }
             </div>
 
-            <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.scheduleAppointment.bind(this)}/>
+            <h2>Please enter your information.</h2>
+            <form>
+                <label>
+                    First Name
+                    <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
+                </label>
+                <br />
+                <label>
+                    Last Name
+                    <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
+                </label>
+                <br />
+                <label>
+                    Email
+                    <input type="email" name="email" value={this.state.email} onChange={this.handleChange} />
+                </label>
+            </form>
+
+            <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.addCustomer.bind(this)}/>
         </div>);
     }
 }
