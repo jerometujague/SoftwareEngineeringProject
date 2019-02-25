@@ -89,12 +89,26 @@ public class AppointmentSlotController {
                                     && u.getReferId() == branchId
                                     && u.getCalendarId() == calendarId);
 
-                    // Check if there is already an appointment scheduled
+                    // Check if there is already an appointment scheduled and no other manager has service
                     boolean taken = appointmentDAO.list()
                             .stream()
-                            .anyMatch(a -> a.getCalendarId() == calendarId
+                            .filter(a -> a.getCalendarId() == calendarId
                                     && a.getTime().getHour() == slotHour
-                                    && a.getBranchId() == branchId);
+                                    && a.getBranchId() == branchId)
+                            .count() >= skillDAO.list() // The count of appointments is equal to count of managers with that service
+                            .stream()
+                            .filter(s -> managerDAO.list()
+                                    .stream()
+                                    .anyMatch(m -> s.getManagerId() == m.getId() // Only get skills for specific branch
+                                            && m.getBranchId() == branchId
+                                            && (unavailableDAO.listManagers() // There can't be an unavailable for that time
+                                            .stream()
+                                            .noneMatch(u -> u.getReferId() == m.getId()
+                                                    && u.getTime().getHour() == slotHour
+                                                    && u.getCalendarId() == calendarId))))
+                            .filter(s -> s.getServiceId() == serviceId)
+                            .count();
+
 
                     // Check if the service is unavailable
                     boolean serviceUnavailable = skillDAO.list()
