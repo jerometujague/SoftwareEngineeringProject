@@ -53,39 +53,43 @@ class CustomerView extends React.Component {
         });
     }
 
-    addCustomer() {
+    async addCustomer() {
         let url = "/api/customers/" + this.state.email + "/";
+        let id = 0;
 
         // Check if the customer already exists
-        $.getJSON(url, (customer) => {
+        await $.getJSON(url, (customer) => {
             if(customer.id > 0){
                 // Customer already exists, schedule appointment with that id
-                this.scheduleAppointment(customer.id);
-            } else {
-                // Create a new customer
-                $.ajax({
-                    type: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                    },
-                    url: '/api/customers/add',
-                    data: JSON.stringify({
-                        firstName: this.state.firstName,
-                        lastName: this.state.lastName,
-                        phoneNumber: this.state.phoneNumber,
-                        email: this.state.email
-                    }),
-                    success: () => {
-                        // Get the id of the customer just created
-                        $.getJSON(url, (customer) => {
-                            // Call schedule appointment with the new id
-                            this.scheduleAppointment(customer.id);
-                        });
-                    }
-                });
-            }
+                id = customer.id;
+            } 
         });
+
+        if(id == 0){
+            // Create a new customer
+            await $.ajax({
+                type: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                url: '/api/customers/add',
+                data: JSON.stringify({
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    phoneNumber: this.state.phoneNumber,
+                    email: this.state.email
+                })
+            });
+
+            // Get the id of the customer just created
+            await $.getJSON(url, (customer) => {
+                // Call schedule appointment with the new id
+                id = customer.id;
+            });
+        }
+
+        return id;
       }
 
     loadServices(){
@@ -133,8 +137,9 @@ class CustomerView extends React.Component {
         });
     }
 
-    scheduleAppointment(customerId){
-        console.log(customerId);
+    async scheduleAppointment(){
+        let customerId = await this.addCustomer();
+        
         // Send the schedule request
         $.ajax({
             type: 'POST',
@@ -225,7 +230,7 @@ class CustomerView extends React.Component {
                 </label>
             </form>
 
-            <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.addCustomer.bind(this)}/>
+            <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.scheduleAppointment.bind(this)}/>
         </div>);
     }
 }
