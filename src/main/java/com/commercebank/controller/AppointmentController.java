@@ -44,10 +44,7 @@ public class AppointmentController {
         appointmentDAO.insert(appointment);
 
         // get customer ID for the just-scheduled appointment
-        List<Appointment> appts = appointmentDAO.list();
-        int apptsSize = appts.size();
-        Appointment appt = appts.get(apptsSize - 1);
-        int customerID = appt.getCustomerId();
+        int customerID = appointment.getCustomerId();
 
         String apptDetails = appointment.toString();
         String messageBody = "Your appointment is scheduled for " + apptDetails;
