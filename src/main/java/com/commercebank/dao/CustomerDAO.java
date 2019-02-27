@@ -26,19 +26,11 @@ public class CustomerDAO {
         return this.jdbcTemplate.query("SELECT * FROM customer", customerMapper);
     }
 
-//    public List<Customer> getEmail(int customerID){
-//        return this.jdbcTemplate.query("SELECT email FROM customer WHERE customerID=?", customerMapper, customerID);
-//    }
-
     public String getEmail(int customerID){
-
         String sql = "SELECT email FROM customer WHERE id=?";
-
         String emailAddress = (String) jdbcTemplate.queryForObject(
                 sql, new Object[] { customerID }, String.class);
-
         return emailAddress;
-
     }
 
     public List<Customer> list(String email){
