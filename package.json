@@ -4,15 +4,22 @@
   "description": "* NodeJS\r * ReactJS",
   "main": "index.js",
   "scripts": {
-    "start": "npx babel --watch src/main/resources/assets/src --out-dir src/main/resources/assets/scripts --presets react-app/prod",
-    "compiler": "npx babel src/main/resources/assets/src --out-dir src/main/resources/assets/scripts --presets react-app/prod",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npx babel --watch src/main/resources/assets/src --out-dir src/main/resources/assets/scripts",
+    "compiler": "npx babel src/main/resources/assets/src --out-dir src/main/resources/assets/scripts --presets react-app/prod"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-react-app": "^3.1.2"
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-react": "^7.0.0"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env",
+      "@babel/preset-react"
+    ]
   }
 }
