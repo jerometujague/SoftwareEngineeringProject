@@ -53,4 +53,12 @@ public class Manager {
     public void setBranchId(int branchId) {
         this.branchId = branchId;
     }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 }
