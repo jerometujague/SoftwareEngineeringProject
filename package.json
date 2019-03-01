@@ -14,7 +14,9 @@
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
-    "@babel/preset-react": "^7.0.0"
+    "@babel/preset-react": "^7.0.0",
+    "eslint": "^5.14.1",
+    "eslint-plugin-react": "^7.12.4"
   },
   "babel": {
     "presets": [
