@@ -69,7 +69,9 @@ function (_React$Component) {
       firstName: '',
       lastName: '',
       phoneNumber: '',
-      email: ''
+      email: '',
+      page: 1,
+      loading: false
     };
     _this.handleChange = _this.handleChange.bind(_assertThisInitialized(_this));
 
@@ -156,73 +158,154 @@ function (_React$Component) {
     }()
   }, {
     key: "loadServices",
-    value: function loadServices() {
-      var _this2 = this;
+    value: function () {
+      var _loadServices = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2() {
+        var _this2 = this;
 
-      var url = "/api/services";
-      $.getJSON(url, function (servicesList) {
-        var newServices = [];
-        servicesList.forEach(function (service) {
-          newServices.push(service);
-        });
+        var url;
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                url = "/api/services";
+                _context2.next = 3;
+                return $.getJSON(url, function (servicesList) {
+                  var newServices = [];
+                  servicesList.forEach(function (service) {
+                    newServices.push(service);
+                  });
 
-        _this2.setState({
-          services: newServices
-        });
-      });
-    }
+                  _this2.setState({
+                    services: newServices
+                  });
+                });
+
+              case 3:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }));
+
+      function loadServices() {
+        return _loadServices.apply(this, arguments);
+      }
+
+      return loadServices;
+    }()
   }, {
     key: "loadBranches",
-    value: function loadBranches(id) {
-      var _this3 = this;
+    value: function () {
+      var _loadBranches = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee3(id) {
+        var _this3 = this;
 
-      var url = "/api/branches/" + id;
-      $.getJSON(url, function (branchesList) {
-        var newBranches = [];
-        branchesList.forEach(function (branch) {
-          newBranches.push(branch);
-        });
+        var url;
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                url = "/api/branches/" + id;
+                _context3.next = 3;
+                return $.getJSON(url, function (branchesList) {
+                  var newBranches = [];
+                  branchesList.forEach(function (branch) {
+                    newBranches.push(branch);
+                  });
 
-        _this3.setState({
-          branches: newBranches
-        });
-      });
-    }
+                  _this3.setState({
+                    branches: newBranches
+                  });
+                });
+
+              case 3:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3);
+      }));
+
+      function loadBranches(_x) {
+        return _loadBranches.apply(this, arguments);
+      }
+
+      return loadBranches;
+    }()
   }, {
     key: "loadAppointmentSlots",
-    value: function loadAppointmentSlots(branchId, serviceId) {
-      var _this4 = this;
+    value: function () {
+      var _loadAppointmentSlots = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee4(branchId, serviceId) {
+        var _this4 = this;
 
-      var url = "/api/appointment-slots/" + branchId + "/" + serviceId;
-      $.getJSON(url, function (appointmentSlotsList) {
-        var newAppointmentSlots = [];
-        appointmentSlotsList.forEach(function (appointmentSlot) {
-          newAppointmentSlots.push(appointmentSlot);
-        });
+        var url;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                url = "/api/appointment-slots/" + branchId + "/" + serviceId;
+                _context4.next = 3;
+                return $.getJSON(url, function (appointmentSlotsList) {
+                  var newAppointmentSlots = [];
+                  appointmentSlotsList.forEach(function (appointmentSlot) {
+                    newAppointmentSlots.push(appointmentSlot);
+                  });
 
-        _this4.setState({
-          appointmentSlots: newAppointmentSlots
-        });
-      });
-    }
+                  _this4.setState({
+                    appointmentSlots: newAppointmentSlots
+                  });
+                });
+
+              case 3:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4);
+      }));
+
+      function loadAppointmentSlots(_x2, _x3) {
+        return _loadAppointmentSlots.apply(this, arguments);
+      }
+
+      return loadAppointmentSlots;
+    }()
   }, {
     key: "scheduleAppointment",
     value: function () {
       var _scheduleAppointment = _asyncToGenerator(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee2() {
+      regeneratorRuntime.mark(function _callee5() {
         var customerId;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        return regeneratorRuntime.wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
-                _context2.next = 2;
-                return this.addCustomer();
+                if (!(this.state.firstName == '' || this.state.lastName == '' || this.state.email == '')) {
+                  _context5.next = 2;
+                  break;
+                }
+
+                return _context5.abrupt("return");
 
               case 2:
-                customerId = _context2.sent;
-                // Send the schedule request
-                $.ajax({
+                // Show a loading image
+                this.setState({
+                  loading: true
+                });
+                _context5.next = 5;
+                return this.addCustomer();
+
+              case 5:
+                customerId = _context5.sent;
+                _context5.next = 8;
+                return $.ajax({
                   type: 'POST',
                   headers: {
                     'Accept': 'application/json',
@@ -238,12 +321,19 @@ function (_React$Component) {
                   })
                 });
 
-              case 4:
+              case 8:
+                // Show the completion page
+                this.setState({
+                  page: 5,
+                  loading: false
+                });
+
+              case 9:
               case "end":
-                return _context2.stop();
+                return _context5.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee5, this);
       }));
 
       function scheduleAppointment() {
@@ -254,26 +344,88 @@ function (_React$Component) {
     }()
   }, {
     key: "handleServiceClicked",
-    value: function handleServiceClicked(id) {
-      this.setState({
-        serviceId: id
-      }); // Load the branches based on this service
+    value: function () {
+      var _handleServiceClicked = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee6(id) {
+        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                // Update service id and show a loading image
+                this.setState({
+                  serviceId: id,
+                  loading: true
+                }); // Load the branches based on this service
 
-      this.loadBranches(id);
-    }
+                _context6.next = 3;
+                return this.loadBranches(id);
+
+              case 3:
+                this.setState({
+                  page: 2,
+                  loading: false
+                });
+
+              case 4:
+              case "end":
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this);
+      }));
+
+      function handleServiceClicked(_x4) {
+        return _handleServiceClicked.apply(this, arguments);
+      }
+
+      return handleServiceClicked;
+    }()
   }, {
     key: "handleBranchClicked",
-    value: function handleBranchClicked(id) {
-      this.setState({
-        branchId: id
-      });
-      this.loadAppointmentSlots(id, this.state.serviceId);
-    }
+    value: function () {
+      var _handleBranchClicked = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee7(id) {
+        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                // Update branch id and show a loading image
+                this.setState({
+                  branchId: id,
+                  loading: true
+                }); // Load the appointment slots based on the branch and service
+
+                _context7.next = 3;
+                return this.loadAppointmentSlots(id, this.state.serviceId);
+
+              case 3:
+                this.setState({
+                  page: 3,
+                  loading: false
+                });
+
+              case 4:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7, this);
+      }));
+
+      function handleBranchClicked(_x5) {
+        return _handleBranchClicked.apply(this, arguments);
+      }
+
+      return handleBranchClicked;
+    }()
   }, {
     key: "handleAppointmentSlotClicked",
     value: function handleAppointmentSlotClicked(slot) {
       this.setState({
-        appointmentSlot: slot
+        appointmentSlot: slot,
+        page: 4
       });
     }
   }, {
@@ -281,16 +433,18 @@ function (_React$Component) {
     value: function render() {
       var _this5 = this;
 
-      return React.createElement("div", null, React.createElement("h1", null, "What can we help you with?"), React.createElement("p", null, "Choose as many topics as you need."), React.createElement("div", {
+      return React.createElement("div", null, this.state.page == 1 && // Show the services when page is 1
+      React.createElement("div", null, React.createElement("h1", null, "What can we help you with?"), React.createElement("h2", null, "Choose a service"), React.createElement("div", {
         id: "services"
       }, this.state.services.map(function (service) {
         return React.createElement("button", {
           key: service.id,
           onClick: _this5.handleServiceClicked.bind(_this5, service.id)
         }, service.service);
-      })), React.createElement("div", {
+      }))), this.state.page == 2 && // Show the branches when page is 2
+      React.createElement("div", {
         id: "branches"
-      }, this.state.branches.map(function (branch) {
+      }, React.createElement("h2", null, "Choose a branch"), this.state.branches.map(function (branch) {
         return React.createElement("div", {
           className: "branch",
           key: branch.id
@@ -300,9 +454,10 @@ function (_React$Component) {
           disabled: !branch.hasService,
           onClick: _this5.handleBranchClicked.bind(_this5, branch.id)
         }));
-      })), React.createElement("div", {
+      })), this.state.page == 3 && // Show the appointment slots when page is 3
+      React.createElement("div", {
         id: "appointmentSlots"
-      }, this.state.appointmentSlots.map(function (slot, i) {
+      }, React.createElement("h2", null, "Choose an appointment time"), this.state.appointmentSlots.map(function (slot, i) {
         return React.createElement("input", {
           key: i,
           type: "submit",
@@ -310,7 +465,8 @@ function (_React$Component) {
           disabled: slot.taken,
           onClick: _this5.handleAppointmentSlotClicked.bind(_this5, slot)
         });
-      })), React.createElement("h2", null, "Please enter your information."), React.createElement("form", null, React.createElement("label", null, "First Name", React.createElement("input", {
+      })), this.state.page == 4 && // Show the page to enter information when page is 4
+      React.createElement("div", null, React.createElement("h2", null, "Please enter your information."), React.createElement("form", null, React.createElement("label", null, "First Name", React.createElement("input", {
         type: "text",
         name: "firstName",
         value: this.state.firstName,
@@ -330,7 +486,12 @@ function (_React$Component) {
         value: "Schedule Appointment",
         id: "scheduleButton",
         onClick: this.scheduleAppointment.bind(this)
-      }));
+      })), this.state.page == 5 && // Show the confimation screen when page is 5
+      React.createElement("div", null, React.createElement("p", null, "You have successfully scheduled an appointment")), this.state.loading && // Show the loading image when page is loading something
+      React.createElement("div", null, React.createElement("img", {
+        id: "loadingImage",
+        src: "./images/loading.gif"
+      })));
     }
   }]);
 
