@@ -4,6 +4,7 @@ import com.commercebank.dao.*;
 import com.commercebank.model.AppointmentSlot;
 import com.commercebank.model.BranchHours;
 import com.commercebank.model.Calendar;
+import com.commercebank.util.DateUtil;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -125,42 +126,19 @@ public class AppointmentSlotController {
                             .noneMatch(s -> s.getServiceId() == serviceId);
 
                     // Get day and month string names
-                    String dayName = capitalize(DayOfWeek.of(dayOfWeek).name().toLowerCase());
-                    String monthName = capitalize(calendar.get(i - 1).getDate().getMonth().name().toLowerCase());
+                    String dayName = DateUtil.capitalize(DayOfWeek.of(dayOfWeek).name().toLowerCase());
+                    String monthName = DateUtil.capitalize(calendar.get(i - 1).getDate().getMonth().name().toLowerCase());
 
-                    String timeString = String.valueOf(slotHour) + ":00 AM";
-
-                    // Check for PM time
-                    if(slotHour > 12){
-                        timeString = String.valueOf(slotHour - 12) + ":00 PM";
-                    } else if(slotHour == 12){
-                        timeString = "12:00 PM";
-                    }
+                    String timeString = DateUtil.hourToHumanString(slotHour);
 
                     // Add the appointmentSlot if it is available
                     if (!branchUnavailable && !serviceUnavailable) {
-                        appointmentSlots.add(new AppointmentSlot(i, dayName, ordinal(calendar.get(i - 1).getDate().getDayOfMonth()), monthName, timeString, taken));
+                        appointmentSlots.add(new AppointmentSlot(i, dayName, DateUtil.ordinal(calendar.get(i - 1).getDate().getDayOfMonth()), monthName, timeString, taken));
                     }
                 }
             }
         }
 
         return appointmentSlots;
-    }
-
-    public static String ordinal(int i) {
-        String[] sufixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
-        switch (i % 100) {
-            case 11:
-            case 12:
-            case 13:
-                return i + "th";
-            default:
-                return i + sufixes[i % 10];
-        }
-    }
-
-    public static String capitalize(String s){
-        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 }
