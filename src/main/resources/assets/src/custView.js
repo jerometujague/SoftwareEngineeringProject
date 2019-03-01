@@ -1,4 +1,4 @@
-function fixTime(oldTime){
+function fixTime(oldTime) {
     // Get AM or PM
     let t = oldTime.slice(-2);
 
@@ -6,9 +6,9 @@ function fixTime(oldTime){
     let time = oldTime.slice(0, oldTime.length - 2);
 
     // Add 12 to hour if PM
-    if(t == "PM"){
+    if (t == "PM") {
         let array = time.split(":");
-        if(array[0] != 12){
+        if (array[0] != 12) {
             let newHour = Number(array[0]) + 12;
             time = newHour + ":00";
         }
@@ -17,7 +17,7 @@ function fixTime(oldTime){
     let array = time.split(":");
 
     // Check if hour is single digit
-    if(array[0] < 10){
+    if (array[0] < 10) {
         time = "0" + array[0] + ":00";
     }
 
@@ -38,6 +38,8 @@ class CustomerView extends React.Component {
             lastName: '',
             phoneNumber: '',
             email: '',
+            page: 1,
+            loading: false,
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -59,13 +61,13 @@ class CustomerView extends React.Component {
 
         // Check if the customer already exists
         await $.getJSON(url, (customer) => {
-            if(customer.id > 0){
+            if (customer.id > 0) {
                 // Customer already exists, schedule appointment with that id
                 id = customer.id;
-            } 
+            }
         });
 
-        if(id == 0){
+        if (id == 0) {
             // Create a new customer
             await $.ajax({
                 type: 'POST',
@@ -90,12 +92,12 @@ class CustomerView extends React.Component {
         }
 
         return id;
-      }
+    }
 
-    loadServices(){
+    async loadServices() {
         let url = "/api/services";
 
-        $.getJSON(url, (servicesList) => {
+        await $.getJSON(url, (servicesList) => {
             const newServices = [];
             servicesList.forEach(service => {
                 newServices.push(service);
@@ -107,10 +109,10 @@ class CustomerView extends React.Component {
         });
     }
 
-    loadBranches(id){
+    async loadBranches(id) {
         let url = "/api/branches/" + id;
 
-        $.getJSON(url, (branchesList) => {
+        await $.getJSON(url, (branchesList) => {
             const newBranches = [];
             branchesList.forEach(branch => {
                 newBranches.push(branch);
@@ -122,10 +124,10 @@ class CustomerView extends React.Component {
         });
     }
 
-    loadAppointmentSlots(branchId, serviceId){
+    async loadAppointmentSlots(branchId, serviceId) {
         let url = "/api/appointment-slots/" + branchId + "/" + serviceId;
 
-        $.getJSON(url, (appointmentSlotsList) => {
+        await $.getJSON(url, (appointmentSlotsList) => {
             const newAppointmentSlots = [];
             appointmentSlotsList.forEach(appointmentSlot => {
                 newAppointmentSlots.push(appointmentSlot);
@@ -137,11 +139,22 @@ class CustomerView extends React.Component {
         });
     }
 
-    async scheduleAppointment(){
+    async scheduleAppointment() {
+        // TODO: Valid email checking here
+        if (this.state.firstName == '' || this.state.lastName == '' || this.state.email == '') {
+            // TODO: Show a error message
+            return;
+        }
+
+        // Show a loading image
+        this.setState({
+            loading: true,
+        });
+
         let customerId = await this.addCustomer();
-        
+
         // Send the schedule request
-        $.ajax({
+        await $.ajax({
             type: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -156,86 +169,136 @@ class CustomerView extends React.Component {
                 serviceId: this.state.serviceId
             })
         });
+
+        // Show the completion page
+        this.setState({
+            page: 5,
+            loading: false,
+        });
     }
 
-    handleServiceClicked(id){
+    async handleServiceClicked(id) {
+        // Update service id and show a loading image
         this.setState({
             serviceId: id,
+            loading: true,
         });
 
         // Load the branches based on this service
-        this.loadBranches(id);
+        await this.loadBranches(id);
+
+        this.setState({
+            page: 2,
+            loading: false,
+        });
     }
 
-    handleBranchClicked(id){
+    async handleBranchClicked(id) {
+        // Update branch id and show a loading image
         this.setState({
             branchId: id,
+            loading: true,
         });
 
-        this.loadAppointmentSlots(id, this.state.serviceId);
+        // Load the appointment slots based on the branch and service
+        await this.loadAppointmentSlots(id, this.state.serviceId);
+
+        this.setState({
+            page: 3,
+            loading: false,
+        });
     }
 
-    handleAppointmentSlotClicked(slot){
+    handleAppointmentSlotClicked(slot) {
         this.setState({
             appointmentSlot: slot,
+            page: 4,
         });
     }
 
-    render(){
+    render() {
         return (<div>
-            <h1>What can we help you with?</h1>
-            <p>Choose as many topics as you need.</p>
-            <div id="services">
-                {
-                    this.state.services.map(service => {
-                        return <button key={service.id} onClick={this.handleServiceClicked.bind(this, service.id)}>{service.service}</button>
-                    })
-                }
-            </div>
-            <div id="branches">
-                {
-                    this.state.branches.map(branch => {
-                        return (
-                            <div className="branch" key={branch.id}>
-                                <p>Name: {branch.name} </p>
-                                <input type="submit" value="Choose branch" disabled={!branch.hasService} onClick={this.handleBranchClicked.bind(this, branch.id)}/>
-                            </div>
-                        );
-                    })
-                }
-            </div>
-            <div id="appointmentSlots">
-                {
-                    this.state.appointmentSlots.map((slot, i) => {
-                        return <input key={i} type="submit" value={slot.day + " " + slot.month + " " + slot.date + " at " + slot.time} disabled={slot.taken} onClick={this.handleAppointmentSlotClicked.bind(this, slot)}/>
-                    })
-                }
-            </div>
+            {this.state.page == 1 && // Show the services when page is 1
+                <div>
+                    <h1>What can we help you with?</h1>
+                    <h2>Choose a service</h2>
+                    <div id="services">
+                        {
+                            this.state.services.map(service => {
+                                return <button key={service.id} onClick={this.handleServiceClicked.bind(this, service.id)}>{service.service}</button>
+                            })
+                        }
+                    </div>
+                </div>
+            }
 
-            <h2>Please enter your information.</h2>
-            <form>
-                <label>
-                    First Name
+            {this.state.page == 2 && // Show the branches when page is 2
+                <div id="branches">
+                    <h2>Choose a branch</h2>
+                    {
+                        this.state.branches.map(branch => {
+                            return (
+                                <div className="branch" key={branch.id}>
+                                    <p>Name: {branch.name} </p>
+                                    <input type="submit" value="Choose branch" disabled={!branch.hasService} onClick={this.handleBranchClicked.bind(this, branch.id)} />
+                                </div>
+                            );
+                        })
+                    }
+                </div>
+            }
+
+            {this.state.page == 3 && // Show the appointment slots when page is 3
+                <div id="appointmentSlots">
+                    <h2>Choose an appointment time</h2>
+                    {
+                        this.state.appointmentSlots.map((slot, i) => {
+                            return <input key={i} type="submit" value={slot.day + " " + slot.month + " " + slot.date + " at " + slot.time} disabled={slot.taken} onClick={this.handleAppointmentSlotClicked.bind(this, slot)} />
+                        })
+                    }
+                </div>
+            }
+
+            {this.state.page == 4 && // Show the page to enter information when page is 4
+                <div>
+                    <h2>Please enter your information.</h2>
+                    <form>
+                        <label>
+                            First Name
                     <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
-                </label>
-                <br />
-                <label>
-                    Last Name
+                        </label>
+                        <br />
+                        <label>
+                            Last Name
                     <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
-                </label>
-                <br />
-                <label>
-                    Email
+                        </label>
+                        <br />
+                        <label>
+                            Email
                     <input type="email" name="email" value={this.state.email} onChange={this.handleChange} />
-                </label>
-            </form>
+                        </label>
+                    </form>
 
-            <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.scheduleAppointment.bind(this)}/>
+                    <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.scheduleAppointment.bind(this)} />
+                </div>
+            }
+
+            {this.state.page == 5 && // Show the confimation screen when page is 5
+                <div>
+                    <p>You have successfully scheduled an appointment</p>
+                </div>
+            }
+
+            {this.state.loading && // Show the loading image when page is loading something
+                <div>
+                    <img id="loadingImage" src="./images/loading.gif" />
+                </div>
+            }
         </div>);
     }
 }
 
 ReactDOM.render(
-    <CustomerView/>,
+    <CustomerView />,
     document.getElementById('root')
 );
