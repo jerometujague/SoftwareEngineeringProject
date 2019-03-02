@@ -469,16 +469,16 @@ INSERT INTO service (service)
 
 INSERT INTO customer (f_name, l_name, phone_num, email)
 	VALUES
-		("John", "Doe", "9135555555", "jdoe@ucmo.edu"),
-		("Jane", "Doe", "8165555555", "jadoe@ucmo.edu"),
-		("Bob", "Smith", "6605555555", "bsmith@ucmo.edu"),
-		("Larry", "Jones", "9905555555", "ljones@ucmo.edu");
+		("John", "Doe", "9135555555", "dmb79790@ucmo.edu"),
+		("Jane", "Doe", "8165555555", "jmb18290@ucmo.edu"),
+		("Bob", "Smith", "6605555555", "jmb18290@ucmo.edu"),
+		("Larry", "Jones", "9905555555", "dmb79790@ucmo.edu");
 
 INSERT INTO manager (f_name, l_name, phone_num, email, branch_id)
 	VALUES
-		("LeBron", "James", "6607777777", "ljames@ucmo.edu", 1),
-		("Tom", "Brady", "6608888888", "tbrady@ucmo.edu", 2),
-		("Steph", "Curry", "9137777777", "scurry@ucmo.edu", 3);
+		("LeBron", "James", "6607777777", "jmb18290@ucmo.edu", 1),
+		("Tom", "Brady", "6608888888", "jlt35400@ucmo.edu", 2),
+		("Steph", "Curry", "9137777777", "jlt35400@ucmo.edu", 3);
 
 INSERT INTO unavailable (calendar_id, time)
 	VALUES
@@ -533,7 +533,3 @@ INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week)
 CALL future_unavailable(1, 0, 1);
 
 CALL future_unavailable(1, 1, 0);
-
-
-
-
