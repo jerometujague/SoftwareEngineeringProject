@@ -44,6 +44,7 @@ class CustomerView extends React.Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.loadServices();
+        this.goBack = this.goBack.bind(this);
     }
 
     handleChange(event) {
@@ -216,8 +217,20 @@ class CustomerView extends React.Component {
         });
     }
 
+    async goBack(){
+        //Go back one page if back button is clicked
+        this.setState({
+            page: this.state.page-1,
+        });
+    }
+
     render() {
         return (<div>
+            {this.state.page >= 2 && //Show the button when page is 2 or greater
+            <div>
+                <button onClick={this.goBack}>Go Back</button>
+            </div>
+            }
             {this.state.page == 1 && // Show the services when page is 1
                 <div>
                     <h1>What can we help you with?</h1>
