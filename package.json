@@ -14,16 +14,12 @@
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
-    "@babel/preset-react": "^7.0.0",
-    "babel-cli": "^6.26.0"
+    "@babel/preset-react": "^7.0.0"
   },
   "babel": {
     "presets": [
       "@babel/preset-env",
       "@babel/preset-react"
     ]
-  },
-  "dependencies": {
-    "redux-undo": "^0.6.1"
   }
 }
