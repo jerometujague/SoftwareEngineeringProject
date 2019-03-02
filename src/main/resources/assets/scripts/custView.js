@@ -77,6 +77,7 @@ function (_React$Component) {
 
     _this.loadServices();
 
+    _this.goBack = _this.goBack.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -429,11 +430,43 @@ function (_React$Component) {
       });
     }
   }, {
+    key: "goBack",
+    value: function () {
+      var _goBack = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee8() {
+        return regeneratorRuntime.wrap(function _callee8$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                //Go back one page if back button is clicked
+                this.setState({
+                  page: this.state.page - 1
+                });
+
+              case 1:
+              case "end":
+                return _context8.stop();
+            }
+          }
+        }, _callee8, this);
+      }));
+
+      function goBack() {
+        return _goBack.apply(this, arguments);
+      }
+
+      return goBack;
+    }()
+  }, {
     key: "render",
     value: function render() {
       var _this5 = this;
 
-      return React.createElement("div", null, this.state.page == 1 && // Show the services when page is 1
+      return React.createElement("div", null, this.state.page >= 2 && //Show the button when page is 2 or greater
+      React.createElement("div", null, React.createElement("button", {
+        onClick: this.goBack
+      }, "Go Back")), this.state.page == 1 && // Show the services when page is 1
       React.createElement("div", null, React.createElement("h1", null, "What can we help you with?"), React.createElement("h2", null, "Choose a service"), React.createElement("div", {
         id: "services"
       }, this.state.services.map(function (service) {
