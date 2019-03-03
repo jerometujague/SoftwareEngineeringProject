@@ -21,6 +21,6 @@ module.exports = {
         "plugin:react/recommended"
     ],
     "rules": {
-        // "react/prop-types": 0
+        "react/prop-types": 0
     }
 }
