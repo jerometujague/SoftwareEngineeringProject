@@ -4,8 +4,8 @@
   "description": "* NodeJS\r * ReactJS",
   "main": "index.js",
   "scripts": {
-    "start": "npx babel --watch src/main/resources/assets/src --out-dir src/main/resources/assets/scripts",
-    "compiler": "npx babel src/main/resources/assets/src --out-dir src/main/resources/assets/scripts --presets react-app/prod"
+    "start": "webpack --watch",
+    "build": "webpack"
   },
   "keywords": [],
   "author": "",
