@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 class Description extends React.Component {
     constructor(props) {
         super(props);
@@ -27,7 +30,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.checkingAccount}
                         onChange={this.handleInputChange} />
-                        Checking Account &nbsp;
+                    Checking Account &nbsp;
                 </label>
                 <label>
                     <input
@@ -35,7 +38,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.savingsAccount}
                         onChange={this.handleInputChange} />
-                        Savings Account &nbsp;
+                    Savings Account &nbsp;
                 </label>
                 <label>
                     <input
@@ -43,7 +46,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.CDs}
                         onChange={this.handleInputChange} />
-                        CDs/Money Market Accounts &nbsp;
+                    CDs/Money Market Accounts &nbsp;
                 </label>
                 <br />
                 <label>
@@ -52,7 +55,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.studentBanking}
                         onChange={this.handleInputChange} />
-                        Student Banking &nbsp;
+                    Student Banking &nbsp;
                 </label>
                 <label>
                     <input
@@ -60,7 +63,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.autoLoans}
                         onChange={this.handleInputChange} />
-                        Auto Loans &nbsp;
+                    Auto Loans &nbsp;
                 </label>
                 <label>
                     <input
@@ -68,7 +71,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.homeEquity}
                         onChange={this.handleInputChange} />
-                        Home Equity &nbsp;
+                    Home Equity &nbsp;
                 </label>
                 <br />
                 <label>
@@ -77,7 +80,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.mortgage}
                         onChange={this.handleInputChange} />
-                        Mortgage &nbsp;
+                    Mortgage &nbsp;
                 </label>
                 <label>
                     <input
@@ -85,7 +88,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.studentLoans}
                         onChange={this.handleInputChange} />
-                        Student Loans &nbsp;
+                    Student Loans &nbsp;
                 </label>
                 <label>
                     <input
@@ -93,7 +96,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.sfr}
                         onChange={this.handleInputChange} />
-                        Saving for Retirement &nbsp;
+                    Saving for Retirement &nbsp;
                 </label>
                 <br />
                 <label>
@@ -102,7 +105,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.investmentAccount}
                         onChange={this.handleInputChange} />
-                        Investment Account &nbsp;
+                    Investment Account &nbsp;
                 </label>
                 <label>
                     <input
@@ -110,7 +113,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.creditCard}
                         onChange={this.handleInputChange} />
-                        Credit Card &nbsp;
+                    Credit Card &nbsp;
                 </label>
                 <label>
                     <input
@@ -118,7 +121,7 @@ class Description extends React.Component {
                         type="checkbox"
                         checked={this.state.other}
                         onChange={this.handleInputChange} />
-                        Other &nbsp;
+                    Other &nbsp;
                 </label>
             </form>
         );
@@ -126,6 +129,6 @@ class Description extends React.Component {
 }
 
 ReactDOM.render(
-    <Description/>,
+    <Description />,
     document.getElementById('checkbox')
 );
