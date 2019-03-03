@@ -1,3 +1,10 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import $ from 'jquery';
+import 'babel-polyfill';
+import './css/customer.css';
+import loadingImage from './images/loading.gif';
+
 function fixTime(oldTime) {
     // Get AM or PM
     let t = oldTime.slice(-2);
@@ -217,19 +224,19 @@ class CustomerView extends React.Component {
         });
     }
 
-    async goBack(){
+    async goBack() {
         //Go back one page if back button is clicked
         this.setState({
-            page: this.state.page-1,
+            page: this.state.page - 1,
         });
     }
 
     render() {
         return (<div>
             {this.state.page >= 2 && //Show the button when page is 2 or greater
-            <div>
-                <button onClick={this.goBack}>Go Back</button>
-            </div>
+                <div>
+                    <button onClick={this.goBack}>Go Back</button>
+                </div>
             }
             {this.state.page == 1 && // Show the services when page is 1
                 <div>
@@ -304,7 +311,7 @@ class CustomerView extends React.Component {
 
             {this.state.loading && // Show the loading image when page is loading something
                 <div>
-                    <img id="loadingImage" src="./images/loading.gif" />
+                    <img id="loadingImage" src={loadingImage} />
                 </div>
             }
         </div>);

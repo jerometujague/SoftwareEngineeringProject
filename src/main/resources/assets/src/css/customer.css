@@ -25,6 +25,7 @@
         cursor: pointer;
         height: 150px;
         width: 150px;
+        padding: 0px;
     }
 
     button:hover{
