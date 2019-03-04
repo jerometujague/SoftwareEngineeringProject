@@ -61,7 +61,7 @@ public class AppointmentSlotController {
                 .getCalendarId();
 
         // Go through the calendar dates for the next two weeks
-        for(int i = startId; i < startId + 7; i++){
+        for(int i = startId; i < startId + 14; i++){
             final int calendarId = i;
 
             // Get the day of week int from the current day

@@ -139,9 +139,21 @@ class CustomerView extends React.Component {
 
         await $.getJSON(url, (appointmentSlotsList) => {
             const newAppointmentSlots = [];
+            let daySlots = [];
+            let lastDay = appointmentSlotsList[0].day;
             appointmentSlotsList.forEach(appointmentSlot => {
-                newAppointmentSlots.push(appointmentSlot);
+                if (appointmentSlot.day != lastDay) {
+                    // Hit a new day
+                    newAppointmentSlots.push(daySlots);
+                    daySlots = [];
+                }
+
+                daySlots.push(appointmentSlot);
+
+                lastDay = appointmentSlot.day;
             });
+
+            newAppointmentSlots.push(daySlots);
 
             this.setState({
                 appointmentSlots: newAppointmentSlots,
@@ -294,11 +306,28 @@ class CustomerView extends React.Component {
                 unmountOnExit>
                 <div className="page" id="appointmentSlots">
                     <h2>Choose an appointment time</h2>
+                    <div id="slotHolder">
                     {
                         this.state.appointmentSlots.map((slot, i) => {
-                            return <input key={i} type="submit" value={slot.day + " " + slot.month + " " + slot.date + " at " + slot.time} disabled={slot.taken} onClick={this.handleAppointmentSlotClicked.bind(this, slot)} />
+                            return (
+                                <div key={i}>
+                                    <h3>{slot[0].day + ", " + slot[0].month + " " + slot[0].date}</h3>
+                                    <div className="timeSlots">
+                                        {
+                                            slot.map((time, j) => {
+                                                return (
+                                                    <div key={j}>
+                                                        <input className="appointmentTime" type="submit" value={time.time} disabled={time.taken} onClick={this.handleAppointmentSlotClicked.bind(this, slot)} />
+                                                    </div>
+                                                );
+                                            })
+                                        }
+                                    </div>
+                                </div>
+                            );
                         })
                     }
+                    </div>
                 </div>
             </CSSTransition>
 

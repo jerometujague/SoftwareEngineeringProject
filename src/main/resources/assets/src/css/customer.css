@@ -141,3 +141,27 @@ input[type="checkbox"]{
 .loading-exit.page-exit-active {
     opacity: 0.01;
 }
+
+.appointmentTime {
+    padding: 5px;
+    margin: 5px;
+    width: 70px;
+    text-align: center;
+}
+
+.timeSlots {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 350px;
+}
+
+#slotHolder {
+    margin-left: 5px;
+    height: 450px;
+    width: 370px;
+    padding: 10px;
+    overflow-y: scroll;
+    border-top: 1px solid #006747;
+    border-bottom: 1px solid #006747;
+}
