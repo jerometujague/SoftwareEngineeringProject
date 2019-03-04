@@ -56,4 +56,28 @@ input[type="checkbox"]{
     margin-right: 4px;
 }
 
+.page-enter {
+    transform: translate3d(0, 50%, 0);
+    opacity: 0.01;
+}
 
+.page-enter.page-enter-active {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    transition: all 600ms;
+}
+
+.page-exit {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+}
+
+.page-exit.page-exit-active {
+    transform: translate3d(0, -50%, 0);
+    opacity: 0.01;
+    transition: all 600ms;
+}
+
+.page {
+    position: absolute;
+}

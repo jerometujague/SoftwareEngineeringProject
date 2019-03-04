@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import $ from 'jquery';
+import { CSSTransition } from 'react-transition-group';
 import 'babel-polyfill';
 import './css/customer.css';
 import loadingImage from './images/loading.gif';
@@ -233,13 +234,22 @@ class CustomerView extends React.Component {
 
     render() {
         return (<div>
-            {this.state.page >= 2 && //Show the button when page is 2 or greater
+            <div id="header">
                 <div>
-                    <button onClick={this.goBack}>Go Back</button>
+                    <button id="backButton" onClick={this.goBack}>Go Back</button>
                 </div>
-            }
-            {this.state.page == 1 && // Show the services when page is 1
-                <div>
+                <span>Schedule an appointment</span>
+            </div>
+
+            <CSSTransition
+                in={this.state.page == 1}
+                timeout={{
+                    enter: 600,
+                    exit: 600,
+                }}
+                classNames="page"
+                unmountOnExit>
+                <div className="page">
                     <h1>What can we help you with?</h1>
                     <h2>Choose a service</h2>
                     <div id="services">
@@ -250,10 +260,17 @@ class CustomerView extends React.Component {
                         }
                     </div>
                 </div>
-            }
+            </CSSTransition>
 
-            {this.state.page == 2 && // Show the branches when page is 2
-                <div id="branches">
+            <CSSTransition
+                in={this.state.page == 2}
+                timeout={{
+                    enter: 600,
+                    exit: 600,
+                }}
+                classNames="page"
+                unmountOnExit>
+                <div className="page" id="branches">
                     <h2>Choose a branch</h2>
                     {
                         this.state.branches.map(branch => {
@@ -266,10 +283,17 @@ class CustomerView extends React.Component {
                         })
                     }
                 </div>
-            }
+            </CSSTransition>
 
-            {this.state.page == 3 && // Show the appointment slots when page is 3
-                <div id="appointmentSlots">
+            <CSSTransition
+                in={this.state.page == 3}
+                timeout={{
+                    enter: 600,
+                    exit: 600,
+                }}
+                classNames="page"
+                unmountOnExit>
+                <div className="page" id="appointmentSlots">
                     <h2>Choose an appointment time</h2>
                     {
                         this.state.appointmentSlots.map((slot, i) => {
@@ -277,10 +301,17 @@ class CustomerView extends React.Component {
                         })
                     }
                 </div>
-            }
+            </CSSTransition>
 
-            {this.state.page == 4 && // Show the page to enter information when page is 4
-                <div>
+            <CSSTransition
+                in={this.state.page == 4}
+                timeout={{
+                    enter: 600,
+                    exit: 300,
+                }}
+                classNames="page"
+                unmountOnExit>
+                <div className="page">
                     <h2>Please enter your information.</h2>
                     <form>
                         <label>
@@ -301,7 +332,7 @@ class CustomerView extends React.Component {
 
                     <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.scheduleAppointment.bind(this)} />
                 </div>
-            }
+            </CSSTransition>
 
             {this.state.page == 5 && // Show the confimation screen when page is 5
                 <div>
