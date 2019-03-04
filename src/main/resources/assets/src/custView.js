@@ -48,6 +48,7 @@ class CustomerView extends React.Component {
             email: '',
             page: 1,
             loading: false,
+            wentBack: false,
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -183,6 +184,7 @@ class CustomerView extends React.Component {
         this.setState({
             page: 5,
             loading: false,
+            wentBack: false,
         });
     }
 
@@ -199,6 +201,7 @@ class CustomerView extends React.Component {
         this.setState({
             page: 2,
             loading: false,
+            wentBack: false,
         });
     }
 
@@ -215,6 +218,7 @@ class CustomerView extends React.Component {
         this.setState({
             page: 3,
             loading: false,
+            wentBack: false,
         });
     }
 
@@ -222,6 +226,7 @@ class CustomerView extends React.Component {
         this.setState({
             appointmentSlot: slot,
             page: 4,
+            wentBack: false,
         });
     }
 
@@ -229,28 +234,28 @@ class CustomerView extends React.Component {
         //Go back one page if back button is clicked
         this.setState({
             page: this.state.page - 1,
+            wentBack: true,
         });
     }
 
     render() {
         return (<div>
             <div id="header">
-                <div>
-                    <button id="backButton" onClick={this.goBack}>Go Back</button>
-                </div>
-                <span>Schedule an appointment</span>
+                {this.state.page >= 2 && // Show the back button when page is 2 or greater
+                    <div id="backButtonHolder">
+                        <button id="backButton" onClick={this.goBack}>Go Back</button>
+                    </div>
+                }
+                <h1 id="headerText">Schedule an appointment</h1>
             </div>
 
             <CSSTransition
                 in={this.state.page == 1}
-                timeout={{
-                    enter: 600,
-                    exit: 600,
-                }}
-                classNames="page"
+                timeout={600}
+                classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
                 <div className="page">
-                    <h1>What can we help you with?</h1>
+                    <h2>What can we help you with?</h2>
                     <h2>Choose a service</h2>
                     <div id="services">
                         {
@@ -264,11 +269,8 @@ class CustomerView extends React.Component {
 
             <CSSTransition
                 in={this.state.page == 2}
-                timeout={{
-                    enter: 600,
-                    exit: 600,
-                }}
-                classNames="page"
+                timeout={600}
+                classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
                 <div className="page" id="branches">
                     <h2>Choose a branch</h2>
@@ -287,11 +289,8 @@ class CustomerView extends React.Component {
 
             <CSSTransition
                 in={this.state.page == 3}
-                timeout={{
-                    enter: 600,
-                    exit: 600,
-                }}
-                classNames="page"
+                timeout={600}
+                classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
                 <div className="page" id="appointmentSlots">
                     <h2>Choose an appointment time</h2>
@@ -305,11 +304,8 @@ class CustomerView extends React.Component {
 
             <CSSTransition
                 in={this.state.page == 4}
-                timeout={{
-                    enter: 600,
-                    exit: 300,
-                }}
-                classNames="page"
+                timeout={600}
+                classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
                 <div className="page">
                     <h2>Please enter your information.</h2>
@@ -340,11 +336,18 @@ class CustomerView extends React.Component {
                 </div>
             }
 
-            {this.state.loading && // Show the loading image when page is loading something
-                <div>
+            <CSSTransition
+                in={this.state.loading}
+                timeout={{
+                    enter: 300,
+                    exit: 0,
+                }}
+                classNames="loading"
+                unmountOnExit>
+                <div id="loadingDiv">
                     <img id="loadingImage" src={loadingImage} />
                 </div>
-            }
+            </CSSTransition>
         </div>);
     }
 }

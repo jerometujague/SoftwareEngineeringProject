@@ -46,6 +46,7 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Commerce Bank',
             template: './src/main/resources/assets/src/index.html',
+            favicon: './src/main/resources/assets/src/images/favicon.ico',
             chunks: ['custView'],
             filename: 'index.html' //relative to root of the application
         }),
