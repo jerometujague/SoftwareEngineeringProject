@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -27,10 +28,11 @@ public class AppointmentController {
     private final CalendarDAO calendarDAO;
     private final BranchDAO branchDAO;
     private final ManagerDAO managerDAO;
+    private final SkillDAO skillDAO;
 
     @Autowired // Use dependency injection to get the dependencies
     public AppointmentController(AppointmentDAO appointmentDAO, CustomerDAO customerDAO,
-                                 CalendarDAO calendarDAO, BranchDAO branchDAO,
+                                 CalendarDAO calendarDAO, BranchDAO branchDAO, SkillDAO skillDAO,
                                  ManagerDAO managerDAO, MailSender smtp) {
         this.appointmentDAO = appointmentDAO;
         this.mailSender = smtp;
@@ -38,6 +40,7 @@ public class AppointmentController {
         this.calendarDAO = calendarDAO;
         this.branchDAO = branchDAO;
         this.managerDAO = managerDAO;
+        this.skillDAO = skillDAO;
     }
 
     @RequestMapping(method = RequestMethod.GET) // This method will be called when there is a GET request made to this url
@@ -46,9 +49,22 @@ public class AppointmentController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    void scheduleAppointment(@RequestBody Appointment appointment) throws MessagingException{
-        // TODO: Select a manager that has the appropriate skill
-        appointment.setManagerId(1);
+    void scheduleAppointment(@RequestBody Appointment appointment) throws MessagingException {
+
+        // find available manager with appropriate skill for this appointment
+        int branchID = appointment.getBranchId();
+        int serviceID = appointment.getServiceId();
+        int calendarID = appointment.getCalendarId();
+        LocalTime time = appointment.getTime();
+
+        List<Manager> availableManagers = managerDAO.list(appointment.getBranchId(), appointment.getServiceId(),
+                appointment.getCalendarId(), appointment.getTime());
+        Manager chooseManager = availableManagers.get(0);
+        // Todo: what if there are no available managers?
+
+        appointment.setManagerId(chooseManager.getId());
+
+        // add this appointment to the database
         appointmentDAO.insert(appointment);
 
         // get customer ID for the just-scheduled appointment
@@ -59,8 +75,6 @@ public class AppointmentController {
         Calendar calendar = calendars.get(appointment.getCalendarId() - 1);
         LocalDate date = calendar.getDate();
 
-        LocalTime time = appointment.getTime();
-
         List<Branch> branches = branchDAO.list();
         Branch branch = branches.get(appointment.getBranchId() - 1);
         String branchName = branch.getName();
@@ -68,10 +82,10 @@ public class AppointmentController {
                 + branch.getState() + " " + branch.getZipCode();
 
         List<Manager> managers = managerDAO.list();
-        Manager manager = managers.get(appointment.getManagerId() - 1);
-        String managerName = manager.getFirstName() + " " + manager.getLastName();
-        String managerEmail = manager.getEmail();
-        String managerPhone = manager.getPhoneNumber();
+        Manager apptManager = managers.get(appointment.getManagerId() - 1);
+        String managerName = apptManager.getFirstName() + " " + apptManager.getLastName();
+        String managerEmail = apptManager.getEmail();
+        String managerPhone = apptManager.getPhoneNumber();
 
         // get customer info
         List<Customer> customers = customerDAO.list();
@@ -85,7 +99,7 @@ public class AppointmentController {
                 "If you have questions, or need to reschedule, please contact " + managerName +
                 " at " + managerPhone + " or " + managerEmail;
 
-        mailSender.send(customerEmail, "Banking Appointment", messageBody);
+        mailSender.send(customerEmail, managerEmail, "Banking Appointment", messageBody);
        }
 
 }
