@@ -78,6 +78,66 @@ input[type="checkbox"]{
     transition: all 600ms;
 }
 
+.pageBack-enter {
+    transform: translate3d(0, -50%, 0);
+    opacity: 0.01;
+}
+
+.pageBack-enter.pageBack-enter-active {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    transition: all 600ms;
+}
+
+.pageBack-exit {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+}
+
+.pageBack-exit.pageBack-exit-active {
+    transform: translate3d(0, 50%, 0);
+    opacity: 0.01;
+    transition: all 600ms;
+}
+
 .page {
     position: absolute;
+}
+
+#backButton {
+    width: 100px;
+    height: 40px;
+}
+
+#backButtonHolder {
+    float: left;
+    margin-right: 20px;
+}
+
+#loadingDiv {
+    position: absolute;
+    top: 400px;
+    left: 40px;
+}
+
+#headerText {
+    display: inline-block;
+    margin: 0px;
+}
+
+.loading-enter {
+    opacity: 0.01;
+}
+
+.loading-enter.loading-enter-active {
+    opacity: 1;
+    transition: opacity 300ms ease-in;
+}
+
+.loading-exit {
+    opacity: 1;
+}
+
+.loading-exit.page-exit-active {
+    opacity: 0.01;
 }
