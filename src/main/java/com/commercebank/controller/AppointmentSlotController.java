@@ -47,7 +47,6 @@ public class AppointmentSlotController {
     @RequestMapping(value = "/{branchId}/{serviceId}", method = RequestMethod.GET)
     public List<AppointmentSlot> getAppointmentSlots(@PathVariable("branchId") int branchId, @PathVariable("serviceId") int serviceId){
         List<AppointmentSlot> appointmentSlots = new ArrayList<>();
-        long before = System.currentTimeMillis();
 
         // Get data at the beginning to save time
         List<Calendar> calendar = calendarDAO.list();
@@ -144,7 +143,7 @@ public class AppointmentSlotController {
                 }
             }
         }
-        System.out.println(System.currentTimeMillis() - before);
+        
         return appointmentSlots;
     }
 }
