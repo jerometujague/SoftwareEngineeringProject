@@ -65,21 +65,6 @@ class CustomerView extends React.Component {
         });
     }
 
-    async getAppointmentCount(branchId) {
-        let url = "/api/appointment-slots/" + branchId + "/" + this.state.serviceId;
-        let count = 0;
-
-        await $.getJSON(url, (appointmentSlotsList) => {
-            appointmentSlotsList.forEach(appointmentSlot => {
-                if (!appointmentSlot.taken) {
-                    count++;
-                }
-            });
-        });
-
-        return count;
-    }
-
     async addCustomer() {
         let url = "/api/customers/" + this.state.email + "/";
         let id = 0;
