@@ -65,6 +65,21 @@ class CustomerView extends React.Component {
         });
     }
 
+    async getAppointmentCount(branchId) {
+        let url = "/api/appointment-slots/" + branchId + "/" + this.state.serviceId;
+        let count = 0;
+
+        await $.getJSON(url, (appointmentSlotsList) => {
+            appointmentSlotsList.forEach(appointmentSlot => {
+                if (!appointmentSlot.taken) {
+                    count++;
+                }
+            });
+        });
+
+        return count;
+    }
+
     async addCustomer() {
         let url = "/api/customers/" + this.state.email + "/";
         let id = 0;
@@ -268,7 +283,6 @@ class CustomerView extends React.Component {
                 unmountOnExit>
                 <div className="page">
                     <h2>What can we help you with?</h2>
-                    <h2>Choose a service</h2>
                     <div id="services">
                         {
                             this.state.services.map(service => {
@@ -285,13 +299,15 @@ class CustomerView extends React.Component {
                 classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
                 <div className="page" id="branches">
-                    <h2>Choose a branch</h2>
+                    <h2>Which location works best for you?</h2>
                     {
                         this.state.branches.map(branch => {
                             return (
                                 <div className="branch" key={branch.id}>
-                                    <p>Name: {branch.name} </p>
-                                    <input type="submit" value="Choose branch" disabled={!branch.hasService} onClick={this.handleBranchClicked.bind(this, branch.id)} />
+                                    <p>{branch.streetAddress}</p>
+                                    <p>{branch.city + ", " + branch.city + " " + branch.zipCode}</p>
+                                    <p>{branch.appointmentCount} available appointments in the two weeks</p>
+                                    <input type="submit" value="Select branch" disabled={!branch.hasService} onClick={this.handleBranchClicked.bind(this, branch.id)} />
                                 </div>
                             );
                         })
@@ -305,28 +321,28 @@ class CustomerView extends React.Component {
                 classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
                 <div className="page" id="appointmentSlots">
-                    <h2>Choose an appointment time</h2>
+                    <h2>{"Let's find a time that works for you."}</h2>
                     <div id="slotHolder">
-                    {
-                        this.state.appointmentSlots.map((slot, i) => {
-                            return (
-                                <div key={i}>
-                                    <h3>{slot[0].day + ", " + slot[0].month + " " + slot[0].date}</h3>
-                                    <div className="timeSlots">
-                                        {
-                                            slot.map((time, j) => {
-                                                return (
-                                                    <div key={j}>
-                                                        <input className="appointmentTime" type="submit" value={time.time} disabled={time.taken} onClick={this.handleAppointmentSlotClicked.bind(this, slot)} />
-                                                    </div>
-                                                );
-                                            })
-                                        }
+                        {
+                            this.state.appointmentSlots.map((slot, i) => {
+                                return (
+                                    <div key={i}>
+                                        <h3>{slot[0].day + ", " + slot[0].month + " " + slot[0].date}</h3>
+                                        <div className="timeSlots">
+                                            {
+                                                slot.map((time, j) => {
+                                                    return (
+                                                        <div key={j}>
+                                                            <input className="appointmentTime" type="submit" value={time.time} disabled={time.taken} onClick={this.handleAppointmentSlotClicked.bind(this, slot)} />
+                                                        </div>
+                                                    );
+                                                })
+                                            }
+                                        </div>
                                     </div>
-                                </div>
-                            );
-                        })
-                    }
+                                );
+                            })
+                        }
                     </div>
                 </div>
             </CSSTransition>
@@ -337,13 +353,12 @@ class CustomerView extends React.Component {
                 classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
                 <div className="page">
-                    <h2>Please enter your information.</h2>
+                    <h2>Now we just need a few more details.</h2>
                     <form>
                         <label>
                             First Name
                     <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
                         </label>
-                        <br />
                         <label>
                             Last Name
                     <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
@@ -353,6 +368,10 @@ class CustomerView extends React.Component {
                             Email
                     <input type="email" name="email" value={this.state.email} onChange={this.handleChange} />
                         </label>
+                        <label>
+                            Phone number
+                    <input type="tel" name="phoneNumber" value={this.state.phoneNumber} onChange={this.handleChange} />
+                        </label>
                     </form>
 
                     <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.scheduleAppointment.bind(this)} />
@@ -361,7 +380,7 @@ class CustomerView extends React.Component {
 
             {this.state.page == 5 && // Show the confimation screen when page is 5
                 <div>
-                    <p>You have successfully scheduled an appointment</p>
+                    <p>{"Here's your appointment"}</p>
                 </div>
             }
 

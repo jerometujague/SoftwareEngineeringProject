@@ -21,12 +21,14 @@ public class BranchController {
     private final BranchDAO branchDAO;
     private final SkillDAO skillDAO;
     private final ManagerDAO managerDAO;
+    private final AppointmentSlotController appointmentSlotController;
 
     @Autowired // Use dependency injection to get the dependencies
-    public BranchController(BranchDAO branchDAO, SkillDAO skillDAO, ManagerDAO managerDAO) {
+    public BranchController(BranchDAO branchDAO, SkillDAO skillDAO, ManagerDAO managerDAO, AppointmentSlotController appointmentSlotController) {
         this.branchDAO = branchDAO;
         this.skillDAO = skillDAO;
         this.managerDAO = managerDAO;
+        this.appointmentSlotController = appointmentSlotController;
     }
 
     @RequestMapping(method = RequestMethod.GET) // This method will be called when there is a GET request made to this url
@@ -41,6 +43,7 @@ public class BranchController {
         // Set hasService to true for branches that have the service
         for(Branch b : branches){
             if(hasService(b.getId(), serviceId)){
+                b.setAppointmentCount(appointmentSlotController.getAppointmentSlots(b.getId(), serviceId).size());
                 b.setHasService(true);
             }
         }

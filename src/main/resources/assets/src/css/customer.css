@@ -116,8 +116,13 @@ input[type="checkbox"]{
 
 #loadingDiv {
     position: absolute;
-    top: 400px;
-    left: 40px;
+    left: 0; 
+    right: 0; 
+    top: 0;
+    bottom: 0;
+    margin: auto auto;
+    width: 60px;
+    height: 60px;
 }
 
 #headerText {
