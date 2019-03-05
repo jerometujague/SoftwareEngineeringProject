@@ -1,5 +1,6 @@
 package com.commercebank;
 
+import com.commercebank.controller.AppointmentSlotController;
 import com.commercebank.controller.BranchController;
 import com.commercebank.dao.*;
 import com.commercebank.model.*;
@@ -29,6 +30,9 @@ public class BranchControllerTests {
     @Autowired
     private BranchDAO branchDAO;
 
+    @Autowired
+    private AppointmentSlotController appointmentSlotController;
+
     private BranchController branchController;
 
     private List<Skill> skills = new ArrayList<>();
@@ -43,7 +47,7 @@ public class BranchControllerTests {
         when(skillDAO.list()).thenReturn(skills);
         when(managerDAO.list()).thenReturn(managers);
 
-        branchController = new BranchController(branchDAO, skillDAO, managerDAO);
+        branchController = new BranchController(branchDAO, skillDAO, managerDAO, appointmentSlotController);
     }
 
     @Before
