@@ -1,9 +1,7 @@
 package com.commercebank.controller;
 
 import com.commercebank.dao.*;
-import com.commercebank.model.AppointmentSlot;
-import com.commercebank.model.BranchHours;
-import com.commercebank.model.Calendar;
+import com.commercebank.model.*;
 import com.commercebank.util.DateUtil;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,12 +47,20 @@ public class AppointmentSlotController {
     @RequestMapping(value = "/{branchId}/{serviceId}", method = RequestMethod.GET)
     public List<AppointmentSlot> getAppointmentSlots(@PathVariable("branchId") int branchId, @PathVariable("serviceId") int serviceId){
         List<AppointmentSlot> appointmentSlots = new ArrayList<>();
+        long before = System.currentTimeMillis();
 
+        // Get data at the beginning to save time
         List<Calendar> calendar = calendarDAO.list();
+        List<Appointment> appointments = appointmentDAO.list();
+        List<Manager> managers = managerDAO.list();
+        List<Skill> skills = skillDAO.list();
+        List<Unavailable> managerUnavailables = unavailableDAO.listManagers();
+        List<Unavailable> branchUnavailables = unavailableDAO.listBranches();
+        List<BranchHours> branchHours = branchHoursDAO.list();
 
         // Get today's day and calendarId
         int startId = calendar
-                .stream()
+                .parallelStream()
                 .filter(c -> c.getDate().isAfter(LocalDate.now()))
                 .findFirst()
                 .get()
@@ -71,8 +77,8 @@ public class AppointmentSlotController {
                     .getValue();
 
             // Get the branch hours for that branch and for that day of the week
-            Optional<BranchHours> hours = branchHoursDAO.list()
-                    .stream()
+            Optional<BranchHours> hours = branchHours
+                    .parallelStream()
                     .filter(h -> h.getDayOfWeek() == dayOfWeek
                             && h.getBranchId() == branchId)
                     .findFirst();
@@ -84,26 +90,26 @@ public class AppointmentSlotController {
                     final int slotHour = hour;
 
                     // Check if this time slot is unavailable at this branch
-                    boolean branchUnavailable = unavailableDAO.listBranches()
-                            .stream()
+                    boolean branchUnavailable = branchUnavailables
+                            .parallelStream()
                             .anyMatch(u -> u.getTime().getHour() == slotHour
                                     && u.getReferId() == branchId
                                     && u.getCalendarId() == calendarId);
 
                     // Check if there is already an appointment scheduled and no other manager has service
-                    boolean taken = appointmentDAO.list()
-                            .stream()
+                    boolean taken = appointments
+                            .parallelStream()
                             .filter(a -> a.getCalendarId() == calendarId
                                     && a.getTime().getHour() == slotHour
                                     && a.getBranchId() == branchId)
-                            .count() >= skillDAO.list() // The count of appointments is equal to count of managers with that service
-                            .stream()
-                            .filter(s -> managerDAO.list()
-                                    .stream()
+                            .count() >= skills // The count of appointments is equal to count of managers with that service
+                            .parallelStream()
+                            .filter(s -> managers
+                                    .parallelStream()
                                     .anyMatch(m -> s.getManagerId() == m.getId() // Only get skills for specific branch
                                             && m.getBranchId() == branchId
-                                            && (unavailableDAO.listManagers() // There can't be an unavailable for that time
-                                            .stream()
+                                            && (managerUnavailables // There can't be an unavailable for that time
+                                            .parallelStream()
                                             .noneMatch(u -> u.getReferId() == m.getId()
                                                     && u.getTime().getHour() == slotHour
                                                     && u.getCalendarId() == calendarId))))
@@ -112,14 +118,14 @@ public class AppointmentSlotController {
 
 
                     // Check if the service is unavailable
-                    boolean serviceUnavailable = skillDAO.list()
-                            .stream()
-                            .filter(s -> managerDAO.list()
-                                    .stream()
+                    boolean serviceUnavailable = skills
+                            .parallelStream()
+                            .filter(s -> managers
+                                    .parallelStream()
                                     .anyMatch(m -> s.getManagerId() == m.getId() // Only get skills for specific branch
                                             && m.getBranchId() == branchId
-                                            && (unavailableDAO.listManagers() // There can't be an unavailable for that time
-                                            .stream()
+                                            && (managerUnavailables // There can't be an unavailable for that time
+                                            .parallelStream()
                                             .noneMatch(u -> u.getReferId() == m.getId()
                                                     && u.getTime().getHour() == slotHour
                                                     && u.getCalendarId() == calendarId))))
@@ -138,7 +144,7 @@ public class AppointmentSlotController {
                 }
             }
         }
-
+        System.out.println(System.currentTimeMillis() - before);
         return appointmentSlots;
     }
 }
