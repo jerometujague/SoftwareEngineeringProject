@@ -9,6 +9,7 @@ public class Branch {
     private int zipCode;
     private String name;
     private boolean hasService;
+    private int appointmentCount;
 
     public Branch(int id, String streetAddress, String city, String state, int zipCode, String name) {
         this.id = id;
@@ -18,6 +19,7 @@ public class Branch {
         this.zipCode = zipCode;
         this.name = name;
         this.hasService = false;
+        this.appointmentCount = 0;
     }
 
     public int getId() {
@@ -72,6 +74,14 @@ public class Branch {
         this.hasService = hasService;
     }
 
+    public int getAppointmentCount() {
+        return appointmentCount;
+    }
+
+    public void setAppointmentCount(int appointmentCount) {
+        this.appointmentCount = appointmentCount;
+    }
+
     @Override
     public String toString() {
         return "Branch{" +
@@ -82,6 +92,7 @@ public class Branch {
                 ", zipCode=" + zipCode +
                 ", name='" + name + '\'' +
                 ", hasService=" + hasService +
+                ", appointmentCount=" + appointmentCount +
                 '}';
     }
 }
