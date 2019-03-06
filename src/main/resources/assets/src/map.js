@@ -1,29 +1,11 @@
 import React from 'react';
+import blueDotImage from './images/blueDot.png';
 
 export class Map extends React.Component {
     constructor(props) {
         super(props);
 
         this.mapRef = React.createRef();
-    }
-
-    async getCurrentLocation() {
-        let origin;
-
-        const getCurrentPosition = () => new Promise(resolve => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    origin = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    };
-
-                    resolve(origin);
-                });
-            }
-        });
-
-        return await getCurrentPosition();
     }
 
     componentDidMount() {
@@ -39,8 +21,20 @@ export class Map extends React.Component {
     async loadMap() {
         const google = window.google;
 
-        const map = new google.maps.Map(this.mapRef.current, { zoom: 13, center: await this.getCurrentLocation(), disableDefaultUI: true });
+        // Get the current location
+        const currentLocation = await getCurrentLocation();
 
+        // Create the map centered on the current location
+        const map = new google.maps.Map(this.mapRef.current, { zoom: 13, center: currentLocation, disableDefaultUI: true });
+
+        // Create a marker at the current location
+        new google.maps.Marker({
+            position: currentLocation,
+            map: map,
+            icon: blueDotImage,
+        });
+
+        // Create markers for each branch
         this.props.branches.forEach(branch => {
             const address = branch.streetAddress + ", " + branch.city + ", " + branch.state + " " + branch.zipCode;
             const geocoder = new google.maps.Geocoder();
@@ -56,15 +50,7 @@ export class Map extends React.Component {
 }
 
 export async function distance(address) {
-    let origin = "Warrensburg, MO";
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            origin = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude
-            };
-        });
-    }
+    let origin = await getCurrentLocation();
 
     const getDistanceMatrix = (service, data) => new Promise((resolve, reject) => {
         service.getDistanceMatrix(data, (response, status) => {
@@ -79,6 +65,8 @@ export async function distance(address) {
     const google = window.google;
 
     const service = new google.maps.DistanceMatrixService();
+
+    // Get the driving distance in miles
     const response = await getDistanceMatrix(service, {
         origins: [origin],
         destinations: [address],
@@ -87,4 +75,21 @@ export async function distance(address) {
     });
 
     return response.rows[0].elements[0].distance.text;
+}
+
+async function getCurrentLocation() {
+    const getCurrentPosition = () => new Promise(resolve => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const origin = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                resolve(origin);
+            });
+        }
+    });
+
+    return await getCurrentPosition();
 }
