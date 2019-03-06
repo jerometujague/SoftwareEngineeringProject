@@ -5,6 +5,7 @@ import { CSSTransition } from 'react-transition-group';
 import 'babel-polyfill';
 import './css/customer.css';
 import loadingImage from './images/loading.gif';
+import { distance } from './map';
 
 function fixTime(oldTime) {
     // Get AM or PM
@@ -122,11 +123,24 @@ class CustomerView extends React.Component {
     async loadBranches(id) {
         let url = "/api/branches/" + id;
 
-        await $.getJSON(url, (branchesList) => {
+        await $.getJSON(url, async (branchesList) => {
             const newBranches = [];
-            branchesList.forEach(branch => {
+
+            for (const branch of branchesList) {
+                // Get distance to branch from here
+                branch.distance = await distance(branch.streetAddress + ", " + branch.city + ", " + branch.state + " " + branch.zipCode);
                 newBranches.push(branch);
-            });
+            }
+
+            newBranches.sort((a, b) => {
+                if (a.distance < b.distance) {
+                    return -1;
+                } else if (a.distance > b.distance) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            })
 
             this.setState({
                 branches: newBranches,
@@ -285,12 +299,14 @@ class CustomerView extends React.Component {
                 unmountOnExit>
                 <div className="page" id="branches">
                     <h2>Which location works best for you?</h2>
+                    {/* <Map branches={this.state.branches}></Map> */}
                     {
                         this.state.branches.map(branch => {
                             return (
                                 <div className="branch" key={branch.id}>
+                                    <p className="distance">{branch.distance}</p>
                                     <p>{branch.streetAddress}</p>
-                                    <p>{branch.city + ", " + branch.city + " " + branch.zipCode}</p>
+                                    <p>{branch.city + ", " + branch.state + " " + branch.zipCode}</p>
                                     <p>{branch.appointmentCount} available appointments in the two weeks</p>
                                     <input type="submit" value="Select branch" disabled={!branch.hasService} onClick={this.handleBranchClicked.bind(this, branch.id)} />
                                 </div>
