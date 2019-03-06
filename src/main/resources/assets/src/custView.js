@@ -318,7 +318,7 @@ class CustomerView extends React.Component {
                                                 slot.map((time, j) => {
                                                     return (
                                                         <div key={j}>
-                                                            <input className="appointmentTime" type="submit" value={time.time} disabled={time.taken} onClick={this.handleAppointmentSlotClicked.bind(this, slot)} />
+                                                            <input className="appointmentTime" type="submit" value={time.time} disabled={time.taken} onClick={this.handleAppointmentSlotClicked.bind(this, time)} />
                                                         </div>
                                                     );
                                                 })
