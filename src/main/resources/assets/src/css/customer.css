@@ -18,6 +18,10 @@
         color: #006747;
     }
 
+    p {
+        margin: 0;
+    }
+
     button{
         outline-color: #77726D;
         color: #006747;
@@ -169,4 +173,13 @@ input[type="checkbox"]{
     overflow-y: scroll;
     border-top: 1px solid #006747;
     border-bottom: 1px solid #006747;
+}
+
+.distance {
+    margin-left: 250px;
+}
+
+#map {
+    width: 400px;
+    height: 300px;
 }
