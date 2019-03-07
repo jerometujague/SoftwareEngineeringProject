@@ -476,9 +476,14 @@ INSERT INTO customer (f_name, l_name, phone_num, email)
 
 INSERT INTO manager (f_name, l_name, phone_num, email, branch_id)
 	VALUES
-		("LeBron", "James", "6607777777", "jmb18290@ucmo.edu", 1),
-		("Tom", "Brady", "6608888888", "jlt35400@ucmo.edu", 2),
-		("Steph", "Curry", "9137777777", "jlt35400@ucmo.edu", 3);
+		("LeBron", "James", "6607777777", "seclassproject@gmail.com", 1),
+		("Michael", "Jordan", "6608887777", "seclassproject@gmail.com", 2),
+		("Drew", "Brees", "6608881111", "seclassproject@gmail.com", 3),
+		("Kyrie", "Irving", "6608882222", "seclassproject@gmail.com", 1),
+		("Demarcus", "Cousins", "6608883333", "seclassproject@gmail.com", 2),
+		("Tim", "Duncan", "6608889999", "seclassproject@gmail.com", 3),
+		("Tom", "Brady", "6608888888", "seclassproject@gmail.com", 1),
+		("Steph", "Curry", "9137777777", "seclassproject@gmail.com", 2);
 
 INSERT INTO unavailable (calendar_id, time)
 	VALUES
@@ -510,7 +515,25 @@ INSERT INTO skills (manager_id, service_id)
 		(3, 4),
 		(3, 7),
 		(3, 1),
-		(3, 11);
+		(3, 11),
+		(4, 7),
+		(4, 5),
+		(4, 1),
+		(4, 11),
+		(5, 10),
+		(5, 9),
+		(5, 8),
+		(6, 2),
+		(6, 4),
+		(6, 6),
+		(6, 12),
+		(7, 5),
+		(7, 7),
+		(7, 9),
+		(7, 10),
+		(8, 1),
+		(8, 2),
+		(8, 3);
 
 INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week)
 	VALUES
