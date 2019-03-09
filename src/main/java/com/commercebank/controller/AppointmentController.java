@@ -63,10 +63,15 @@ public class AppointmentController {
         // find available manager with appropriate skill for this appointment
         LocalTime time = appointment.getTime();
 
+        // change time to standard 12-hour am/pm
+        String apptTime = DateUtil.hourToHumanString(time.getHour());
+
+        // get list of available managers
         List<Manager> availableManagers = managerDAO.list(appointment.getBranchId(), appointment.getServiceId(),
                 appointment.getCalendarId(), appointment.getTime());
-        Manager chooseManager = availableManagers.get(0);
 
+        //choose 1st available manager & assign to this appointment
+        Manager chooseManager = availableManagers.get(0);
         appointment.setManagerId(chooseManager.getId());
 
         // add this appointment to the database
@@ -76,6 +81,12 @@ public class AppointmentController {
         List<Calendar> calendars = calendarDAO.list();
         Calendar calendar = calendars.get(appointment.getCalendarId() - 1);
         LocalDate date = calendar.getDate();
+        String day = DateUtil.ordinal(date.getDayOfMonth());
+        String upperMonth = String.valueOf(date.getMonth());
+        String month = upperMonth.substring(0,1) + upperMonth.substring(1).toLowerCase();
+        int year = date.getYear();
+        String upperDayOfWeek = String.valueOf(date.getDayOfWeek());
+        String dayOfWeek = upperDayOfWeek.substring(0,1)+ upperDayOfWeek.substring(1).toLowerCase();
 
         List<Branch> branches = branchDAO.list();
         Branch branch = branches.get(appointment.getBranchId() - 1);
@@ -101,7 +112,8 @@ public class AppointmentController {
 
         // create the text to display in the email
         String messageBody = "Dear " + customerName + ",<br><br>" + "Your appointment regarding " +
-                service + " is scheduled for " + date + " at " + time + ".<br>" +
+                service + " is scheduled for " + dayOfWeek + ", " + month + " " + day + ", " + year +
+                " at " + apptTime + ".<br>" +
                 "You will be meeting with " + managerName + " at " + branchName + ".<br>" +
                 "The address is " + branchAddress + ".<br><br>" +
                 "If you have questions, or need to reschedule, please contact " + managerName +
@@ -120,10 +132,12 @@ public class AppointmentController {
         StringBuilder strDate = new StringBuilder(date.toString());
         strDate.deleteCharAt(4); strDate.deleteCharAt(6);
         String dateStart = strDate.toString();
-        // todo: change to + 5 after start of daylight saving time
-        int startHourUTC = (time.getHour() + 6)%24; // currently UTC = CST + 6 hours
+
+       // change times to UTC for calendar invite
+        int startHourUTC = (time.getHour() + 5)%24; // currently UTC = CDT + 5 hours
         int endHourUTC = (startHourUTC + 1)%24;
         // todo: Add logic to switch date to next day if UTC time past 2400
+
         // add leading zero to hour if less than 10
         String leadingZeroStart = "";
         String leadingZeroEnd = "";
@@ -132,6 +146,7 @@ public class AppointmentController {
         String dateTimeStart = dateStart + "T" + leadingZeroStart + startHourUTC + "000000Z";
         String dateTimeEnd = dateStart + "T" + leadingZeroEnd + endHourUTC + "000000Z";
 
+        // put appointment info into .ics file
         pw.println("BEGIN:VCALENDAR");
         pw.println("VERSION: 2.0");
         pw.println("PRODID:-//SE3910//Project//EN");
@@ -140,13 +155,14 @@ public class AppointmentController {
         pw.println("DTSTART:" + dateTimeStart);
         pw.println("DTEND:" + dateTimeEnd);
         pw.println("DTSTAMP:" + timeStamp);
+        pw.println("ORGANIZER;CN=" + managerName + ":mailto:" + managerEmail);
         pw.println("SUMMARY:Commerce Bank Appointment");
         pw.println("END:VEVENT");
         pw.println("END:VCALENDAR");
 
         pw.close();
 
-
+        // send email
         mailSender.send(customerEmail, managerEmail, "Banking Appointment", messageBody, "appointmentInvite.ics");
        }
 
