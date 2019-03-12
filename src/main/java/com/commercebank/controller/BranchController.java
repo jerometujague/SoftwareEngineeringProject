@@ -4,12 +4,13 @@ import com.commercebank.dao.BranchDAO;
 import com.commercebank.dao.ManagerDAO;
 import com.commercebank.dao.SkillDAO;
 import com.commercebank.model.Branch;
+import com.commercebank.model.Manager;
+import com.commercebank.model.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,14 +37,14 @@ public class BranchController {
         return branchDAO.list();
     }
 
-    @RequestMapping(value = "/{serviceId}", method = RequestMethod.GET)
-    public List<Branch> getBranches(@PathVariable("serviceId") int serviceId){
+    @RequestMapping(method = RequestMethod.POST)
+    public List<Branch> getBranches(@RequestBody int[] serviceIds){
         List<Branch> branches =  branchDAO.list();
 
         // Set hasService to true for branches that have the service
         for(Branch b : branches){
-            if(hasService(b.getId(), serviceId)){
-                b.setAppointmentCount(appointmentSlotController.getAppointmentSlots(b.getId(), serviceId).size());
+            if(hasService(b.getId(), serviceIds)){
+                b.setAppointmentCount(appointmentSlotController.getAppointmentSlots(b.getId(), serviceIds).size());
                 b.setHasService(true);
             }
         }
@@ -51,15 +52,17 @@ public class BranchController {
         return branches;
     }
 
-    public boolean hasService(int branchId, int serviceId){
-        // Check if the skill is for this service
+    public boolean hasService(int branchId, int[] serviceIds){
+        List<Skill> skills = skillDAO.list();
+        List<Manager> managers = managerDAO.list();
+
+        // Check if there is a skill for every service
         // Check if manager who has the skill works at this branch
-        return skillDAO.list()
-                .stream()
-                .anyMatch(s -> s.getServiceId() == serviceId
-                        && managerDAO.list()
-                        .stream()
-                        .anyMatch(m -> m.getId() == s.getManagerId()
-                                && m.getBranchId() == branchId));
+        return managers.stream()
+                .anyMatch(m -> m.getBranchId() == branchId
+                        && Arrays.stream(serviceIds)
+                        .allMatch(service -> skills.stream()
+                                .anyMatch(skill -> skill.getServiceId() == service
+                                        && skill.getManagerId() == m.getId())));
     }
 }

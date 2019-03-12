@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static junit.framework.TestCase.assertTrue;
@@ -68,8 +69,8 @@ public class BranchControllerTests {
         // Manager 4 at branch 2 has service 2
         skills.add(new Skill(4, 2));
 
-        boolean hasService1 = branchController.hasService(1, 1);
-        boolean hasService2 = branchController.hasService(1, 2);
+        boolean hasService1 = branchController.hasService(1, new int[]{1});
+        boolean hasService2 = branchController.hasService(1, new int[]{2});
 
         assertTrue(hasService1);
         assertFalse(hasService2);
@@ -86,28 +87,28 @@ public class BranchControllerTests {
         // Manager 4 at branch 2 has service 2
         skills.add(new Skill(4, 2));
 
-        boolean branch1hasService1 = branchController.getBranches(1)
+        boolean branch1hasService1 = branchController.getBranches(new int[]{1})
                 .stream()
                 .filter(b -> b.getId() == 1)
                 .findFirst()
                 .get()
                 .isHasService();
 
-        boolean branch1hasService2 = branchController.getBranches(2)
+        boolean branch1hasService2 = branchController.getBranches(new int[]{2})
                 .stream()
                 .filter(b -> b.getId() == 1)
                 .findFirst()
                 .get()
                 .isHasService();
 
-        boolean branch2hasService1 = branchController.getBranches(1)
+        boolean branch2hasService1 = branchController.getBranches(new int[]{1})
                 .stream()
                 .filter(b -> b.getId() == 2)
                 .findFirst()
                 .get()
                 .isHasService();
 
-        boolean branch2hasService2 = branchController.getBranches(2)
+        boolean branch2hasService2 = branchController.getBranches(new int[]{2})
                 .stream()
                 .filter(b -> b.getId() == 2)
                 .findFirst()
@@ -118,6 +119,75 @@ public class BranchControllerTests {
         assertFalse(branch1hasService2);
         assertFalse(branch2hasService1);
         assertTrue(branch2hasService2);
+
+        // Clear the skills
+        skills.clear();
+    }
+
+    @Test
+    public void testGetBranchesWithService_MultipleSkills(){
+        // Manager 1 at branch 1 has service 1 and 2
+        skills.add(new Skill(1, 1));
+        skills.add(new Skill(1, 2));
+
+        // Manager 4 at branch 2 has service 1
+        skills.add(new Skill(4, 1));
+        skills.add(new Skill(4, 3));
+
+        boolean branch1hasService1and2 = branchController.getBranches(new int[]{1, 2})
+                .stream()
+                .filter(b -> b.getId() == 1)
+                .findFirst()
+                .get()
+                .isHasService();
+
+        boolean branch2hasService1and2 = branchController.getBranches(new int[]{1, 2})
+                .stream()
+                .filter(b -> b.getId() == 2)
+                .findFirst()
+                .get()
+                .isHasService();
+
+        assertTrue(branch1hasService1and2);
+        assertFalse(branch2hasService1and2);
+
+        // Clear the skills
+        skills.clear();
+    }
+
+    @Test
+    public void testGetBranchesWithService_MultipleSkillsSameManager(){
+        // Manager 1 at branch 1 has service 1 and 2
+        skills.add(new Skill(1, 1));
+        skills.add(new Skill(2, 2));
+        skills.add(new Skill(1, 3));
+        skills.add(new Skill(1, 4));
+        skills.add(new Skill(2, 4));
+
+        boolean hasService1and3 = branchController.getBranches(new int[]{1, 3})
+                .stream()
+                .filter(b -> b.getId() == 1)
+                .findFirst()
+                .get()
+                .isHasService();
+
+        boolean hasService1and2 = branchController.getBranches(new int[]{1, 2})
+                .stream()
+                .filter(b -> b.getId() == 1)
+                .findFirst()
+                .get()
+                .isHasService();
+
+        boolean hasService2and4 = branchController.getBranches(new int[]{2, 4})
+                .stream()
+                .filter(b -> b.getId() == 1)
+                .findFirst()
+                .get()
+                .isHasService();
+
+        assertTrue(hasService1and3);
+        assertFalse(hasService1and2);
+        assertTrue(hasService2and4);
 
         // Clear the skills
         skills.clear();

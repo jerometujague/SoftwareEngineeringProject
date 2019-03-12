@@ -40,7 +40,7 @@ class CustomerView extends React.Component {
             branches: [],
             services: [],
             appointmentSlots: [],
-            serviceId: 0,
+            serviceIds: [],
             branchId: 0,
             appointmentSlot: null,
             firstName: '',
@@ -120,19 +120,34 @@ class CustomerView extends React.Component {
         });
     }
 
-    async loadBranches(id) {
-        let url = "/api/branches/" + id;
+    async loadBranches() {
+        await $.ajax({
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: '/api/branches',
+            data: JSON.stringify(this.state.serviceIds),
+            success: async (data) => await this.loadBranchesWithDistance(data)
+        });
+    }
 
-        await $.getJSON(url, async (branchesList) => {
-            const newBranches = [];
+    async loadBranchesWithDistance(branchesList) {
+        const newBranches = [];
 
-            for (const branch of branchesList) {
-                // Get distance to branch from here
-                branch.distance = await distance(branch.streetAddress + ", " + branch.city + ", " + branch.state + " " + branch.zipCode);
-                newBranches.push(branch);
-            }
+        for (const branch of branchesList) {
+            // Get distance to branch from here
+            branch.distance = await distance(branch.streetAddress + ", " + branch.city + ", " + branch.state + " " + branch.zipCode);
+            newBranches.push(branch);
+        }
 
-            newBranches.sort((a, b) => {
+        newBranches.sort((a, b) => {
+            if (a.hasService && !b.hasService) {
+                return -1;
+            } else if (!a.hasService && b.hasService) {
+                return 1;
+            } else {
                 if (a.distance < b.distance) {
                     return -1;
                 } else if (a.distance > b.distance) {
@@ -140,38 +155,45 @@ class CustomerView extends React.Component {
                 } else {
                     return 0;
                 }
-            })
+            }
+        })
 
-            this.setState({
-                branches: newBranches,
-            });
+        this.setState({
+            branches: newBranches,
         });
     }
 
-    async loadAppointmentSlots(branchId, serviceId) {
-        let url = "/api/appointment-slots/" + branchId + "/" + serviceId;
+    async loadAppointmentSlots(branchId) {
+        await $.ajax({
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: "/api/appointment-slots/" + branchId,
+            data: JSON.stringify(this.state.serviceIds),
+            success: (appointmentSlotsList) => {
+                const newAppointmentSlots = [];
+                let daySlots = [];
+                let lastDay = appointmentSlotsList[0].day;
+                appointmentSlotsList.forEach(appointmentSlot => {
+                    if (appointmentSlot.day != lastDay) {
+                        // Hit a new day
+                        newAppointmentSlots.push(daySlots);
+                        daySlots = [];
+                    }
 
-        await $.getJSON(url, (appointmentSlotsList) => {
-            const newAppointmentSlots = [];
-            let daySlots = [];
-            let lastDay = appointmentSlotsList[0].day;
-            appointmentSlotsList.forEach(appointmentSlot => {
-                if (appointmentSlot.day != lastDay) {
-                    // Hit a new day
-                    newAppointmentSlots.push(daySlots);
-                    daySlots = [];
-                }
+                    daySlots.push(appointmentSlot);
 
-                daySlots.push(appointmentSlot);
+                    lastDay = appointmentSlot.day;
+                });
 
-                lastDay = appointmentSlot.day;
-            });
+                newAppointmentSlots.push(daySlots);
 
-            newAppointmentSlots.push(daySlots);
-
-            this.setState({
-                appointmentSlots: newAppointmentSlots,
-            });
+                this.setState({
+                    appointmentSlots: newAppointmentSlots,
+                });
+            }
         });
     }
 
@@ -215,14 +237,29 @@ class CustomerView extends React.Component {
     }
 
     async handleServiceClicked(id) {
+        const ids = this.state.serviceIds;
+
+        // Check if id is already in array
+        var index = ids.indexOf(id);
+        if (index !== -1) {
+            ids.splice(index, 1);
+        } else {
+            ids.push(id);
+        }
+
+        this.setState({
+            serviceIds: ids,
+        })
+    }
+
+    async handleServicesDone() {
         // Update service id and show a loading image
         this.setState({
-            serviceId: id,
             loading: true,
         });
 
         // Load the branches based on this service
-        await this.loadBranches(id);
+        await this.loadBranches();
 
         this.setState({
             page: 2,
@@ -282,13 +319,15 @@ class CustomerView extends React.Component {
                 unmountOnExit>
                 <div className="page">
                     <h2>What can we help you with?</h2>
+                    <p>Choose as many as you would like.</p>
                     <div id="services">
                         {
                             this.state.services.map(service => {
-                                return <button key={service.id} onClick={this.handleServiceClicked.bind(this, service.id)}>{service.service}</button>
+                                return <button key={service.id} className={this.state.serviceIds.includes(service.id) ? "selected" : ""} onClick={this.handleServiceClicked.bind(this, service.id)}>{service.service}</button>
                             })
                         }
                     </div>
+                    <input type="submit" value="Next" onClick={this.handleServicesDone.bind(this)} />
                 </div>
             </CSSTransition>
 
