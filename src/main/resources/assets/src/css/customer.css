@@ -32,6 +32,11 @@
         padding: 0px;
     }
 
+    button.selected {
+        background-color: #006747;
+        color: #ffffff;
+    }
+
     button:hover{
         background-color: #006747;
         color: #ffffff;

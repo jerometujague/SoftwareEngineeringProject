@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -92,11 +93,11 @@ public class AppointmentSlotControllerTests {
     public void testBranchNotOpen(){
         skills.add(new Skill(1, 1));
 
-        boolean closedDay = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean closedDay = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .anyMatch(a -> a.getCalendarId() == calendarId + 1 && a.getTime().equals("12:00 PM"));
 
-        boolean closedHour = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean closedHour = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .anyMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("7:00 AM"));
 
@@ -108,7 +109,7 @@ public class AppointmentSlotControllerTests {
 
     @Test
     public void noManagerHasSkill(){
-        boolean unavailable = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean unavailable = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 AM"));
 
@@ -119,7 +120,7 @@ public class AppointmentSlotControllerTests {
     public void testAppointmentMakesTakenFalse(){
         skills.add(new Skill(1, 1));
 
-        boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
                 .findFirst()
@@ -128,7 +129,7 @@ public class AppointmentSlotControllerTests {
 
         appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
 
-        boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
                 .findFirst()
@@ -147,14 +148,14 @@ public class AppointmentSlotControllerTests {
     public void testBranchUnavailableBlocksSlot(){
         skills.add(new Skill(1, 1));
 
-        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
         // Add a branch unavailable for branch 1
         branchUnavailables.add(new Unavailable(1, calendarId, LocalTime.of(12, 0), 1));
 
-        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
@@ -170,14 +171,14 @@ public class AppointmentSlotControllerTests {
     public void testManagerUnavailableBlocksSlot_HasNeededSkill(){
         skills.add(new Skill(1, 1));
 
-        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
         // Add a manager unavailable for manager 1
         managerUnavailables.add(new Unavailable(1, calendarId, LocalTime.of(12, 0), 1));
 
-        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
@@ -194,14 +195,14 @@ public class AppointmentSlotControllerTests {
         skills.add(new Skill(1, 1));
         skills.add(new Skill(2, 2));
 
-        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
         // Add a manager unavailable for manager 2
         managerUnavailables.add(new Unavailable(1, calendarId, LocalTime.of(12, 0), 2));
 
-        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
@@ -219,14 +220,14 @@ public class AppointmentSlotControllerTests {
         skills.add(new Skill(2, 2));
         skills.add(new Skill(3, 1));
 
-        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
         // Add a manager unavailable for manager 2
         managerUnavailables.add(new Unavailable(1, calendarId, LocalTime.of(12, 0), 2));
 
-        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
@@ -243,7 +244,7 @@ public class AppointmentSlotControllerTests {
         skills.add(new Skill(1, 1));
         skills.add(new Skill(2, 1));
 
-        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
@@ -251,7 +252,7 @@ public class AppointmentSlotControllerTests {
         managerUnavailables.add(new Unavailable(1, calendarId, LocalTime.of(12, 0), 1));
         managerUnavailables.add(new Unavailable(1, calendarId, LocalTime.of(12, 0), 2));
 
-        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
@@ -267,14 +268,14 @@ public class AppointmentSlotControllerTests {
     public void testManagerUnavailableBlocksSlot_DifferentHour(){
         skills.add(new Skill(1, 1));
 
-        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
         // Add a manager unavailable for manager 2
         managerUnavailables.add(new Unavailable(1, calendarId, LocalTime.of(13, 0), 1));
 
-        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
@@ -291,7 +292,7 @@ public class AppointmentSlotControllerTests {
         skills.add(new Skill(1, 1));
         skills.add(new Skill(1, 2));
 
-        boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, 2)
+        boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{2})
                 .stream()
                 .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
                 .findFirst()
@@ -301,7 +302,7 @@ public class AppointmentSlotControllerTests {
         // Add an appointment with manager 1 and service 1
         appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
 
-        boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, 2)
+        boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{2})
                 .stream()
                 .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
                 .findFirst()
@@ -321,7 +322,7 @@ public class AppointmentSlotControllerTests {
         skills.add(new Skill(1, 1));
         skills.add(new Skill(2, 1));
 
-        boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
                 .findFirst()
@@ -331,7 +332,7 @@ public class AppointmentSlotControllerTests {
         // Add an appointment with manager 1 and service 1
         appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
 
-        boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
                 .findFirst()
@@ -341,7 +342,7 @@ public class AppointmentSlotControllerTests {
         // Add an appointment with manager 2 and service 1
         appointments.add(new Appointment(2, calendarId, LocalTime.of(12, 0), 1, 2, 2, 1));
 
-        boolean isTakenFinally = appointmentSlotController.getAppointmentSlots(1, 1)
+        boolean isTakenFinally = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
                 .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
                 .findFirst()

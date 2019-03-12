@@ -3,16 +3,15 @@ package com.commercebank.controller;
 import com.commercebank.dao.*;
 import com.commercebank.model.*;
 import com.commercebank.util.DateUtil;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 // @RestController means Spring will automatically create and manager and instance of this class
 @RestController // Make this class a REST controller that accept HTTP requests
@@ -44,8 +43,8 @@ public class AppointmentSlotController {
         this.managerDAO = managerDAO;
     }
 
-    @RequestMapping(value = "/{branchId}/{serviceId}", method = RequestMethod.GET)
-    public List<AppointmentSlot> getAppointmentSlots(@PathVariable("branchId") int branchId, @PathVariable("serviceId") int serviceId){
+    @RequestMapping(value = "/{branchId}", method = RequestMethod.POST)
+    public List<AppointmentSlot> getAppointmentSlots(@PathVariable("branchId") int branchId, @RequestBody int[] serviceIds){
         List<AppointmentSlot> appointmentSlots = new ArrayList<>();
 
         // Get data at the beginning to save time
@@ -95,40 +94,32 @@ public class AppointmentSlotController {
                                     && u.getReferId() == branchId
                                     && u.getCalendarId() == calendarId);
 
+                    // Get all skills available at this branch at this time and day
+                    Supplier<Stream<Skill>> availableSkills = () -> skills
+                            .parallelStream()
+                            .filter(s -> managers // A manager must have the skill
+                                    .parallelStream()
+                                    .anyMatch(m -> s.getManagerId() == m.getId() // Only get skills for specific branch
+                                            && m.getBranchId() == branchId
+                                            && (managerUnavailables // There can't be an unavailable for that time
+                                            .parallelStream()
+                                            .noneMatch(u -> u.getReferId() == m.getId()
+                                                    && u.getTime().getHour() == slotHour
+                                                    && u.getCalendarId() == calendarId))));
+
                     // Check if there is already an appointment scheduled and no other manager has service
                     boolean taken = appointments
                             .parallelStream()
                             .filter(a -> a.getCalendarId() == calendarId
                                     && a.getTime().getHour() == slotHour
                                     && a.getBranchId() == branchId)
-                            .count() >= skills // The count of appointments is equal to count of managers with that service
-                            .parallelStream()
-                            .filter(s -> managers
-                                    .parallelStream()
-                                    .anyMatch(m -> s.getManagerId() == m.getId() // Only get skills for specific branch
-                                            && m.getBranchId() == branchId
-                                            && (managerUnavailables // There can't be an unavailable for that time
-                                            .parallelStream()
-                                            .noneMatch(u -> u.getReferId() == m.getId()
-                                                    && u.getTime().getHour() == slotHour
-                                                    && u.getCalendarId() == calendarId))))
-                            .filter(s -> s.getServiceId() == serviceId)
+                            .count() >= availableSkills.get() // The count of appointments is equal to count of managers with that service
+                            .filter(s -> s.getServiceId() == serviceIds[0])
                             .count();
 
-
                     // Check if the service is unavailable
-                    boolean serviceUnavailable = skills
-                            .parallelStream()
-                            .filter(s -> managers
-                                    .parallelStream()
-                                    .anyMatch(m -> s.getManagerId() == m.getId() // Only get skills for specific branch
-                                            && m.getBranchId() == branchId
-                                            && (managerUnavailables // There can't be an unavailable for that time
-                                            .parallelStream()
-                                            .noneMatch(u -> u.getReferId() == m.getId()
-                                                    && u.getTime().getHour() == slotHour
-                                                    && u.getCalendarId() == calendarId))))
-                            .noneMatch(s -> s.getServiceId() == serviceId);
+                    boolean serviceUnavailable = availableSkills.get()
+                            .noneMatch(s -> s.getServiceId() == serviceIds[0]);
 
                     // Get day and month string names
                     String dayName = DateUtil.capitalize(DayOfWeek.of(dayOfWeek).name().toLowerCase());
