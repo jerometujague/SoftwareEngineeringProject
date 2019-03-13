@@ -6,6 +6,7 @@ import 'babel-polyfill';
 import './css/customer.css';
 import loadingImage from './images/loading.gif';
 import { distance } from './map';
+import Services from './servicesPage';
 
 function fixTime(oldTime) {
     // Get AM or PM
@@ -121,6 +122,10 @@ class CustomerView extends React.Component {
     }
 
     async loadBranches() {
+        this.setState({
+            loading: true,
+        });
+
         await $.ajax({
             type: 'POST',
             headers: {
@@ -130,6 +135,10 @@ class CustomerView extends React.Component {
             url: '/api/branches',
             data: JSON.stringify(this.state.serviceIds),
             success: async (data) => await this.loadBranchesWithDistance(data)
+        });
+
+        this.setState({
+            loading: false,
         });
     }
 
@@ -236,38 +245,6 @@ class CustomerView extends React.Component {
         });
     }
 
-    async handleServiceClicked(id) {
-        const ids = this.state.serviceIds;
-
-        // Check if id is already in array
-        var index = ids.indexOf(id);
-        if (index !== -1) {
-            ids.splice(index, 1);
-        } else {
-            ids.push(id);
-        }
-
-        this.setState({
-            serviceIds: ids,
-        })
-    }
-
-    async handleServicesDone() {
-        // Update service id and show a loading image
-        this.setState({
-            loading: true,
-        });
-
-        // Load the branches based on this service
-        await this.loadBranches();
-
-        this.setState({
-            page: 2,
-            loading: false,
-            wentBack: false,
-        });
-    }
-
     async handleBranchClicked(id) {
         // Update branch id and show a loading image
         this.setState({
@@ -293,11 +270,24 @@ class CustomerView extends React.Component {
         });
     }
 
-    async goBack() {
-        //Go back one page if back button is clicked
+    goBack() {
+        // Go back one page if back button is clicked
         this.setState({
             page: this.state.page - 1,
             wentBack: true,
+        });
+    }
+
+    goForward() {
+        this.setState({
+            page: this.state.page + 1,
+            wentBack: false,
+        });
+    }
+
+    setServiceIds(serviceIds) {
+        this.setState({
+            serviceIds: serviceIds,
         });
     }
 
@@ -317,18 +307,12 @@ class CustomerView extends React.Component {
                 timeout={600}
                 classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
-                <div className="page">
-                    <h2>What can we help you with?</h2>
-                    <p>Choose as many as you would like.</p>
-                    <div id="services">
-                        {
-                            this.state.services.map(service => {
-                                return <button key={service.id} className={this.state.serviceIds.includes(service.id) ? "selected" : ""} onClick={this.handleServiceClicked.bind(this, service.id)}>{service.service}</button>
-                            })
-                        }
-                    </div>
-                    <input type="submit" value="Next" onClick={this.handleServicesDone.bind(this)} />
-                </div>
+                <Services
+                    services={this.state.services}
+                    serviceIds={this.state.serviceIds}
+                    goForward={this.goForward}
+                    setServiceIds={this.setServiceIds}
+                    loadBranches={this.loadBranches()} />
             </CSSTransition>
 
             <CSSTransition
