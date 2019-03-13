@@ -111,7 +111,7 @@ public class AppointmentSlotControllerTests {
     public void noManagerHasSkill(){
         boolean unavailable = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
-                .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 AM"));
+                .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
 
         assertTrue(unavailable);
     }
@@ -355,6 +355,88 @@ public class AppointmentSlotControllerTests {
 
         // Reset appointments and skills list
         appointments.clear();
+        skills.clear();
+    }
+
+    @Test
+    public void appointmentMakeMultipleSkillsTaken(){
+        skills.add(new Skill(1, 1));
+        skills.add(new Skill(1, 2));
+        skills.add(new Skill(2, 1));
+
+        boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1, 2})
+                .stream()
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .findFirst()
+                .get()
+                .getTaken();
+
+        // Add an appointment with manager 1 and service 1
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
+
+        boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1, 2})
+                .stream()
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .findFirst()
+                .get()
+                .getTaken();
+
+        boolean isOneTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
+                .stream()
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .findFirst()
+                .get()
+                .getTaken();
+
+        assertFalse(isTakenBefore);
+        assertTrue(isTakenAfter);
+        assertFalse(isOneTakenAfter);
+
+        skills.clear();
+        appointments.clear();
+    }
+
+    @Test
+    public void noManagerHasMultipleSkills(){
+        skills.add(new Skill(1, 1));
+        skills.add(new Skill(2, 2));
+
+
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
+
+        boolean unavailable = appointmentSlotController.getAppointmentSlots(1, new int[]{1, 2})
+                .stream()
+                .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
+
+        assertTrue(unavailable);
+
+        skills.clear();
+    }
+
+    @Test
+    public void testManagerUnavailableBlocksSlot_HasNeededMultipleSkills(){
+        skills.add(new Skill(1, 1));
+        skills.add(new Skill(1, 2));
+        skills.add(new Skill(1, 3));
+        skills.add(new Skill(2, 2));
+        skills.add(new Skill(2, 3));
+
+        boolean isUnavailableBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1, 2, 3})
+                .stream()
+                .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
+
+        // Add a manager unavailable for manager 1
+        managerUnavailables.add(new Unavailable(1, calendarId, LocalTime.of(12, 0), 1));
+
+        boolean isUnavailableAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1, 2, 3})
+                .stream()
+                .noneMatch(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"));
+
+        assertFalse(isUnavailableBefore);
+        assertTrue(isUnavailableAfter);
+
+        // Reset managerUnavailables list
+        managerUnavailables.clear();
         skills.clear();
     }
 
