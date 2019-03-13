@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -94,18 +95,18 @@ public class AppointmentSlotController {
                                     && u.getReferId() == branchId
                                     && u.getCalendarId() == calendarId);
 
-                    // Get all skills available at this branch at this time and day
-                    Supplier<Stream<Skill>> availableSkills = () -> skills
-                            .parallelStream()
-                            .filter(s -> managers // A manager must have the skill
+                    // Get all available managers at this branch that have all the needed skills for a specific time
+                    Supplier<Stream<Manager>> availableManagers = () -> managers.parallelStream()
+                            .filter(m -> m.getBranchId() == branchId // They must be at this branch
+                                    && (managerUnavailables // There can't be an unavailable for that time
                                     .parallelStream()
-                                    .anyMatch(m -> s.getManagerId() == m.getId() // Only get skills for specific branch
-                                            && m.getBranchId() == branchId
-                                            && (managerUnavailables // There can't be an unavailable for that time
-                                            .parallelStream()
-                                            .noneMatch(u -> u.getReferId() == m.getId()
-                                                    && u.getTime().getHour() == slotHour
-                                                    && u.getCalendarId() == calendarId))));
+                                    .noneMatch(u -> u.getReferId() == m.getId()
+                                            && u.getTime().getHour() == slotHour
+                                            && u.getCalendarId() == calendarId))
+                                    && Arrays.stream(serviceIds) // They must have all of the serviceIds
+                                    .allMatch(service -> skills.parallelStream()
+                                            .anyMatch(skill -> skill.getServiceId() == service
+                                                    && skill.getManagerId() == m.getId())));
 
                     // Check if there is already an appointment scheduled and no other manager has service
                     boolean taken = appointments
@@ -113,13 +114,13 @@ public class AppointmentSlotController {
                             .filter(a -> a.getCalendarId() == calendarId
                                     && a.getTime().getHour() == slotHour
                                     && a.getBranchId() == branchId)
-                            .count() >= availableSkills.get() // The count of appointments is equal to count of managers with that service
-                            .filter(s -> s.getServiceId() == serviceIds[0])
+                            .count() >= availableManagers.get() // The count of appointments is equal to count of managers with that service
                             .count();
 
-                    // Check if the service is unavailable
-                    boolean serviceUnavailable = availableSkills.get()
-                            .noneMatch(s -> s.getServiceId() == serviceIds[0]);
+                    // Check if there is a manager able to provide service
+                    boolean serviceUnavailable = !availableManagers.get()
+                            .findAny()
+                            .isPresent();
 
                     // Get day and month string names
                     String dayName = DateUtil.capitalize(DayOfWeek.of(dayOfWeek).name().toLowerCase());
