@@ -111,6 +111,7 @@ input[type="checkbox"]{
 
 .page {
     position: absolute;
+    left: 80px;
 }
 
 #backButton {
@@ -189,6 +190,9 @@ input[type="checkbox"]{
     height: 300px;
 }
 
+#progressBar {
+    position: absolute;
+}
 .error {
     color: red;
 }

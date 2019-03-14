@@ -6,6 +6,7 @@ import { CSSTransition } from 'react-transition-group';
 import AppointmentSlots from './appointmentSlotsPage';
 import Branches from './branchesPage';
 import './css/customer.css';
+import './css/progressBar.css';
 import Details from './detailsPage';
 import loadingImage from './images/loading.gif';
 import Info from './infoPage';
@@ -88,6 +89,16 @@ class CustomerView extends React.Component {
                     </div>
                 }
                 <h1 id="headerText">Schedule an appointment</h1>
+            </div>
+
+            <div id="progressBar">
+                <ul className="progressbar">
+                    <li className={this.state.page >= 1 ? "active" : ""}></li>
+                    <li className={this.state.page >= 2 ? "active" : ""}></li>
+                    <li className={this.state.page >= 3 ? "active" : ""}></li>
+                    <li className={this.state.page >= 4 ? "active" : ""}></li>
+                    <li className={this.state.page >= 5 ? "active" : ""}></li>
+                </ul>
             </div>
 
             <CSSTransition // Services page that shows the services and loads the branches

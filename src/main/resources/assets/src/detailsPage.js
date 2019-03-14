@@ -21,7 +21,7 @@ export default class Details extends React.Component {
         });
 
         return (
-            <div>
+            <div className="page">
                 <h2>{"Here's your appointment:"}</h2>
                 <p>{this.props.customerName},</p>
                 <p>{"Your appointment is scheduled. We'll see you soon!"}</p>
