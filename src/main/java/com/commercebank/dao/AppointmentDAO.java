@@ -33,6 +33,6 @@ public class AppointmentDAO {
                 appointment.getBranchId(),
                 appointment.getManagerId(),
                 appointment.getCustomerId(),
-                appointment.getServiceId());
+                appointment.getServiceIds()[0]);
     }
 }

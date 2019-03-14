@@ -224,7 +224,7 @@ class CustomerView extends React.Component {
                 time: fixTime(this.state.appointmentSlot.time),
                 branchId: this.state.branchId,
                 customerId: customerId,
-                serviceId: this.state.serviceId
+                serviceIds: this.state.serviceIds
             })
         });
 
@@ -304,7 +304,7 @@ class CustomerView extends React.Component {
     render() {
         return (<div>
             <div id="header">
-                {this.state.page >= 2 && // Show the back button when page is 2 or greater
+                {this.state.page >= 2 && this.state.page <= 4 && // Show the back button when page is 2 or greater
                     <div id="backButtonHolder">
                         <button id="backButton" onClick={this.goBack}>Go Back</button>
                     </div>

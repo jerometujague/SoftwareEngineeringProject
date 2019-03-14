@@ -127,7 +127,7 @@ public class AppointmentSlotControllerTests {
                 .get()
                 .getTaken();
 
-        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, new int[]{1}));
 
         boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
@@ -300,7 +300,7 @@ public class AppointmentSlotControllerTests {
                 .getTaken();
 
         // Add an appointment with manager 1 and service 1
-        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, new int[]{1}));
 
         boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{2})
                 .stream()
@@ -330,7 +330,7 @@ public class AppointmentSlotControllerTests {
                 .getTaken();
 
         // Add an appointment with manager 1 and service 1
-        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, new int[]{1}));
 
         boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
@@ -340,7 +340,7 @@ public class AppointmentSlotControllerTests {
                 .getTaken();
 
         // Add an appointment with manager 2 and service 1
-        appointments.add(new Appointment(2, calendarId, LocalTime.of(12, 0), 1, 2, 2, 1));
+        appointments.add(new Appointment(2, calendarId, LocalTime.of(12, 0), 1, 2, 2, new int[]{1}));
 
         boolean isTakenFinally = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
@@ -372,7 +372,7 @@ public class AppointmentSlotControllerTests {
                 .getTaken();
 
         // Add an appointment with manager 1 and service 1
-        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, new int[]{1}));
 
         boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1, 2})
                 .stream()
@@ -402,7 +402,7 @@ public class AppointmentSlotControllerTests {
         skills.add(new Skill(2, 2));
 
 
-        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, 1));
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, new int[]{1}));
 
         boolean unavailable = appointmentSlotController.getAppointmentSlots(1, new int[]{1, 2})
                 .stream()
