@@ -63,7 +63,7 @@ public class AppointmentController {
         String apptTime = DateUtil.hourToHumanString(time.getHour());
 
         // get list of available managers
-        List<Manager> availableManagers = managerDAO.list(appointment.getBranchId(), appointment.getServiceId(),
+        List<Manager> availableManagers = managerDAO.list(appointment.getBranchId(), appointment.getServiceIds(),
                 appointment.getCalendarId(), appointment.getTime());
 
         //choose 1st available manager & assign to this appointment
@@ -97,8 +97,23 @@ public class AppointmentController {
         String managerPhone = apptManager.getPhoneNumber();
 
         List<Service> services = serviceDAO.list();
-        Service apptService = services.get(appointment.getServiceId() - 1);
-        String service = apptService.getService();
+
+        String service = "";
+
+        int numServiceIds = appointment.getServiceIds().length;
+        for(int i = 0; i < numServiceIds; i++){
+            Service apptService = services.get(appointment.getServiceIds()[i] - 1);
+
+            if(i == 0){
+                service = apptService.getService();
+            } else if (i == numServiceIds - 1 && numServiceIds == 2) {
+                service = service + " and " + apptService.getService();
+            } else if (i == numServiceIds - 1) {
+                service = service + ", and " + apptService.getService();
+            } else {
+                service = service + ", " + apptService.getService();
+            }
+        }
 
         // get customer info
         List<Customer> customers = customerDAO.list();

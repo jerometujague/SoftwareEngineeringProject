@@ -28,8 +28,8 @@ public class ManagerDAO {
     }
 
     // TODO: Make work for multiple servicecs
-    public List<Manager> list(int branchID, int serviceID, int calendarID, LocalTime time){
+    public List<Manager> list(int branchID, int[] serviceIDs, int calendarID, LocalTime time){
         String sql = "SELECT * FROM manager WHERE (branch_id=?) AND id IN (SELECT id FROM manager JOIN skills ON(id = manager_id) WHERE (service_id=?)) AND id NOT IN (SELECT manager_id FROM manager_unavailable JOIN unavailable ON(unavailable_id = id) WHERE (calendar_id=?) AND (time=?));";
-        return this.jdbcTemplate.query(sql, managerMapper, branchID, serviceID, calendarID, time);
+        return this.jdbcTemplate.query(sql, managerMapper, branchID, serviceIDs[0], calendarID, time);
     }
 }

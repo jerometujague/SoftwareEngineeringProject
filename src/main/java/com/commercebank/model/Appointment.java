@@ -10,16 +10,16 @@ public class Appointment {
     private int branchId;
     private int managerId;
     private int customerId;
-    private int serviceId;
+    private int[] serviceIds;
 
-    public Appointment(int id, int calendarId, LocalTime time, int branchId, int managerId, int customerId, int serviceId) {
+    public Appointment(int id, int calendarId, LocalTime time, int branchId, int managerId, int customerId, int[] serviceIds) {
         this.id = id;
         this.calendarId = calendarId;
         this.time = time;
         this.branchId = branchId;
         this.managerId = managerId;
         this.customerId = customerId;
-        this.serviceId = serviceId;
+        this.serviceIds = serviceIds;
     }
 
     // Default constructor used when a post request is made
@@ -69,12 +69,12 @@ public class Appointment {
         this.customerId = customerId;
     }
 
-    public int getServiceId() {
-        return serviceId;
+    public int[] getServiceIds() {
+        return serviceIds;
     }
 
-    public void setServiceId(int serviceId) {
-        this.serviceId = serviceId;
+    public void setServiceIds(int[] serviceIds) {
+        this.serviceIds = serviceIds;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class Appointment {
                 ", branchId=" + branchId +
                 ", managerId=" + managerId +
                 ", customerId=" + customerId +
-                ", serviceId=" + serviceId +
+                ", serviceIds=" + serviceIds +
                 '}';
     }
 }
