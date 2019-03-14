@@ -52,9 +52,17 @@ export default class Info extends React.Component {
             })
         });
 
-        // Show the completion page
-        this.props.setStateValue('loading', false);
+        // Get the appointment that was just scheduled
+        let url = "/api/appointments";
 
+        await $.getJSON(url, (appointmentList) => {
+            this.props.setStateValue('appointment', appointmentList[appointmentList.length - 1]);
+        });
+
+        this.props.setStateValue('customerName', this.state.firstName + " " + this.state.lastName);
+
+        // Stop loading and move to next page
+        this.props.setStateValue('loading', false);
         this.props.goForward();
     }
 

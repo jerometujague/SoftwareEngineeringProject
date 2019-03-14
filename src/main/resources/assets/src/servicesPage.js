@@ -22,7 +22,12 @@ export default class Services extends React.Component {
     }
 
     handleServicesDone() {
-        // Load the branches and move the page forward
+        // Check if at least on service is selected
+        if (this.props.serviceIds.length == 0) {
+            return;
+        }
+
+        // Load the branches
         this.loadBranches();
     }
 
@@ -83,7 +88,7 @@ export default class Services extends React.Component {
                         })
                     }
                 </div>
-                <input type="submit" value="Next" onClick={this.handleServicesDone.bind(this)} />
+                <input type="submit" value="Continue" onClick={this.handleServicesDone.bind(this)} />
             </div>
         );
     }

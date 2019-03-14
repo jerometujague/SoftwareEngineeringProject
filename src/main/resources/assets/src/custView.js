@@ -21,15 +21,23 @@ class CustomerView extends React.Component {
             serviceIds: [],
             branchId: 0,
             appointmentSlot: null,
-            page: 1,
+            appointment: null,
+            customerName: "",
+            page: 0,
             loading: false,
             wentBack: false,
         }
+    }
 
+    componentDidMount() {
         this.loadServices();
     }
 
     async loadServices() {
+        this.setState({
+            loading: true,
+        });
+
         let url = "/api/services";
 
         await $.getJSON(url, (servicesList) => {
@@ -42,6 +50,12 @@ class CustomerView extends React.Component {
                 services: newServices,
             });
         });
+
+        this.setState({
+            loading: false,
+        });
+
+        this.goForward();
     }
 
     goBack() {
@@ -129,7 +143,12 @@ class CustomerView extends React.Component {
                 timeout={600}
                 classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
-                <Details />
+                <Details
+                    appointment={this.state.appointment}
+                    appointmentSlot={this.state.appointmentSlot}
+                    branches={this.state.branches}
+                    services={this.state.services}
+                    customerName={this.state.customerName} />
             </CSSTransition>
 
             <CSSTransition // Loading image for when we are retrieving data
