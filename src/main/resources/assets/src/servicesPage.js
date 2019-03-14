@@ -21,16 +21,15 @@ export default class Services extends React.Component {
         this.props.setStateValue('serviceIds', ids);
     }
 
-    async handleServicesDone() {
+    handleServicesDone() {
         // Load the branches and move the page forward
-        await this.loadBranches();
-        this.props.goForward();
+        this.loadBranches();
     }
 
-    async loadBranches() {
+    loadBranches() {
         this.props.setStateValue('loading', true);
 
-        await $.ajax({
+        $.ajax({
             type: 'POST',
             headers: {
                 'Accept': 'application/json',
@@ -38,10 +37,8 @@ export default class Services extends React.Component {
             },
             url: '/api/branches',
             data: JSON.stringify(this.props.serviceIds),
-            success: async (data) => await this.loadBranchesWithDistance(data)
+            success: (data) => this.loadBranchesWithDistance(data)
         });
-
-        this.props.setStateValue('loading', false);
     }
 
     async loadBranchesWithDistance(branchesList) {
@@ -70,6 +67,8 @@ export default class Services extends React.Component {
         })
 
         this.props.setStateValue('branches', newBranches);
+        this.props.setStateValue('loading', false);
+        this.props.goForward();
     }
 
     render() {
