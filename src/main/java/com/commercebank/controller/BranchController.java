@@ -44,7 +44,10 @@ public class BranchController {
         // Set hasService to true for branches that have the service
         for(Branch b : branches){
             if(hasService(b.getId(), serviceIds)){
-                b.setAppointmentCount(appointmentSlotController.getAppointmentSlots(b.getId(), serviceIds).size());
+                b.setAppointmentCount(((int)appointmentSlotController.getAppointmentSlots(b.getId(), serviceIds)
+                        .parallelStream()
+                        .filter(s -> !s.getTaken())
+                        .count()));
                 b.setHasService(true);
             }
         }
