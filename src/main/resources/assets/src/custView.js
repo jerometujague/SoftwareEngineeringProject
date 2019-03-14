@@ -1,38 +1,15 @@
+import 'babel-polyfill';
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import $ from 'jquery';
 import { CSSTransition } from 'react-transition-group';
-import 'babel-polyfill';
+import AppointmentSlots from './appointmentSlotsPage';
+import Branches from './branchesPage';
 import './css/customer.css';
+import Details from './detailsPage';
 import loadingImage from './images/loading.gif';
-import { distance } from './map';
+import Info from './infoPage';
 import Services from './servicesPage';
-
-function fixTime(oldTime) {
-    // Get AM or PM
-    let t = oldTime.slice(-2);
-
-    // Cut off AM or PM
-    let time = oldTime.slice(0, oldTime.length - 2);
-
-    // Add 12 to hour if PM
-    if (t == "PM") {
-        let array = time.split(":");
-        if (array[0] != 12) {
-            let newHour = Number(array[0]) + 12;
-            time = newHour + ":00";
-        }
-    }
-
-    let array = time.split(":");
-
-    // Check if hour is single digit
-    if (array[0] < 10) {
-        time = "0" + array[0] + ":00";
-    }
-
-    return time;
-}
 
 class CustomerView extends React.Component {
     constructor(props) {
@@ -44,66 +21,12 @@ class CustomerView extends React.Component {
             serviceIds: [],
             branchId: 0,
             appointmentSlot: null,
-            firstName: '',
-            lastName: '',
-            phoneNumber: '',
-            email: '',
             page: 1,
             loading: false,
             wentBack: false,
         }
 
-        this.handleChange = this.handleChange.bind(this);
         this.loadServices();
-        this.goBack = this.goBack.bind(this);
-    }
-
-    handleChange(event) {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
-        this.setState({
-            [name]: value
-        });
-    }
-
-    async addCustomer() {
-        let url = "/api/customers/" + this.state.email + "/";
-        let id = 0;
-
-        // Check if the customer already exists
-        await $.getJSON(url, (customer) => {
-            if (customer.id > 0) {
-                // Customer already exists, schedule appointment with that id
-                id = customer.id;
-            }
-        });
-
-        if (id == 0) {
-            // Create a new customer
-            await $.ajax({
-                type: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                url: '/api/customers/add',
-                data: JSON.stringify({
-                    firstName: this.state.firstName,
-                    lastName: this.state.lastName,
-                    phoneNumber: this.state.phoneNumber,
-                    email: this.state.email
-                })
-            });
-
-            // Get the id of the customer just created
-            await $.getJSON(url, (customer) => {
-                // Call schedule appointment with the new id
-                id = customer.id;
-            });
-        }
-
-        return id;
     }
 
     async loadServices() {
@@ -118,155 +41,6 @@ class CustomerView extends React.Component {
             this.setState({
                 services: newServices,
             });
-        });
-    }
-
-    async loadBranches() {
-        this.setState({
-            loading: true,
-        });
-
-        await $.ajax({
-            type: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            url: '/api/branches',
-            data: JSON.stringify(this.state.serviceIds),
-            success: async (data) => await this.loadBranchesWithDistance(data)
-        });
-
-        this.setState({
-            loading: false,
-        });
-    }
-
-    async loadBranchesWithDistance(branchesList) {
-        const newBranches = [];
-
-        for (const branch of branchesList) {
-            // Get distance to branch from here
-            branch.distance = await distance(branch.streetAddress + ", " + branch.city + ", " + branch.state + " " + branch.zipCode);
-            newBranches.push(branch);
-        }
-
-        newBranches.sort((a, b) => {
-            if (a.hasService && !b.hasService) {
-                return -1;
-            } else if (!a.hasService && b.hasService) {
-                return 1;
-            } else {
-                if (a.distance < b.distance) {
-                    return -1;
-                } else if (a.distance > b.distance) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            }
-        })
-
-        this.setState({
-            branches: newBranches,
-        });
-    }
-
-    async loadAppointmentSlots(branchId) {
-        await $.ajax({
-            type: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            url: "/api/appointment-slots/" + branchId,
-            data: JSON.stringify(this.state.serviceIds),
-            success: (appointmentSlotsList) => {
-                const newAppointmentSlots = [];
-                let daySlots = [];
-                let lastDay = appointmentSlotsList[0].day;
-                appointmentSlotsList.forEach(appointmentSlot => {
-                    if (appointmentSlot.day != lastDay) {
-                        // Hit a new day
-                        newAppointmentSlots.push(daySlots);
-                        daySlots = [];
-                    }
-
-                    daySlots.push(appointmentSlot);
-
-                    lastDay = appointmentSlot.day;
-                });
-
-                newAppointmentSlots.push(daySlots);
-
-                this.setState({
-                    appointmentSlots: newAppointmentSlots,
-                });
-            }
-        });
-    }
-
-    async scheduleAppointment() {
-        // TODO: Valid email checking here
-        if (this.state.firstName == '' || this.state.lastName == '' || this.state.email == '') {
-            // TODO: Show a error message
-            return;
-        }
-
-        // Show a loading image
-        this.setState({
-            loading: true,
-        });
-
-        let customerId = await this.addCustomer();
-
-        // Send the schedule request
-        await $.ajax({
-            type: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            url: '/api/appointments/add',
-            data: JSON.stringify({
-                calendarId: this.state.appointmentSlot.calendarId,
-                time: fixTime(this.state.appointmentSlot.time),
-                branchId: this.state.branchId,
-                customerId: customerId,
-                serviceIds: this.state.serviceIds
-            })
-        });
-
-        // Show the completion page
-        this.setState({
-            page: 5,
-            loading: false,
-            wentBack: false,
-        });
-    }
-
-    async handleBranchClicked(id) {
-        // Update branch id and show a loading image
-        this.setState({
-            branchId: id,
-            loading: true,
-        });
-
-        // Load the appointment slots based on the branch and service
-        await this.loadAppointmentSlots(id, this.state.serviceId);
-
-        this.setState({
-            page: 3,
-            loading: false,
-            wentBack: false,
-        });
-    }
-
-    handleAppointmentSlotClicked(slot) {
-        this.setState({
-            appointmentSlot: slot,
-            page: 4,
-            wentBack: false,
         });
     }
 
@@ -285,9 +59,9 @@ class CustomerView extends React.Component {
         });
     }
 
-    setServiceIds(serviceIds) {
+    setStateValue(name, value) {
         this.setState({
-            serviceIds: serviceIds,
+            [name]: value,
         });
     }
 
@@ -296,13 +70,13 @@ class CustomerView extends React.Component {
             <div id="header">
                 {this.state.page >= 2 && this.state.page <= 4 && // Show the back button when page is 2 or greater
                     <div id="backButtonHolder">
-                        <button id="backButton" onClick={this.goBack}>Go Back</button>
+                        <button id="backButton" onClick={this.goBack.bind(this)}>Go Back</button>
                     </div>
                 }
                 <h1 id="headerText">Schedule an appointment</h1>
             </div>
 
-            <CSSTransition
+            <CSSTransition // Services page that shows the services and loads the branches
                 in={this.state.page == 1}
                 timeout={600}
                 classNames={this.state.wentBack ? "pageBack" : "page"}
@@ -310,105 +84,55 @@ class CustomerView extends React.Component {
                 <Services
                     services={this.state.services}
                     serviceIds={this.state.serviceIds}
-                    goForward={this.goForward}
-                    setServiceIds={this.setServiceIds}
-                    loadBranches={this.loadBranches()} />
+                    goForward={this.goForward.bind(this)}
+                    setStateValue={this.setStateValue.bind(this)} />
             </CSSTransition>
 
-            <CSSTransition
+            <CSSTransition // Branches page that shows the branches and loads the appointment slots
                 in={this.state.page == 2}
                 timeout={600}
                 classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
-                <div className="page" id="branches">
-                    <h2>Which location works best for you?</h2>
-                    {/* <Map branches={this.state.branches}></Map> */}
-                    {
-                        this.state.branches.map(branch => {
-                            return (
-                                <div className="branch" key={branch.id}>
-                                    <p className="distance">{branch.distance}</p>
-                                    <p>{branch.streetAddress}</p>
-                                    <p>{branch.city + ", " + branch.state + " " + branch.zipCode}</p>
-                                    <p>{branch.appointmentCount} available appointments in the two weeks</p>
-                                    <input type="submit" value="Select branch" disabled={!branch.hasService} onClick={this.handleBranchClicked.bind(this, branch.id)} />
-                                </div>
-                            );
-                        })
-                    }
-                </div>
+                <Branches
+                    branches={this.state.branches}
+                    serviceIds={this.state.serviceIds}
+                    goForward={this.goForward.bind(this)}
+                    setStateValue={this.setStateValue.bind(this)} />
             </CSSTransition>
 
-            <CSSTransition
+            <CSSTransition // AppointmentSlots page that shows the appointment slots and moves to info page
                 in={this.state.page == 3}
                 timeout={600}
                 classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
-                <div className="page" id="appointmentSlots">
-                    <h2>{"Let's find a time that works for you."}</h2>
-                    <div id="slotHolder">
-                        {
-                            this.state.appointmentSlots.map((slot, i) => {
-                                return (
-                                    <div key={i}>
-                                        <h3>{slot[0].day + ", " + slot[0].month + " " + slot[0].date}</h3>
-                                        <div className="timeSlots">
-                                            {
-                                                slot.map((time, j) => {
-                                                    return (
-                                                        <div key={j}>
-                                                            <input className="appointmentTime" type="submit" value={time.time} disabled={time.taken} onClick={this.handleAppointmentSlotClicked.bind(this, time)} />
-                                                        </div>
-                                                    );
-                                                })
-                                            }
-                                        </div>
-                                    </div>
-                                );
-                            })
-                        }
-                    </div>
-                </div>
+                <AppointmentSlots
+                    appointmentSlots={this.state.appointmentSlots}
+                    goForward={this.goForward.bind(this)}
+                    setStateValue={this.setStateValue.bind(this)} />
             </CSSTransition>
 
-            <CSSTransition
+            <CSSTransition // Info page that lets the customer enter information and schedules appointment
                 in={this.state.page == 4}
                 timeout={600}
                 classNames={this.state.wentBack ? "pageBack" : "page"}
                 unmountOnExit>
-                <div className="page">
-                    <h2>Now we just need a few more details.</h2>
-                    <form>
-                        <label>
-                            First Name
-                    <input type="text" name="firstName" value={this.state.firstName} onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Last Name
-                    <input type="text" name="lastName" value={this.state.lastName} onChange={this.handleChange} />
-                        </label>
-                        <br />
-                        <label>
-                            Email
-                    <input type="email" name="email" value={this.state.email} onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Phone number
-                    <input type="tel" name="phoneNumber" value={this.state.phoneNumber} onChange={this.handleChange} />
-                        </label>
-                    </form>
-
-                    <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.scheduleAppointment.bind(this)} />
-                </div>
+                <Info
+                    appointmentSlot={this.state.appointmentSlot}
+                    branchId={this.state.branchId}
+                    serviceIds={this.state.serviceIds}
+                    goForward={this.goForward.bind(this)}
+                    setStateValue={this.setStateValue.bind(this)} />
             </CSSTransition>
 
-            {this.state.page == 5 && // Show the confimation screen when page is 5
-                <div>
-                    <p>{"Here's your appointment"}</p>
-                </div>
-            }
+            <CSSTransition // Details page that shows appointment details and lets the customer cancel appointment
+                in={this.state.page == 5}
+                timeout={600}
+                classNames={this.state.wentBack ? "pageBack" : "page"}
+                unmountOnExit>
+                <Details />
+            </CSSTransition>
 
-            <CSSTransition
+            <CSSTransition // Loading image for when we are retrieving data
                 in={this.state.loading}
                 timeout={{
                     enter: 300,
