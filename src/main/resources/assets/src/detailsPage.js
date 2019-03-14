@@ -22,9 +22,9 @@ export default class Details extends React.Component {
 
         return (
             <div>
-                <h2>Here's your appointment:</h2>
+                <h2>{"Here's your appointment:"}</h2>
                 <p>{this.props.customerName},</p>
-                <p>Your appointment is scheduled. We'll see you soon!</p>
+                <p>{"Your appointment is scheduled. We'll see you soon!"}</p>
                 <p>{branch.streetAddress}</p>
                 <p>{branch.city + ", " + branch.state + " " + branch.zipCode}</p>
                 <p>{this.props.appointmentSlot.day}, {this.props.appointmentSlot.month} {this.props.appointmentSlot.date}</p>
