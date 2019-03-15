@@ -1,5 +1,8 @@
 import React from 'react';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapMarkerAlt, faCalendarAlt, faPiggyBank } from "@fortawesome/free-solid-svg-icons";
+
 export default class Details extends React.Component {
     constructor(props) {
         super(props);
@@ -21,8 +24,8 @@ export default class Details extends React.Component {
             }
         });
 
-        for(let i = 0; i<service.length; i++){
-            if(i < service.length-1)
+        for (let i = 0; i < service.length; i++) {
+            if (i < service.length - 1)
                 serviceString += service[i] + ", ";
             else
                 serviceString += service[i];
@@ -34,12 +37,22 @@ export default class Details extends React.Component {
                 <h2>{"Here's your appointment:"}</h2>
                 <p>{this.props.customerName},</p>
                 <p>{"Your appointment is scheduled. We'll see you soon!"}</p>
-                <p>{branch.streetAddress}</p>
-                <p>{branch.city + ", " + branch.state + " " + branch.zipCode}</p>
-                <p>{this.props.appointmentSlot.day}, {this.props.appointmentSlot.month} {this.props.appointmentSlot.date}</p>
-                <p>{this.props.appointmentSlot.time}</p>
-                <p>{serviceString}</p>
-                <p>{this.props.appointment.note}</p>
+
+                <FontAwesomeIcon icon={faMapMarkerAlt} size="2x" fixedWidth className="detailsIcon" id="mapIcon" />
+                <div className="detailsData">
+                    <p>{branch.streetAddress}</p>
+                    <p>{branch.city + ", " + branch.state + " " + branch.zipCode}</p>
+                </div>
+                <FontAwesomeIcon icon={faCalendarAlt} size="2x" fixedWidth className="detailsIcon" id="mapIcon" />
+                <div className="detailsData">
+                    <p>{this.props.appointmentSlot.day}, {this.props.appointmentSlot.month} {this.props.appointmentSlot.date}</p>
+                    <p>{this.props.appointmentSlot.time}</p>
+                </div>
+                <FontAwesomeIcon icon={faPiggyBank} size="2x" fixedWidth className="detailsIcon" id="mapIcon" />
+                <div className="detailsData">
+                    <p>{serviceString}</p>
+                    <p>{this.props.appointment.note}</p>
+                </div>
             </div>
         );
     }
