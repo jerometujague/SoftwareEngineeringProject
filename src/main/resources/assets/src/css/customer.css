@@ -27,7 +27,7 @@
         color: #006747;
         border-radius: 4px;
         cursor: pointer;
-        height: 150px;
+        height: 110px;
         width: 150px;
         padding: 0px;
     }
@@ -63,6 +63,10 @@ input[type="checkbox"]:checked{
 
 input[type="checkbox"]{
     margin-right: 4px;
+}
+
+input[type="submit"]:focus {
+    outline:none;
 }
 
 .page-enter {
@@ -157,13 +161,6 @@ input[type="checkbox"]{
     opacity: 0.01;
 }
 
-.appointmentTime {
-    padding: 5px;
-    margin: 5px;
-    width: 70px;
-    text-align: center;
-}
-
 .timeSlots {
     display: flex;
     flex-direction: row;
@@ -220,4 +217,63 @@ input[type="checkbox"]{
 .detailsIcon {
     float: left;
     margin-top: 20px;
+}
+
+.serviceIcon {
+    display: block;
+    margin: 5px auto;
+}
+
+#services {
+    width: 600px;
+}
+
+.service {
+    margin-right: 6px;
+    margin-bottom: 6px;
+}
+
+input[type="submit"] {
+    background-color: #006747;
+    color: white;
+    margin-top: 10px;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 2px;
+    font-size: 16px;
+}
+
+input[type="submit"]:hover {
+    cursor: pointer;
+    background-color: #006746b7
+}
+
+input[type="submit"]:disabled {
+    background-color: #77726D;
+}
+
+input[type="submit"]:disabled:hover {
+    cursor: default;
+}
+
+input.appointmentTime {
+    background-color: white;
+    color: #006747;
+    border: 2px solid #006747;
+    padding: 5px;
+    width: 75px;
+    text-align: center;
+    margin: 5px;
+    font-size: 14px;
+}
+
+input.appointmentTime:hover {
+    background-color: #006747;
+    color: white;
+}
+
+input.appointmentTime:disabled {
+    background-color: white;
+    color: #77726D;
+    border: 1px solid #77726D;
 }

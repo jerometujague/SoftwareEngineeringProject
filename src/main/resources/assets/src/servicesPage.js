@@ -2,6 +2,15 @@ import React from 'react';
 import $ from 'jquery';
 import { distance } from './map';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMoneyBill, faPiggyBank, faGraduationCap, faHome, faCar, faCreditCard, faBookReader, faCommentAlt } from "@fortawesome/free-solid-svg-icons";
+
+// Icons that correspond to position in the services grid
+export const icons = [faMoneyBill, faPiggyBank, faMoneyBill,
+    faBookReader, faCar, faHome,
+    faHome, faGraduationCap, faMoneyBill,
+    faMoneyBill, faCreditCard, faCommentAlt];
+
 export default class Services extends React.Component {
     constructor(props) {
         super(props);
@@ -98,7 +107,13 @@ export default class Services extends React.Component {
                 <div id="services">
                     {
                         this.props.services.map(service => {
-                            return <button key={service.id} className={this.props.serviceIds.includes(service.id) ? "selected" : ""} onClick={this.handleServiceClicked.bind(this, service.id)}>{service.service}</button>
+                            return (<button
+                                key={service.id}
+                                className={this.props.serviceIds.includes(service.id) ? "service selected" : "service"}
+                                onClick={this.handleServiceClicked.bind(this, service.id)}>
+                                <FontAwesomeIcon icon={icons[service.id - 1]} size="2x" fixedWidth className="serviceIcon" />
+                                {service.service}
+                            </button>);
                         })
                     }
                 </div>
@@ -109,7 +124,7 @@ export default class Services extends React.Component {
                     </label><br />
                     <textarea className="note" rows="5" cols="50" placeholder="Enter an appointment note" name="note" onChange={this.handleChange.bind(this)} ></textarea>
                 </div>
-                <input type="submit" value="Continue" onClick={this.handleServicesDone.bind(this)} />
+                <input type="submit" value="Continue" disabled={this.props.serviceIds.length == 0} onClick={this.handleServicesDone.bind(this)} />
             </div>
         );
     }
