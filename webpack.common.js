@@ -1,13 +1,11 @@
 const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     entry: {
         custView: './src/main/resources/assets/src/custView.js',
     },
-    mode: 'development',
     output: {
         filename: '[name].bundle.js',
         path: path.resolve(__dirname, 'src/main/resources/assets/dist')
@@ -25,13 +23,6 @@ module.exports = {
                 exclude: /(node_modules|bower_components)/,
                 loader: "babel-loader",
                 options: { presets: ["@babel/preset-env", "@babel/preset-react"] }
-            },
-            {
-                test: /\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader'
-                ]
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
@@ -57,9 +48,4 @@ module.exports = {
             filename: 'managerView.html' //relative to root of the application
         })
     ],
-    optimization: {
-        minimizer: [new UglifyJsPlugin({
-            test: /\.(js|jsx)$/
-        })],
-    }
 };
