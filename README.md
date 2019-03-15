@@ -1,5 +1,5 @@
 # SoftwareEngineeringProject
-CommerceBankProject
+https://commercebank.azurewebsites.net
 
 Check out the wiki for the [project roadmap](https://github.com/jerometujague/SoftwareEngineeringProject/wiki) and the [git workflow](https://github.com/jerometujague/SoftwareEngineeringProject/wiki/Git-Workflow)
 
