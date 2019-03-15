@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMapMarkerAlt, faCalendarAlt, faPiggyBank } from "@fortawesome/free-solid-svg-icons";
+import { faMapMarkerAlt, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { icons } from './servicesPage';
 
 export default class Details extends React.Component {
