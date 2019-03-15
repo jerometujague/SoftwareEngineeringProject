@@ -1,6 +1,9 @@
 import React from 'react';
 import $ from 'jquery';
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+
 export default class Branches extends React.Component {
     constructor(props) {
         super(props);
@@ -61,10 +64,13 @@ export default class Branches extends React.Component {
                         return (
                             <div className="branch" key={branch.id}>
                                 <p className="distance">{branch.distance}</p>
-                                <p>{branch.streetAddress}</p>
-                                <p>{branch.city + ", " + branch.state + " " + branch.zipCode}</p>
-                                <p>{branch.appointmentCount} available appointments in the two weeks</p>
-                                <input type="submit" value="Select branch" disabled={!branch.hasService} onClick={this.handleBranchClicked.bind(this, branch.id)} />
+                                <FontAwesomeIcon icon={faMapMarkerAlt} size="2x" className="mapMarker" />
+                                <div className="branchData">
+                                    <p>{branch.streetAddress}</p>
+                                    <p>{branch.city + ", " + branch.state + " " + branch.zipCode}</p>
+                                    <p>{branch.appointmentCount} available appointments in the two weeks</p>
+                                    <input type="submit" value="Select branch" disabled={!branch.hasService} onClick={this.handleBranchClicked.bind(this, branch.id)} />
+                                </div>
                             </div>
                         );
                     })

@@ -182,7 +182,7 @@ input[type="checkbox"]{
 }
 
 .distance {
-    margin-left: 250px;
+   float: right;
 }
 
 #map {
@@ -193,6 +193,19 @@ input[type="checkbox"]{
 #progressBar {
     position: absolute;
 }
-.error {
+
+.mapMarker {
+    float: left;
+    margin-top: 22px;
+}
+
+.branchData {
+    margin-left: 40px;
+    padding-top: 20px;
+}
+
+.branch {
+    margin-bottom: 10px;
+}.error {
     color: red;
 }
