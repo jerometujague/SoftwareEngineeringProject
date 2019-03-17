@@ -305,6 +305,12 @@ CREATE TABLE manager_unavailable (
 	PRIMARY KEY (unavailable_id, manager_id)
 );
 
+CREATE TABLE appointment_services (
+  service_id SMALLINT UNSIGNED NOT NULL,
+  appointment_id SMALLINT UNSIGNED NOT NULL,
+  PRIMARY KEY (service_id, appointment_id)
+);
+
 #Add Foreign Key Constraints
 
 ALTER TABLE manager
@@ -376,6 +382,16 @@ ALTER TABLE manager_unavailable
 	ADD FOREIGN KEY(unavailable_id)
 	REFERENCES unavailable (id)
 	ON DELETE CASCADE;
+
+ALTER TABLE appointment_services
+  ADD FOREIGN KEY(service_id)
+  REFERENCES service(id)
+  ON DELETE CASCADE;
+
+ALTER TABLE appointment_services
+  ADD FOREIGN KEY(appointment_id)
+  REFERENCES appointment(id)
+  ON DELETE CASCADE;
 
 DROP PROCEDURE IF EXISTS future_unavailable;
 DELIMITER //
