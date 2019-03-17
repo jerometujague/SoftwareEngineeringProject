@@ -17,7 +17,11 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 // @RestController means Spring will automatically create and manager and instance of this class
 @RestController // Make this class a REST controller that accept HTTP requests
@@ -33,11 +37,13 @@ public class AppointmentController {
     private final ManagerDAO managerDAO;
     private final SkillDAO skillDAO;
     private final ServiceDAO serviceDAO;
+    private final UnavailableDAO unavailableDAO;
 
     @Autowired // Use dependency injection to get the dependencies
     public AppointmentController(AppointmentDAO appointmentDAO, CustomerDAO customerDAO,
                                  CalendarDAO calendarDAO, BranchDAO branchDAO, SkillDAO skillDAO,
-                                 ManagerDAO managerDAO, ServiceDAO serviceDAO, MailSender smtp) {
+                                 ManagerDAO managerDAO, ServiceDAO serviceDAO, MailSender smtp,
+                                 UnavailableDAO unavailableDAO) {
         this.appointmentDAO = appointmentDAO;
         this.mailSender = smtp;
         this.customerDAO = customerDAO;
@@ -46,6 +52,7 @@ public class AppointmentController {
         this.managerDAO = managerDAO;
         this.skillDAO = skillDAO;
         this.serviceDAO = serviceDAO;
+        this.unavailableDAO = unavailableDAO;
     }
 
     @RequestMapping(method = RequestMethod.GET) // This method will be called when there is a GET request made to this url
@@ -56,19 +63,33 @@ public class AppointmentController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     void scheduleAppointment(@RequestBody Appointment appointment) throws MessagingException, IOException {
 
-        // find available manager with appropriate skill for this appointment
         LocalTime time = appointment.getTime();
 
         // change time to standard 12-hour am/pm
         String apptTime = DateUtil.hourToHumanString(time.getHour());
 
         // get list of available managers
-        List<Manager> availableManagers = managerDAO.list(appointment.getBranchId(), appointment.getServiceIds(),
-                appointment.getCalendarId(), appointment.getTime());
+        List<Manager> managers = managerDAO.list();
+        List<Unavailable> managerUnavailables = unavailableDAO.listManagers();
+        List<Skill> skills = skillDAO.list();
+
+        // This is the same as in AppointmentSlotController class
+        Supplier<Stream<Manager>> availableManagers = () -> managers.parallelStream()
+                .filter(m -> m.getBranchId() == appointment.getBranchId() // They must be at this branch
+                        && (managerUnavailables // There can't be an unavailable for that time
+                        .parallelStream()
+                        .noneMatch(u -> u.getReferId() == m.getId()
+                                && u.getTime().getHour() == appointment.getTime().getHour()
+                                && u.getCalendarId() == appointment.getCalendarId()))
+                        && Arrays.stream(appointment.getServiceIds()) // They must have all of the serviceIds
+                        .allMatch(service -> skills.parallelStream()
+                                .anyMatch(skill -> skill.getServiceId() == service
+                                        && skill.getManagerId() == m.getId())));
 
         //choose 1st available manager & assign to this appointment
-        Manager chooseManager = availableManagers.get(0);
-        appointment.setManagerId(chooseManager.getId());
+        Optional<Manager> chooseManager = availableManagers.get().findFirst();
+        Manager apptManager = chooseManager.get();
+        appointment.setManagerId(apptManager.getId());
 
         // add this appointment to the database
         appointmentDAO.insert(appointment);
@@ -90,8 +111,6 @@ public class AppointmentController {
         String branchAddress = branch.getStreetAddress() + ", " + branch.getCity() + ", "
                 + branch.getState() + " " + branch.getZipCode();
 
-        List<Manager> managers = managerDAO.list();
-        Manager apptManager = managers.get(appointment.getManagerId() - 1);
         String managerName = apptManager.getFirstName() + " " + apptManager.getLastName();
         String managerEmail = apptManager.getEmail();
         String managerPhone = apptManager.getPhoneNumber();
