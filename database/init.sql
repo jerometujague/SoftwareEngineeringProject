@@ -18,7 +18,7 @@ CREATE TABLE branch (
 	street_address VARCHAR(50) NOT NULL,
 	city VARCHAR(30) NOT NULL,
 	state VARCHAR(30) NOT NULL,
-	zip SMALLINT UNSIGNED NOT NULL,
+	zip MEDIUMINT UNSIGNED NOT NULL,
 	name VARCHAR(50) NOT NULL,
 	PRIMARY KEY (id)
 );
@@ -282,7 +282,6 @@ CREATE TABLE appointment (
 	branch_id SMALLINT UNSIGNED NOT NULL,
 	manager_id SMALLINT UNSIGNED NOT NULL,
 	customer_id SMALLINT UNSIGNED NOT NULL,
-	service_id SMALLINT UNSIGNED NOT NULL,
 	PRIMARY KEY (id)
 );
 
@@ -346,11 +345,6 @@ ALTER TABLE appointment
 ALTER TABLE appointment
 	ADD FOREIGN KEY (customer_id)
 	REFERENCES customer (id)
-	ON DELETE CASCADE;
-
-ALTER TABLE appointment
-	ADD FOREIGN KEY (service_id)
-	REFERENCES service (id)
 	ON DELETE CASCADE;
 
 ALTER TABLE unavailable
@@ -505,10 +499,18 @@ INSERT INTO unavailable (calendar_id, time)
 	VALUES
 		(3, "12:00:00");
 
-INSERT INTO appointment (calendar_id, time, branch_id, manager_id, customer_id, service_id)
+INSERT INTO appointment (calendar_id, time, branch_id, manager_id, customer_id)
 	VALUES
-		(5, "10:00:00", 1, 1, 1, 1),
-		(27, "13:00:00", 2, 3, 2, 2);
+		(5, "10:00:00", 1, 1, 1),
+		(27, "13:00:00", 2, 3, 2);
+
+INSERT INTO appointment_services (service_id, appointment_id)
+	VALUES
+		(2, 1),
+		(3, 1),
+		(1, 2),
+		(4, 2),
+		(7, 2);
 
 INSERT INTO skills (manager_id, service_id)
 	VALUES
