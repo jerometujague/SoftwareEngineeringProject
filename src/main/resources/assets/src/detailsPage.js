@@ -16,7 +16,7 @@ export default class Details extends React.Component {
         let services = "";
         this.props.services.forEach(s => {
             if (this.props.appointment.serviceIds.includes(s.id)) {
-                services += s.service;
+                services += s.service + " ";
             }
         });
 

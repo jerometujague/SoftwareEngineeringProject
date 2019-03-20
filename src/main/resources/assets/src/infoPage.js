@@ -24,26 +24,26 @@ export default class Info extends React.Component {
         });
     }
 
-    validateInput(email, firstName, lastName, phoneNumber){
+    validateInput(email, firstName, lastName, phoneNumber) {
         let formIsValid = true;
         let errors = {};
 
-        if(email == ''){
-                     formIsValid = false;
-                     errors["email"] = "Please enter your email address.";
-                 }
+        if (email == '') {
+            formIsValid = false;
+            errors["email"] = "Please enter your email address.";
+        }
 
-        if(firstName == ''){
+        if (firstName == '') {
             formIsValid = false;
             errors["firstName"] = "Please enter your first name.";
         }
 
-        if(lastName == ''){
+        if (lastName == '') {
             formIsValid = false;
             errors["lastName"] = "Please enter your last name.";
         }
 
-        if(phoneNumber == ''){
+        if (phoneNumber == '') {
             formIsValid = false;
             errors["phoneNumber"] = "Please enter your phoneNumber.";
         }
@@ -53,8 +53,8 @@ export default class Info extends React.Component {
             //regular expression for email validation
             var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
             if (!pattern.test(email)) {
-              formIsValid = false;
-              errors["email"] = "Please enter valid email address.";
+                formIsValid = false;
+                errors["email"] = "Please enter valid email address.";
             }
         }
 
@@ -66,10 +66,10 @@ export default class Info extends React.Component {
             }
         }
 
-       this.setState({
+        this.setState({
             errors: errors
-       });
-       return formIsValid;
+        });
+        return formIsValid;
     }
 
     async scheduleAppointment() {
@@ -161,23 +161,23 @@ export default class Info extends React.Component {
                     <label>
                         First Name
                     <input type="text" name="firstName" onChange={this.handleChange.bind(this)} />
-                    <div>{this.state.errors.firstName}</div>
+                        <div className="error">{this.state.errors.firstName}</div>
                     </label>
                     <label>
                         Last Name
                     <input type="text" name="lastName" onChange={this.handleChange.bind(this)} />
-                    <div>{this.state.errors.lastName}</div>
+                        <div className="error">{this.state.errors.lastName}</div>
                     </label>
                     <br />
                     <label>
                         Email
                     <input type="email" name="email" onChange={this.handleChange.bind(this)} />
-                    <div>{this.state.errors.email}</div>
+                        <div className="error">{this.state.errors.email}</div>
                     </label>
                     <label>
                         Phone number
                     <input type="tel" name="phoneNumber" onChange={this.handleChange.bind(this)} />
-                    <div>{this.state.errors.phoneNumber}</div>
+                        <div className="error">{this.state.errors.phoneNumber}</div>
                     </label>
                 </form>
 
