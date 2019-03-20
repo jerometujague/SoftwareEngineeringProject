@@ -11,8 +11,9 @@ public class Appointment {
     private int managerId;
     private int customerId;
     private int[] serviceIds;
+    private String note;
 
-    public Appointment(int id, int calendarId, LocalTime time, int branchId, int managerId, int customerId, int[] serviceIds) {
+    public Appointment(int id, int calendarId, LocalTime time, int branchId, int managerId, int customerId, int[] serviceIds, String note) {
         this.id = id;
         this.calendarId = calendarId;
         this.time = time;
@@ -20,6 +21,7 @@ public class Appointment {
         this.managerId = managerId;
         this.customerId = customerId;
         this.serviceIds = serviceIds;
+        this.note = note;
     }
 
     // Default constructor used when a post request is made
@@ -77,6 +79,14 @@ public class Appointment {
         this.serviceIds = serviceIds;
     }
 
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
     @Override
     public String toString() {
         return "Appointment{" +
@@ -87,6 +97,7 @@ public class Appointment {
                 ", managerId=" + managerId +
                 ", customerId=" + customerId +
                 ", serviceIds=" + serviceIds +
+                ", note=" + note +
                 '}';
     }
 }

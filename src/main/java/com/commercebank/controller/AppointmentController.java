@@ -115,6 +115,8 @@ public class AppointmentController {
         String managerEmail = apptManager.getEmail();
         String managerPhone = apptManager.getPhoneNumber();
 
+        String note = appointment.getNote();
+
         List<Service> services = serviceDAO.list();
 
         String service = "";
@@ -146,6 +148,7 @@ public class AppointmentController {
                 " at " + apptTime + ".<br>" +
                 "You will be meeting with " + managerName + " at " + branchName + ".<br>" +
                 "The address is " + branchAddress + ".<br><br>" +
+                "You entered the following custom note: " + note + "<br><br>" +
                 "If you have questions, or need to reschedule, please contact " + managerName +
                 " at " + managerPhone + " or " + managerEmail;
 

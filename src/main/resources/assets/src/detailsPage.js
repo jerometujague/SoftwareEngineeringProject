@@ -13,12 +13,21 @@ export default class Details extends React.Component {
             }
         });
 
-        let services = "";
+        let service = [];
+        let serviceString = "";
         this.props.services.forEach(s => {
             if (this.props.appointment.serviceIds.includes(s.id)) {
-                services += s.service + " ";
+                service.push(s.service);
             }
         });
+
+        for(let i = 0; i<service.length; i++){
+            if(i < service.length-1)
+                serviceString += service[i] + ", ";
+            else
+                serviceString += service[i];
+        }
+
 
         return (
             <div className="page">
@@ -29,7 +38,8 @@ export default class Details extends React.Component {
                 <p>{branch.city + ", " + branch.state + " " + branch.zipCode}</p>
                 <p>{this.props.appointmentSlot.day}, {this.props.appointmentSlot.month} {this.props.appointmentSlot.date}</p>
                 <p>{this.props.appointmentSlot.time}</p>
-                <p>{services}</p>
+                <p>{serviceString}</p>
+                <p>{this.props.appointment.note}</p>
             </div>
         );
     }

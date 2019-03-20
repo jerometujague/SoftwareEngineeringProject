@@ -282,6 +282,7 @@ CREATE TABLE appointment (
 	branch_id SMALLINT UNSIGNED NOT NULL,
 	manager_id SMALLINT UNSIGNED NOT NULL,
 	customer_id SMALLINT UNSIGNED NOT NULL,
+	customer_note VARCHAR(1000),
 	PRIMARY KEY (id)
 );
 
