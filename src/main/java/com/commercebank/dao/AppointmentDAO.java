@@ -44,12 +44,13 @@ public class AppointmentDAO {
     }
 
     public void insert(Appointment appointment){
-        this.jdbcTemplate.update("INSERT INTO appointment (calendar_id, time, branch_id, manager_id, customer_id) VALUES (?, ?, ?, ?, ?)",
+        this.jdbcTemplate.update("INSERT INTO appointment (calendar_id, time, branch_id, manager_id, customer_id, customer_note) VALUES (?, ?, ?, ?, ?, ?)",
                 appointment.getCalendarId(),
                 appointment.getTime(),
                 appointment.getBranchId(),
                 appointment.getManagerId(),
-                appointment.getCustomerId());
+                appointment.getCustomerId(),
+                appointment.getNote());
 
 
         // Get the id of the appointment just inserted

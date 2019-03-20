@@ -19,6 +19,7 @@ public class AppointmentMapper implements RowMapper<Appointment> {
                 rs.getInt("branch_id"),
                 rs.getInt("manager_id"),
                 rs.getInt("customer_id"),
-                new int[0]);
+                new int[0],
+                rs.getString("customer_note"));
     }
 }
