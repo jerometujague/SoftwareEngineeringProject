@@ -24,6 +24,7 @@ class CustomerView extends React.Component {
             appointmentSlot: null,
             appointment: null,
             customerName: "",
+            note: "",
             page: 0,
             loading: false,
             wentBack: false,
@@ -145,6 +146,7 @@ class CustomerView extends React.Component {
                     appointmentSlot={this.state.appointmentSlot}
                     branchId={this.state.branchId}
                     serviceIds={this.state.serviceIds}
+                    note={this.state.note}
                     goForward={this.goForward.bind(this)}
                     setStateValue={this.setStateValue.bind(this)} />
             </CSSTransition>

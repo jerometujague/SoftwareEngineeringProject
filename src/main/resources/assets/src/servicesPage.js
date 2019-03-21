@@ -5,6 +5,9 @@ import { distance } from './map';
 export default class Services extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            note: ''
+        }
     }
 
     handleServiceClicked(id) {
@@ -27,8 +30,19 @@ export default class Services extends React.Component {
             return;
         }
 
+        this.props.setStateValue('note', this.state.note);
         // Load the branches
         this.loadBranches();
+    }
+
+    handleChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+
+        this.setState({
+            [name]: value,
+        });
     }
 
     loadBranches() {
@@ -87,6 +101,13 @@ export default class Services extends React.Component {
                             return <button key={service.id} className={this.props.serviceIds.includes(service.id) ? "selected" : ""} onClick={this.handleServiceClicked.bind(this, service.id)}>{service.service}</button>
                         })
                     }
+                </div>
+                <div>
+                    <br />
+                    <label>
+                        Appointment Note
+                    </label><br />
+                    <textarea className="note" rows="5" cols="50" placeholder="Enter an appointment note" name="note" onChange={this.handleChange.bind(this)} ></textarea>
                 </div>
                 <input type="submit" value="Continue" onClick={this.handleServicesDone.bind(this)} />
             </div>
