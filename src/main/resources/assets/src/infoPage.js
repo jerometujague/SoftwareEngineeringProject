@@ -10,7 +10,6 @@ export default class Info extends React.Component {
             lastName: '',
             phoneNumber: '',
             email: '',
-            note: '',
             errors: {}
         }
     }
@@ -98,7 +97,7 @@ export default class Info extends React.Component {
                 branchId: this.props.branchId,
                 customerId: customerId,
                 serviceIds: this.props.serviceIds,
-                note: this.state.note
+                note: this.props.note
             })
         });
 
@@ -181,10 +180,6 @@ export default class Info extends React.Component {
                     <input type="tel" name="phoneNumber" onChange={this.handleChange.bind(this)} />
                         <div className="error">{this.state.errors.phoneNumber}</div>
                     </label>
-                    <label>
-                        Appointment Note
-                    </label><br />
-                    <textarea className="note" rows="5" cols="50" placeholder="Enter an appointment note" name="note" onChange={this.handleChange.bind(this)} ></textarea>
                 </form>
 
                 <input type="submit" value="Schedule Appointment" id="scheduleButton" onClick={this.scheduleAppointment.bind(this)} />
