@@ -52,6 +52,10 @@ export class Map extends React.Component {
 export async function distance(address) {
     let origin = await getCurrentLocation();
 
+    if (origin == null) {
+        return null;
+    }
+
     const getDistanceMatrix = (service, data) => new Promise((resolve, reject) => {
         service.getDistanceMatrix(data, (response, status) => {
             if (status === 'OK') {
@@ -87,6 +91,8 @@ async function getCurrentLocation() {
                 };
 
                 resolve(origin);
+            }, () => {
+                resolve(null);
             });
         }
     });
