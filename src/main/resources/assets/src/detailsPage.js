@@ -9,6 +9,22 @@ export default class Details extends React.Component {
         super(props);
     }
 
+    async cancelAppointment(){
+        this.props.setStateValue('loading', true);
+        // Send the delete request
+        await $.ajax({
+            type: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: '/api/appointments/delete',
+            data: JSON.stringify({
+            })
+        });
+        this.props.setStateValue('loading', false);
+    }
+
     render() {
         let branch = null;
         this.props.branches.forEach(b => {
@@ -54,7 +70,12 @@ export default class Details extends React.Component {
                     <p>{serviceString}</p>
                     <p>{this.props.appointment.note}</p>
                 </div>
+                <div>
+                    <label>{"Need to cancel the appointment? Click below."}</label> <br />
+                    <input type="submit" value="Cancel Appointment" id="cancelButton" onClick={this.cancelAppointment.bind(this)} />
+                </div>
             </div>
+
         );
     }
 }

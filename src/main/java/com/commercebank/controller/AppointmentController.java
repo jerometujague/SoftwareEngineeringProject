@@ -60,6 +60,11 @@ public class AppointmentController {
         return appointmentDAO.list();
     }
 
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
+    void deleteAppointment(){
+        appointmentDAO.delete(appointmentDAO.findId());
+    }
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     void scheduleAppointment(@RequestBody Appointment appointment) throws MessagingException, IOException {
 

@@ -43,6 +43,16 @@ public class AppointmentDAO {
         return appointments;
     }
 
+    public int findId(){
+        List<Appointment> appointments = this.jdbcTemplate.query("SELECT * FROM appointment ORDER BY id DESC LIMIT 1", appointmentMapper);
+        int id = appointments.get(0).getId();
+        return id;
+    }
+
+    public void delete(int id){
+        this.jdbcTemplate.update("DELETE FROM appointment WHERE id = ?", id);
+    }
+
     public void insert(Appointment appointment){
         this.jdbcTemplate.update("INSERT INTO appointment (calendar_id, time, branch_id, manager_id, customer_id, customer_note) VALUES (?, ?, ?, ?, ?, ?)",
                 appointment.getCalendarId(),

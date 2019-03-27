@@ -161,7 +161,8 @@ class CustomerView extends React.Component {
                     appointmentSlot={this.state.appointmentSlot}
                     branches={this.state.branches}
                     services={this.state.services}
-                    customerName={this.state.customerName} />
+                    customerName={this.state.customerName}
+                    setStateValue={this.setStateValue.bind(this)} />
             </CSSTransition>
 
             <CSSTransition // Loading image for when we are retrieving data
