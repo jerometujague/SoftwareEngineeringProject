@@ -12,7 +12,7 @@ export default class Details extends React.Component {
     async deleteAppointment(){
         // Send the delete request
         await $.ajax({
-            type: 'GET',
+            type: 'DELETE',
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
