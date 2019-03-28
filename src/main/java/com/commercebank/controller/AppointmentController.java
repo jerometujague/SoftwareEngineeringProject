@@ -62,7 +62,7 @@ public class AppointmentController {
         return appointmentDAO.list();
     }
 
-    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.GET)
+    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.DELETE)
     void deleteAppointment(@PathVariable("id") int id){
         appointmentDAO.delete(id);
     }
