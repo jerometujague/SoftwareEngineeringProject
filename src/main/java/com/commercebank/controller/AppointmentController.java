@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 import javax.mail.MessagingException;
 import java.io.File;
@@ -58,6 +60,11 @@ public class AppointmentController {
     @RequestMapping(method = RequestMethod.GET) // This method will be called when there is a GET request made to this url
     List<Appointment> getAppointments(){
         return appointmentDAO.list();
+    }
+
+    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.GET)
+    void deleteAppointment(@PathVariable("id") int id){
+        appointmentDAO.delete(id);
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)

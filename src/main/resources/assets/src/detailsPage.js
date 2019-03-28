@@ -1,5 +1,5 @@
 import React from 'react';
-
+import $ from 'jquery';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { icons } from './servicesPage';
@@ -9,6 +9,17 @@ export default class Details extends React.Component {
         super(props);
     }
 
+    async deleteAppointment(){
+        // Send the delete request
+        await $.ajax({
+            type: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: '/api/appointments/delete/' + this.props.appointment.id + '/'
+        });
+    }
     render() {
         let branch = null;
         this.props.branches.forEach(b => {
@@ -53,6 +64,10 @@ export default class Details extends React.Component {
                 <div className="detailsData">
                     <p>{serviceString}</p>
                     <p>{this.props.appointment.note}</p>
+                </div>
+                <div>
+                    <label>{"Need to cancel your appointment? Click below."}</label>
+                    <input type="submit" value="Cancel Appointment" id="cancelButton" onClick={this.deleteAppointment.bind(this)} />
                 </div>
             </div>
         );
