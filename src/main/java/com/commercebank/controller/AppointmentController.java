@@ -101,16 +101,20 @@ public class AppointmentController {
         // add this appointment to the database
         appointmentDAO.insert(appointment);
 
+        if(!appointment.isEmailConsent()){
+            return;
+        }
+
         // get appointment date, time, branch, manager, & service info
         List<Calendar> calendars = calendarDAO.list();
         Calendar calendar = calendars.get(appointment.getCalendarId() - 1);
         LocalDate date = calendar.getDate();
         String day = DateUtil.ordinal(date.getDayOfMonth());
         String upperMonth = String.valueOf(date.getMonth());
-        String month = upperMonth.substring(0,1) + upperMonth.substring(1).toLowerCase();
+        String month = upperMonth.substring(0, 1) + upperMonth.substring(1).toLowerCase();
         int year = date.getYear();
         String upperDayOfWeek = String.valueOf(date.getDayOfWeek());
-        String dayOfWeek = upperDayOfWeek.substring(0,1)+ upperDayOfWeek.substring(1).toLowerCase();
+        String dayOfWeek = upperDayOfWeek.substring(0, 1) + upperDayOfWeek.substring(1).toLowerCase();
 
         List<Branch> branches = branchDAO.list();
         Optional<Branch> possibleBranch = branches.parallelStream()
@@ -173,9 +177,13 @@ public class AppointmentController {
                 service + " is scheduled for " + dayOfWeek + ", " + month + " " + day + ", " + year +
                 " at " + apptTime + ".<br>" +
                 "You will be meeting with " + managerName + " at " + branchName + ".<br>" +
-                "The address is " + branchAddress + ".<br><br>" +
-                "You entered the following custom note: " + note + "<br><br>" +
-                "If you have questions, or need to reschedule, please contact " + managerName +
+                "The address is " + branchAddress + ".<br><br>";
+
+        if(!note.isEmpty()){
+            messageBody += "You entered the following custom note: " + note + "<br><br>";
+        }
+
+        messageBody += "If you have questions, or need to reschedule, please contact " + managerName +
                 " at " + managerPhone + " or " + managerEmail;
 
         // create the .ics file (calendar invite) to send as an attachment
@@ -189,12 +197,13 @@ public class AppointmentController {
 
         // convert appointment date & time to required format
         StringBuilder strDate = new StringBuilder(date.toString());
-        strDate.deleteCharAt(4); strDate.deleteCharAt(6);
+        strDate.deleteCharAt(4);
+        strDate.deleteCharAt(6);
         String dateStart = strDate.toString();
 
-       // change times to UTC for calendar invite
-        int startHourUTC = (time.getHour() + 5)%24; // currently UTC = CDT + 5 hours
-        int endHourUTC = (startHourUTC + 1)%24;
+        // change times to UTC for calendar invite
+        int startHourUTC = (time.getHour() + 5) % 24; // currently UTC = CDT + 5 hours
+        int endHourUTC = (startHourUTC + 1) % 24;
         // todo: Add logic to switch date to next day if UTC time past 2400
 
         // add leading zero to hour if less than 10
@@ -223,6 +232,5 @@ public class AppointmentController {
 
         // send email
         mailSender.send(customerEmail, managerEmail, "Banking Appointment", messageBody, "appointmentInvite.ics");
-       }
-
+    }
 }

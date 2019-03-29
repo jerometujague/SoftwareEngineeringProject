@@ -10,6 +10,7 @@ export default class Info extends React.Component {
             lastName: '',
             phoneNumber: '',
             email: '',
+            emailConsent: true,
             errors: {}
         }
     }
@@ -22,6 +23,16 @@ export default class Info extends React.Component {
         this.setState({
             [name]: value,
         });
+    }
+
+    handleChecked(event) {
+        const target = event.target;
+        const value = target.checked;
+        const name = target.name;
+
+        this.setState({
+            [name]: value,
+        })
     }
 
     validateInput(email, firstName, lastName, phoneNumber) {
@@ -97,7 +108,8 @@ export default class Info extends React.Component {
                 branchId: this.props.branchId,
                 customerId: customerId,
                 serviceIds: this.props.serviceIds,
-                note: this.props.note
+                note: this.props.note,
+                emailConsent: this.state.emailConsent
             })
         });
 
@@ -179,6 +191,10 @@ export default class Info extends React.Component {
                         Phone Number
                     <input type="tel" name="phoneNumber" onChange={this.handleChange.bind(this)} />
                         <div className="error">{this.state.errors.phoneNumber}</div>
+                    </label>
+                    <label>
+                        Email consent
+                    <input type="checkbox" name="emailConsent" checked={this.state.emailConsent} onChange={this.handleChecked.bind(this)} />
                     </label>
                 </form>
 

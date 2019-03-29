@@ -1,6 +1,7 @@
 package com.commercebank.model;
 
 import java.time.LocalTime;
+import java.util.Arrays;
 
 // Basic object with getters and setters that matches the database row
 public class Appointment {
@@ -12,6 +13,7 @@ public class Appointment {
     private int customerId;
     private int[] serviceIds;
     private String note;
+    private boolean emailConsent;
 
     public Appointment(int id, int calendarId, LocalTime time, int branchId, int managerId, int customerId, int[] serviceIds, String note) {
         this.id = id;
@@ -22,6 +24,7 @@ public class Appointment {
         this.customerId = customerId;
         this.serviceIds = serviceIds;
         this.note = note;
+        this.emailConsent = true;
     }
 
     // Default constructor used when a post request is made
@@ -87,6 +90,14 @@ public class Appointment {
         this.note = note;
     }
 
+    public boolean isEmailConsent() {
+        return emailConsent;
+    }
+
+    public void setEmailConsent(boolean emailConsent) {
+        this.emailConsent = emailConsent;
+    }
+
     @Override
     public String toString() {
         return "Appointment{" +
@@ -96,8 +107,9 @@ public class Appointment {
                 ", branchId=" + branchId +
                 ", managerId=" + managerId +
                 ", customerId=" + customerId +
-                ", serviceIds=" + serviceIds +
-                ", note=" + note +
+                ", serviceIds=" + Arrays.toString(serviceIds) +
+                ", note='" + note + '\'' +
+                ", emailConsent=" + emailConsent +
                 '}';
     }
 }
