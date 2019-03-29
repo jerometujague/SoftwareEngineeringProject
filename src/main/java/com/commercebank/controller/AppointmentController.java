@@ -68,7 +68,7 @@ public class AppointmentController {
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    void scheduleAppointment(@RequestBody Appointment appointment) throws MessagingException, IOException {
+    void scheduleAppointment(@RequestBody Appointment appointment) throws MessagingException, IOException, Exception {
 
         LocalTime time = appointment.getTime();
 
@@ -113,7 +113,16 @@ public class AppointmentController {
         String dayOfWeek = upperDayOfWeek.substring(0,1)+ upperDayOfWeek.substring(1).toLowerCase();
 
         List<Branch> branches = branchDAO.list();
-        Branch branch = branches.get(appointment.getBranchId() - 1);
+        Optional<Branch> possibleBranch = branches.parallelStream()
+                .filter(b -> b.getId() == appointment.getBranchId())
+                .findFirst();
+
+        if(!possibleBranch.isPresent()){
+            throw new Exception("Branch not found");
+        }
+
+        Branch branch = possibleBranch.get();
+
         String branchName = branch.getName();
         String branchAddress = branch.getStreetAddress() + ", " + branch.getCity() + ", "
                 + branch.getState() + " " + branch.getZipCode();
@@ -145,7 +154,17 @@ public class AppointmentController {
 
         // get customer info
         List<Customer> customers = customerDAO.list();
-        Customer customer = customers.get(appointment.getCustomerId() - 1);
+
+        Optional<Customer> possibleCustomer = customers.parallelStream()
+                .filter(c -> c.getId() == appointment.getCustomerId())
+                .findFirst();
+
+        if(!possibleCustomer.isPresent()){
+            throw new Exception("Customer not found");
+        }
+
+        Customer customer = possibleCustomer.get();
+
         String customerEmail = customer.getEmail();
         String customerName = customer.getFirstName() + " " + customer.getLastName();
 
