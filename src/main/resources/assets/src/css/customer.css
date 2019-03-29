@@ -16,6 +16,7 @@
         font-weight: 500;
         line-height: 1.1;
         color: #006747;
+        margin: 0;
     }
 
     p {
@@ -276,4 +277,60 @@ input.appointmentTime:disabled {
     background-color: white;
     color: #77726D;
     border: 1px solid #77726D;
+}
+
+#confirmationDialog::before {
+    content: '';
+    width: 0; 
+    height: 0; 
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 10px solid #006747;
+    position: relative;
+    top: -44px;
+    left: 90px;
+}
+
+#confirmationDialog {
+    width: 200px;
+    margin: 10px 30px;
+    border: 1px solid #006747;
+    border-radius: 5px;
+    padding: 10px;
+    display: inline-block;
+}
+
+#confirmationDialog p {
+    margin-top: -28px;
+}
+
+#yesButton {
+    float: left;
+}
+
+#noButton {
+    float: right;
+}
+
+.confirm-enter {
+    opacity: 0.01;
+}
+
+.confirm-enter.confirm-enter-active {
+    opacity: 1;
+    transition: opacity 400ms ease-in;
+}
+
+.confirm-exit {
+    opacity: 1;
+}
+
+.confirm-exit.confirm-exit-active {
+    opacity: 0.01;
+    transition: opacity 400ms ease-out;
+}
+
+.pageHeader {
+    margin-top: 18px;
+    margin-bottom: 5px;
 }

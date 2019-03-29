@@ -3,13 +3,31 @@ import $ from 'jquery';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt, faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import { icons } from './servicesPage';
+import ConfirmationDialog from './confirmationDialog';
+import { CSSTransition } from 'react-transition-group';
 
 export default class Details extends React.Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            showConfirmationDialog: false,
+        }
     }
 
-    async deleteAppointment(){
+    cancelAppointment() {
+        this.setState({
+            showConfirmationDialog: true,
+        })
+    }
+
+    dontCancelAppointment() {
+        this.setState({
+            showConfirmationDialog: false,
+        })
+    }
+
+    async deleteAppointment() {
         // Send the delete request
         await $.ajax({
             type: 'DELETE',
@@ -20,6 +38,7 @@ export default class Details extends React.Component {
             url: '/api/appointments/delete/' + this.props.appointment.id + '/'
         });
     }
+
     render() {
         let branch = null;
         this.props.branches.forEach(b => {
@@ -43,10 +62,9 @@ export default class Details extends React.Component {
                 serviceString += service[i];
         }
 
-
         return (
             <div className="page">
-                <h2>{"Here's your appointment:"}</h2>
+                <h2 className="pageHeader">{"Here's your appointment:"}</h2>
                 <p>{this.props.customerName},</p>
                 <p>{"Your appointment is scheduled. We'll see you soon!"}</p>
 
@@ -65,10 +83,20 @@ export default class Details extends React.Component {
                     <p>{serviceString}</p>
                     <p>{this.props.appointment.note}</p>
                 </div>
-                <div>
-                    <label>{"Need to cancel your appointment? Click below."}</label>
-                    <input type="submit" value="Cancel Appointment" id="cancelButton" onClick={this.deleteAppointment.bind(this)} />
+                <div className="detailsData">
+                    <label>{"Need to cancel your appointment? Click below."}</label><br />
+                    <input type="submit" value="Cancel Appointment" id="cancelButton" disabled={this.state.showConfirmationDialog} onClick={this.cancelAppointment.bind(this)} />
                 </div>
+                <CSSTransition // Show the confirmation dialog when they want to cancel
+                    in={this.state.showConfirmationDialog}
+                    timeout={400}
+                    classNames="confirm"
+                    unmountOnExit>
+                    <ConfirmationDialog
+                        infoText="Are you sure you want to cancel the appointment?"
+                        onYesClicked={this.deleteAppointment.bind(this)}
+                        onNoClicked={this.dontCancelAppointment.bind(this)} />
+                </CSSTransition>
             </div>
         );
     }

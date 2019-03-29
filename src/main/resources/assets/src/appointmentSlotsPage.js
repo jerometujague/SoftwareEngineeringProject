@@ -13,7 +13,7 @@ export default class AppointmentSlots extends React.Component {
     render() {
         return (
             <div className="page" id="appointmentSlots">
-                <h2>{"Let's find a time that works for you."}</h2>
+                <h2 className="pageHeader">{"Let's find a time that works for you."}</h2>
                 <div id="slotHolder">
                     {
                         this.props.appointmentSlots.map((slot, i) => {

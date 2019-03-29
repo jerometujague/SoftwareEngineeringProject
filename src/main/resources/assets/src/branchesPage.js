@@ -57,7 +57,7 @@ export default class Branches extends React.Component {
     render() {
         return (
             <div className="page" id="branches">
-                <h2>Which location works best for you?</h2>
+                <h2 className="pageHeader">Which location works best for you?</h2>
                 {/* <Map branches={this.state.branches}></Map> */}
                 {
                     this.props.branches.map(branch => {
