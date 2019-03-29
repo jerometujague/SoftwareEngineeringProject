@@ -102,7 +102,7 @@ export default class Services extends React.Component {
     render() {
         return (
             <div className="page" >
-                <h2>What can we help you with?</h2>
+                <h2 className="pageHeader">What can we help you with?</h2>
                 <p>Choose as many as you would like.</p>
                 <div id="services">
                     {
@@ -118,7 +118,6 @@ export default class Services extends React.Component {
                     }
                 </div>
                 <div>
-                    <br />
                     <label>
                         Appointment Note
                     </label><br />
