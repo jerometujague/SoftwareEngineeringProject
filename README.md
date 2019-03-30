@@ -1,6 +1,8 @@
 # SoftwareEngineeringProject
 https://commercebank.azurewebsites.net
 
+![version](https://img.shields.io/badge/version-0.3.0-blue.svg)
+
 Check out the wiki for the [project roadmap](https://github.com/jerometujague/SoftwareEngineeringProject/wiki) and the [git workflow](https://github.com/jerometujague/SoftwareEngineeringProject/wiki/Git-Workflow)
 
 ## API Documentation
