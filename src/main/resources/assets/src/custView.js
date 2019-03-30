@@ -11,6 +11,7 @@ import Details from './detailsPage';
 import loadingImage from './images/loading.gif';
 import Info from './infoPage';
 import Services from './servicesPage';
+import Cancelled from './cancelledPage';
 
 class CustomerView extends React.Component {
     constructor(props) {
@@ -75,6 +76,14 @@ class CustomerView extends React.Component {
         });
     }
 
+    goToBeginning() {
+        this.setState({
+            page: 1,
+            wentBack: true,
+            serviceIds: [],
+        });
+    }
+
     setStateValue(name, value) {
         this.setState({
             [name]: value,
@@ -92,15 +101,18 @@ class CustomerView extends React.Component {
                 <h1 id="headerText">Schedule an appointment</h1>
             </div>
 
-            <div id="progressBar">
-                <ul className="progressbar">
-                    <li className={this.state.page >= 1 ? "active" : ""}></li>
-                    <li className={this.state.page >= 2 ? "active" : ""}></li>
-                    <li className={this.state.page >= 3 ? "active" : ""}></li>
-                    <li className={this.state.page >= 4 ? "active" : ""}></li>
-                    <li className={this.state.page >= 5 ? "active" : ""}></li>
-                </ul>
-            </div>
+            {
+                this.state.page != 6 &&
+                <div id="progressBar">
+                    <ul className="progressbar">
+                        <li className={this.state.page >= 1 ? "active" : ""}></li>
+                        <li className={this.state.page >= 2 ? "active" : ""}></li>
+                        <li className={this.state.page >= 3 ? "active" : ""}></li>
+                        <li className={this.state.page >= 4 ? "active" : ""}></li>
+                        <li className={this.state.page >= 5 ? "active" : ""}></li>
+                    </ul>
+                </div>
+            }
 
             <CSSTransition // Services page that shows the services and loads the branches
                 in={this.state.page == 1}
@@ -161,7 +173,17 @@ class CustomerView extends React.Component {
                     appointmentSlot={this.state.appointmentSlot}
                     branches={this.state.branches}
                     services={this.state.services}
-                    customerName={this.state.customerName} />
+                    customerName={this.state.customerName}
+                    goForward={this.goForward.bind(this)}
+                    setStateValue={this.setStateValue.bind(this)} />
+            </CSSTransition>
+
+            <CSSTransition // Cancelled page that shows when an appointment has been cancelled
+                in={this.state.page == 6}
+                timeout={600}
+                classNames={this.state.wentBack ? "pageBack" : "page"}
+                unmountOnExit>
+                <Cancelled goToBeginning={this.goToBeginning.bind(this)} />
             </CSSTransition>
 
             <CSSTransition // Loading image for when we are retrieving data
