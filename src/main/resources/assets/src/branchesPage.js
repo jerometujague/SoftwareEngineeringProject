@@ -68,7 +68,7 @@ export default class Branches extends React.Component {
                                 <div className="branchData">
                                     <p>{branch.streetAddress}</p>
                                     <p>{branch.city + ", " + branch.state + " " + branch.zipCode}</p>
-                                    <p>{branch.appointmentCount} available appointments in the two weeks</p>
+                                    <p>{branch.appointmentCount} available appointments in the next two weeks</p>
                                     <input type="submit" value="Select branch" disabled={!branch.hasService} onClick={this.handleBranchClicked.bind(this, branch.id)} />
                                 </div>
                             </div>

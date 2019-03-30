@@ -28,6 +28,8 @@ export default class Details extends React.Component {
     }
 
     async deleteAppointment() {
+        this.props.setStateValue('loading', true);
+
         // Send the delete request
         await $.ajax({
             type: 'DELETE',
@@ -37,6 +39,10 @@ export default class Details extends React.Component {
             },
             url: '/api/appointments/delete/' + this.props.appointment.id + '/'
         });
+
+        this.props.setStateValue('loading', false);
+
+        this.props.goForward();
     }
 
     render() {
