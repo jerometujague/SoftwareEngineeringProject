@@ -10,7 +10,7 @@ export default class Info extends React.Component {
             lastName: '',
             phoneNumber: '',
             email: '',
-            emailConsent: true,
+            emailConsent: false,
             errors: {}
         }
     }
