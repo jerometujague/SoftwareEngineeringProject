@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,16 @@ public class AppointmentSlotController {
     private final ServiceDAO serviceDAO;
     private final SkillDAO skillDAO;
     private final ManagerDAO managerDAO;
+
+    private List<Calendar> calendar;
+    private List<Appointment> appointments;
+    private List<Manager> managers;
+    private List<Skill> skills;
+    private List<Unavailable> managerUnavailables;
+    private List<Unavailable> branchUnavailables;
+    private List<BranchHours> branchHours;
+    private LocalTime currentTime;
+    private int todayCalendarId;
 
     public AppointmentSlotController(
             BranchHoursDAO branchHoursDAO,
@@ -49,93 +60,130 @@ public class AppointmentSlotController {
         List<AppointmentSlot> appointmentSlots = new ArrayList<>();
 
         // Get data at the beginning to save time
-        List<Calendar> calendar = calendarDAO.list();
-        List<Appointment> appointments = appointmentDAO.list();
-        List<Manager> managers = managerDAO.list();
-        List<Skill> skills = skillDAO.list();
-        List<Unavailable> managerUnavailables = unavailableDAO.listManagers();
-        List<Unavailable> branchUnavailables = unavailableDAO.listBranches();
-        List<BranchHours> branchHours = branchHoursDAO.list();
+        calendar = calendarDAO.list();
+        appointments = appointmentDAO.list();
+        managers = managerDAO.list();
+        skills = skillDAO.list();
+        managerUnavailables = unavailableDAO.listManagers();
+        branchUnavailables = unavailableDAO.listBranches();
+        branchHours = branchHoursDAO.list();
+
+        currentTime = LocalTime.now();
 
         // Get today's day and calendarId
         int startId = calendar
                 .parallelStream()
-                .filter(c -> c.getDate().isAfter(LocalDate.now()))
+                .filter(c -> c.getDate().isEqual(LocalDate.now()))
                 .findFirst()
                 .get()
                 .getCalendarId();
 
+        todayCalendarId = startId;
+
         // Go through the calendar dates for the next two weeks
         for(int i = startId; i < startId + 14; i++){
-            final int calendarId = i;
+            // Add all of the appointment slots for this day
+            appointmentSlots.addAll(getAppointmentSlots(branchId, i, serviceIds));
+        }
+        
+        return appointmentSlots;
+    }
 
-            // Get the day of week int from the current day
-            int dayOfWeek = calendar.get(i - 1)
-                    .getDate()
-                    .getDayOfWeek()
-                    .getValue();
+    @RequestMapping(value = "/{branchId}/{calendarId}", method = RequestMethod.POST)
+    public List<AppointmentSlot> getAppointmentSlots(@PathVariable("branchId") int branchId, @PathVariable("calendarId") int calendarId, @RequestBody int[] serviceIds){
+        List<AppointmentSlot> appointmentSlots = new ArrayList<>();
 
-            // Get the branch hours for that branch and for that day of the week
-            Optional<BranchHours> hours = branchHours
+        // Check if the data needs to be initialized
+        if(calendar == null){
+            calendar = calendarDAO.list();
+            appointments = appointmentDAO.list();
+            managers = managerDAO.list();
+            skills = skillDAO.list();
+            managerUnavailables = unavailableDAO.listManagers();
+            branchUnavailables = unavailableDAO.listBranches();
+            branchHours = branchHoursDAO.list();
+
+            currentTime = LocalTime.now();
+
+            // Get today's day and calendarId
+            todayCalendarId = calendar
                     .parallelStream()
-                    .filter(h -> h.getDayOfWeek() == dayOfWeek
-                            && h.getBranchId() == branchId)
-                    .findFirst();
+                    .filter(c -> c.getDate().isEqual(LocalDate.now()))
+                    .findFirst()
+                    .get()
+                    .getCalendarId();
+        }
 
-            // If the branch has hours for the day
-            if(hours.isPresent()) {
-                // Loop from start hour to close hour
-                for (int hour = hours.get().getOpenTime().getHour(); hour < hours.get().getCloseTime().getHour(); hour++) {
-                    final int slotHour = hour;
 
-                    // Check if this time slot is unavailable at this branch
-                    boolean branchUnavailable = branchUnavailables
-                            .parallelStream()
-                            .anyMatch(u -> u.getTime().getHour() == slotHour
-                                    && u.getReferId() == branchId
-                                    && u.getCalendarId() == calendarId);
+        // Get the day of week int from the current day
+        int dayOfWeek = calendar.get(calendarId - 1)
+                .getDate()
+                .getDayOfWeek()
+                .getValue();
 
-                    // Get all available managers at this branch that have all the needed skills for a specific time
-                    Supplier<Stream<Manager>> availableManagers = () -> managers.parallelStream()
-                            .filter(m -> m.getBranchId() == branchId // They must be at this branch
-                                    && (managerUnavailables // There can't be an unavailable for that time
-                                    .parallelStream()
-                                    .noneMatch(u -> u.getReferId() == m.getId()
-                                            && u.getTime().getHour() == slotHour
-                                            && u.getCalendarId() == calendarId))
-                                    && Arrays.stream(serviceIds) // They must have all of the serviceIds
-                                    .allMatch(service -> skills.parallelStream()
-                                            .anyMatch(skill -> skill.getServiceId() == service
-                                                    && skill.getManagerId() == m.getId())));
+        // Get the branch hours for that branch and for that day of the week
+        Optional<BranchHours> hours = branchHours
+                .parallelStream()
+                .filter(h -> h.getDayOfWeek() == dayOfWeek
+                        && h.getBranchId() == branchId)
+                .findFirst();
 
-                    // Check if there is already an appointment scheduled and no other manager has service
-                    boolean taken = appointments
-                            .parallelStream()
-                            .filter(a -> a.getCalendarId() == calendarId
-                                    && a.getTime().getHour() == slotHour
-                                    && a.getBranchId() == branchId)
-                            .count() >= availableManagers.get() // The count of appointments is equal to count of managers with that service
-                            .count();
+        // If the branch has hours for the day
+        if(hours.isPresent()) {
+            // Loop from start hour to close hour
+            for (int hour = hours.get().getOpenTime().getHour(); hour < hours.get().getCloseTime().getHour(); hour++) {
+                final int slotHour = hour;
 
-                    // Check if there is a manager able to provide service
-                    boolean serviceUnavailable = !availableManagers.get()
-                            .findAny()
-                            .isPresent();
+                // Check if this time slot is unavailable at this branch
+                boolean branchUnavailable = branchUnavailables
+                        .parallelStream()
+                        .anyMatch(u -> u.getTime().getHour() == slotHour
+                                && u.getReferId() == branchId
+                                && u.getCalendarId() == calendarId);
 
-                    // Get day and month string names
-                    String dayName = DateUtil.capitalize(DayOfWeek.of(dayOfWeek).name().toLowerCase());
-                    String monthName = DateUtil.capitalize(calendar.get(i - 1).getDate().getMonth().name().toLowerCase());
+                // Get all available managers at this branch that have all the needed skills for a specific time
+                Supplier<Stream<Manager>> availableManagers = () -> managers.parallelStream()
+                        .filter(m -> m.getBranchId() == branchId // They must be at this branch
+                                && (managerUnavailables // There can't be an unavailable for that time
+                                .parallelStream()
+                                .noneMatch(u -> u.getReferId() == m.getId()
+                                        && u.getTime().getHour() == slotHour
+                                        && u.getCalendarId() == calendarId))
+                                && Arrays.stream(serviceIds) // They must have all of the serviceIds
+                                .allMatch(service -> skills.parallelStream()
+                                        .anyMatch(skill -> skill.getServiceId() == service
+                                                && skill.getManagerId() == m.getId())));
 
-                    String timeString = DateUtil.hourToHumanString(slotHour);
+                // Check if there is already an appointment scheduled and no other manager has service
+                boolean taken = appointments
+                        .parallelStream()
+                        .filter(a -> a.getCalendarId() == calendarId
+                                && a.getTime().getHour() == slotHour
+                                && a.getBranchId() == branchId)
+                        .count() >= availableManagers.get() // The count of appointments is equal to count of managers with that service
+                        .count();
 
-                    // Add the appointmentSlot if it is available
-                    if (!branchUnavailable && !serviceUnavailable) {
-                        appointmentSlots.add(new AppointmentSlot(i, dayName, DateUtil.ordinal(calendar.get(i - 1).getDate().getDayOfMonth()), monthName, timeString, taken));
-                    }
+                // Check if there is a manager able to provide service
+                boolean serviceUnavailable = !availableManagers.get()
+                        .findAny()
+                        .isPresent();
+
+                // Check if the time slot has already passed for the current day
+                taken = taken || ((slotHour <= currentTime.getHour() + 1) && (calendarId == todayCalendarId));
+
+                // Get day and month string names
+                String dayName = DateUtil.capitalize(DayOfWeek.of(dayOfWeek).name().toLowerCase());
+                String monthName = DateUtil.capitalize(calendar.get(calendarId - 1).getDate().getMonth().name().toLowerCase());
+
+                String timeString = DateUtil.hourToHumanString(slotHour);
+
+                // Add the appointmentSlot if it is available
+                if (!branchUnavailable && !serviceUnavailable) {
+                    appointmentSlots.add(new AppointmentSlot(calendarId, dayName, DateUtil.ordinal(calendar.get(calendarId - 1).getDate().getDayOfMonth()), monthName, timeString, taken));
                 }
             }
         }
-        
+
         return appointmentSlots;
     }
 }
