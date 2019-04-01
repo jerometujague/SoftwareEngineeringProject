@@ -122,16 +122,16 @@ public class AppointmentSlotControllerTests {
 
         boolean isTakenBefore = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
-                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("10:00 AM"))
                 .findFirst()
                 .get()
                 .getTaken();
 
-        appointments.add(new Appointment(1, calendarId, LocalTime.of(12, 0), 1, 1, 1, new int[]{1}, ""));
+        appointments.add(new Appointment(1, calendarId, LocalTime.of(10, 0), 1, 1, 1, new int[]{1}, ""));
 
         boolean isTakenAfter = appointmentSlotController.getAppointmentSlots(1, new int[]{1})
                 .stream()
-                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("12:00 PM"))
+                .filter(a -> a.getCalendarId() == calendarId && a.getTime().equals("10:00 AM"))
                 .findFirst()
                 .get()
                 .getTaken();
