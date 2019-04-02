@@ -25,4 +25,18 @@ public class BranchHoursDAO {
         // Run the SQL query on the database to select all branch hours and return a List of BranchHours objects
         return this.jdbcTemplate.query("SELECT * FROM branch_hours", branchHoursMapper);
     }
+
+    public void insert(BranchHours branchHours){
+        this.jdbcTemplate.update("INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week) VALUES (?, ?, ?, ?)",
+                branchHours.getOpenTime(),
+                branchHours.getCloseTime(),
+                branchHours.getBranchId(),
+                branchHours.getDayOfWeek());
+    }
+
+    public void change(BranchHours branchHours){
+        String sql = "update branch_hours set open_time=?, close_time=? where branch_id=? and day_of_week=?";
+        this.jdbcTemplate.update(sql, branchHours.getOpenTime(), branchHours.getCloseTime(),
+                branchHours.getBranchId(), branchHours.getDayOfWeek());
+    }
 }
