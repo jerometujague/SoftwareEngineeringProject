@@ -1,5 +1,5 @@
 import React from 'react';
-import blueDotImage from './images/blueDot.png';
+import blueDotImage from '../images/blueDot.png';
 
 export class Map extends React.Component {
     constructor(props) {

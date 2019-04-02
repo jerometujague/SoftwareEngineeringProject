@@ -1,0 +1,34 @@
+#sideBar {
+    position: fixed;
+    height: 100%;
+    width: 300px;
+    border-right: 1px solid #006747;
+    top: 0;
+    left: 0;
+    padding-top: 50px;
+}
+
+.sideBarItem {
+    border-bottom: 1px solid #006747;
+    padding: 10px;
+    padding-left: 20px;
+}
+
+.sideBarItem:first-child {
+    border-top: 1px solid #006747;
+}
+
+.mainViewHolder {
+    margin-left: 300px
+}
+
+/* Appointment view */
+.appointment {
+    border-bottom: 1px solid #006747;
+}
+
+.appointmentData {
+    padding: 5px;
+    /* border-right: 1px solid #006747; */
+    margin-right: 10px;
+}

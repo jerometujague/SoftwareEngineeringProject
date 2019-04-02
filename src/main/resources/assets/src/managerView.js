@@ -1,11 +1,11 @@
 import 'babel-polyfill';
-import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
 import './css/base.css';
 import './css/manager.css';
 import loadingImage from './images/loading.gif';
+import AppointmentsView from './managerView/appointmentsView';
 
 class ManagerView extends React.Component {
     constructor(props) {
@@ -15,32 +15,26 @@ class ManagerView extends React.Component {
         }
     }
 
-    async loadAppointments() {
+    setStateValue(name, value) {
         this.setState({
-            loading: true,
-        });
-
-        let url = "/api/services";
-
-        await $.getJSON(url, (servicesList) => {
-            const newServices = [];
-            servicesList.forEach(service => {
-                newServices.push(service);
-            });
-
-            this.setState({
-                services: newServices,
-            });
-        });
-
-        this.setState({
-            loading: false,
+            [name]: value,
         });
     }
 
     render() {
         return (
             <div>
+                <div id="sideBar">
+                    <div className="sideBarItem">Appointments</div>
+                    <div className="sideBarItem">Managers</div>
+                    <div className="sideBarItem">Manager Scheduling</div>
+                    <div className="sideBarItem">Branch Scheduling</div>
+                    <div className="sideBarItem">Branch Hours</div>
+                </div>
+
+                <AppointmentsView
+                    setStateValue={this.setStateValue.bind(this)} />
+
                 <CSSTransition // Loading image for when we are retrieving data
                     in={this.state.loading}
                     timeout={{
