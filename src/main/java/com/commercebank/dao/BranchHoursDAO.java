@@ -34,9 +34,9 @@ public class BranchHoursDAO {
                 branchHours.getDayOfWeek());
     }
 
-    public void change(BranchHours branchHours){
-        String sql = "update branch_hours set open_time=?, close_time=? where branch_id=? and day_of_week=?";
+    public void update(int id, BranchHours branchHours){
+        String sql = "UPDATE branch_hours SET open_time=?, close_time=?, branch_id=?, day_of_week=? WHERE id =?";
         this.jdbcTemplate.update(sql, branchHours.getOpenTime(), branchHours.getCloseTime(),
-                branchHours.getBranchId(), branchHours.getDayOfWeek());
+                branchHours.getBranchId(), branchHours.getDayOfWeek(), id);
     }
 }
