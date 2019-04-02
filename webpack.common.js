@@ -4,7 +4,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     entry: {
-        custView: './src/main/resources/assets/src/custView.js',
+        customerView: './src/main/resources/assets/src/customerView.js',
+        managerView: './src/main/resources/assets/src/managerView.js',
     },
     output: {
         filename: '[name].bundle.js',
@@ -38,13 +39,13 @@ module.exports = {
             title: 'Commerce Bank',
             template: './src/main/resources/assets/src/index.html',
             favicon: './src/main/resources/assets/src/images/favicon.ico',
-            chunks: ['custView'],
+            chunks: ['customerView'],
             filename: 'index.html' //relative to root of the application
         }),
         new HtmlWebpackPlugin({
             title: 'Commerce Bank',
             template: './src/main/resources/assets/src/index.html',
-            chunks: ['custView'],
+            chunks: ['managerView'],
             filename: 'managerView.html' //relative to root of the application
         })
     ],
