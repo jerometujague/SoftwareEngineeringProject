@@ -3,9 +3,7 @@ package com.commercebank.controller;
 import com.commercebank.dao.ManagerDAO;
 import com.commercebank.model.Manager;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,4 +23,15 @@ public class ManagerController {
     List<Manager> getManagers(){
         return managerDAO.list();
     }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    void addManager(@RequestBody Manager manager){
+        managerDAO.insert(manager);
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    void updateManager(@PathVariable("id") int id, @RequestBody Manager manager) {
+        managerDAO.update(id, manager);
+    }
+
 }

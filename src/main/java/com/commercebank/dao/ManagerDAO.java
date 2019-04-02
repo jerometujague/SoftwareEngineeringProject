@@ -27,6 +27,25 @@ public class ManagerDAO {
         return this.jdbcTemplate.query("SELECT * FROM manager", managerMapper);
     }
 
+    public void insert(Manager manager){
+        this.jdbcTemplate.update("INSERT INTO manager (f_name, l_name, phone_num, email, branch_id) VALUES (?, ?, ?, ?, ?)",
+                manager.getFirstName(),
+                manager.getLastName(),
+                manager.getPhoneNumber(),
+                manager.getEmail(),
+                manager.getBranchId());
+    }
+
+    public void update(int id, Manager manager){
+        String sql = "update manager set f_name=?, l_name=?, phone_num=?, email = ?,and branch_id=? WHERE id = ?";
+        this.jdbcTemplate.update(sql, manager.getFirstName(), manager.getLastName(),
+                manager.getPhoneNumber(), manager.getEmail(), manager.getBranchId(), id);
+    }
+
+    public void delete(int id){this.jdbcTemplate.update("DELETE FROM manager WHERE id = ?", id); }
+
+
+
     // TODO: Make work for multiple servicecs
 //    public List<Manager> list(int branchID, int[] serviceIDs, int calendarID, LocalTime time){
 //        String sql = "SELECT * FROM manager WHERE (branch_id=?) AND id IN (SELECT id FROM manager JOIN skills ON(id = manager_id) WHERE (service_id=?)) AND id NOT IN (SELECT manager_id FROM manager_unavailable JOIN unavailable ON(unavailable_id = id) WHERE (calendar_id=?) AND (time=?));";
