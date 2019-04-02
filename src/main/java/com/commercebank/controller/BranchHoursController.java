@@ -29,8 +29,8 @@ public class BranchHoursController {
         branchHoursDAO.insert(branchHours);
     }
 
-    @RequestMapping(value = "/change", method = RequestMethod.POST)
-    void changeHours(@RequestBody BranchHours branchHours) {
-        branchHoursDAO.change(branchHours);
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    void updateHours(@PathVariable("id") int id, @RequestBody BranchHours branchHours) {
+        branchHoursDAO.update(id, branchHours);
     }
 }
