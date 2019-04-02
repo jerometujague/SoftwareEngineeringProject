@@ -1,6 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
-import { fixTime } from './functions';
+import { fixTime } from '../functions';
 
 export default class Info extends React.Component {
     constructor(props) {

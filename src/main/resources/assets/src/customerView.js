@@ -3,16 +3,16 @@ import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
-import AppointmentSlots from './appointmentSlotsPage';
-import Branches from './branchesPage';
+import AppointmentSlots from './customerView/appointmentSlotsPage';
+import Branches from './customerView/branchesPage';
 import './css/base.css';
 import './css/customer.css';
 import './css/progressBar.css';
-import Details from './detailsPage';
+import Details from './customerView/detailsPage';
 import loadingImage from './images/loading.gif';
-import Info from './infoPage';
-import Services from './servicesPage';
-import Cancelled from './cancelledPage';
+import Info from './customerView/infoPage';
+import Services from './customerView/servicesPage';
+import Cancelled from './customerView/cancelledPage';
 
 class CustomerView extends React.Component {
     constructor(props) {
