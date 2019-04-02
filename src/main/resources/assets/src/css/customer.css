@@ -1,73 +1,6 @@
-/* Kyle Graber CSS Customer View Version 1.0*/
-/* Last Touched Feb 2 2019*/
-
-/*This is to establish the body font and color of everything that is placed in body tags*/
-    body {
-        font-family: "cera_proregular", Arial, sans-serif;
-        font-size: 18px;
-        line-height: 1.5;
-        color: #77726D;
-        background-color: #fff;
-    }
-
-    /* This is to get the color/font right on the headings*/
-    h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-        font-family: "cera_probold", Arial, sans-serif;
-        font-weight: 500;
-        line-height: 1.1;
-        color: #006747;
-        margin: 0;
-    }
-
-    p {
-        margin: 0;
-    }
-
-    button{
-        outline-color: #77726D;
-        color: #006747;
-        border-radius: 4px;
-        cursor: pointer;
-        height: 110px;
-        width: 150px;
-        padding: 0px;
-    }
-
-    button.selected {
-        background-color: #006747;
-        color: #ffffff;
-    }
-
-    button:hover{
-        background-color: #006747;
-        color: #ffffff;
-    }
-
-input[type="checkbox"] {
-    display: none;
-}
-input[type="checkbox"]{
-    display: inline-block;
-    position: relative;
-    top: -1px;
-    width: 12px;
-    height: 12px;
-    margin: -1px 0px 0 0;
-    vertical-align: middle;
-    background: white left top no-repeat;
-    border: 1px solid #ccc;
-    cursor: pointer;
-}
-input[type="checkbox"]:checked{
-    background: #d9534f -19px top no-repeat;
-}
-
-input[type="checkbox"]{
-    margin-right: 4px;
-}
-
-input[type="submit"]:focus {
-    outline:none;
+.page {
+    position: absolute;
+    left: 80px;
 }
 
 .page-enter {
@@ -114,11 +47,6 @@ input[type="submit"]:focus {
     transition: all 600ms;
 }
 
-.page {
-    position: absolute;
-    left: 80px;
-}
-
 #backButton {
     width: 100px;
     height: 40px;
@@ -129,37 +57,9 @@ input[type="submit"]:focus {
     margin-right: 20px;
 }
 
-#loadingDiv {
-    position: absolute;
-    left: 0; 
-    right: 0; 
-    top: 0;
-    bottom: 0;
-    margin: auto auto;
-    width: 60px;
-    height: 60px;
-}
-
 #headerText {
     display: inline-block;
     margin: 0px;
-}
-
-.loading-enter {
-    opacity: 0.01;
-}
-
-.loading-enter.loading-enter-active {
-    opacity: 1;
-    transition: opacity 300ms ease-in;
-}
-
-.loading-exit {
-    opacity: 1;
-}
-
-.loading-exit.page-exit-active {
-    opacity: 0.01;
 }
 
 .timeSlots {
@@ -206,10 +106,6 @@ input[type="submit"]:focus {
     margin-bottom: 10px;
 }
 
-.error {
-    color: red;
-}
-
 .detailsData {
     margin-left: 55px;
     margin-top: 20px;
@@ -232,29 +128,6 @@ input[type="submit"]:focus {
 .service {
     margin-right: 6px;
     margin-bottom: 6px;
-}
-
-input[type="submit"] {
-    background-color: #006747;
-    color: white;
-    margin-top: 10px;
-    padding: 5px 15px;
-    border: none;
-    border-radius: 2px;
-    font-size: 16px;
-}
-
-input[type="submit"]:hover {
-    cursor: pointer;
-    background-color: #006746b7
-}
-
-input[type="submit"]:disabled {
-    background-color: #77726D;
-}
-
-input[type="submit"]:disabled:hover {
-    cursor: default;
 }
 
 input.appointmentTime {

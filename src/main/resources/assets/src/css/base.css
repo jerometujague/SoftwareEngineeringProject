@@ -1,0 +1,103 @@
+body {
+    font-family: "cera_proregular", Arial, sans-serif;
+    font-size: 18px;
+    line-height: 1.5;
+    color: #77726D;
+    background-color: #fff;
+}
+
+/* This is to get the color/font right on the headings*/
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: "cera_probold", Arial, sans-serif;
+    font-weight: 500;
+    line-height: 1.1;
+    color: #006747;
+    margin: 0;
+}
+
+p {
+    margin: 0;
+}
+
+/* Button */
+button {
+    outline-color: #77726D;
+    color: #006747;
+    border-radius: 4px;
+    cursor: pointer;
+    height: 110px;
+    width: 150px;
+    padding: 0px;
+}
+
+button.selected {
+    background-color: #006747;
+    color: #ffffff;
+}
+
+button:hover{
+    background-color: #006747;
+    color: #ffffff;
+}
+
+/* Input submit buttons */
+input[type="submit"] {
+    background-color: #006747;
+    color: white;
+    margin-top: 10px;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 2px;
+    font-size: 16px;
+}
+
+input[type="submit"]:hover {
+    cursor: pointer;
+    background-color: #006746b7
+}
+
+input[type="submit"]:disabled {
+    background-color: #77726D;
+}
+
+input[type="submit"]:disabled:hover {
+    cursor: default;
+}
+
+input[type="submit"]:focus {
+    outline:none;
+}
+
+/* Loading image */
+#loadingDiv {
+    position: absolute;
+    left: 0; 
+    right: 0; 
+    top: 0;
+    bottom: 0;
+    margin: auto auto;
+    width: 60px;
+    height: 60px;
+}
+
+.loading-enter {
+    opacity: 0.01;
+}
+
+.loading-enter.loading-enter-active {
+    opacity: 1;
+    transition: opacity 300ms ease-in;
+}
+
+.loading-exit {
+    opacity: 1;
+}
+
+.loading-exit.page-exit-active {
+    opacity: 0.01;
+}
+
+/* Error messages */
+.error {
+    color: red;
+}
