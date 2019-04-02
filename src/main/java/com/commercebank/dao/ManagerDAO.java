@@ -37,7 +37,7 @@ public class ManagerDAO {
     }
 
     public void update(int id, Manager manager){
-        String sql = "update manager set f_name=?, l_name=?, phone_num=?, email = ?,and branch_id=? WHERE id = ?";
+        String sql = "UPDATE manager SET f_name=?, l_name=?, phone_num=?, email = ?, branch_id=? WHERE id = ?";
         this.jdbcTemplate.update(sql, manager.getFirstName(), manager.getLastName(),
                 manager.getPhoneNumber(), manager.getEmail(), manager.getBranchId(), id);
     }
