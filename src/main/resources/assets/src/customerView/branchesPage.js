@@ -49,9 +49,10 @@ export default class Branches extends React.Component {
                 newAppointmentSlots.push(daySlots);
 
                 this.props.setStateValue('appointmentSlots', newAppointmentSlots);
-                this.props.setStateValue('loading', false);
             }
         });
+
+        this.props.setStateValue('loading', false);
     }
 
     render() {

@@ -89,7 +89,25 @@ public class AppointmentSlotController {
         return appointmentSlots;
     }
 
-    @RequestMapping(value = "/{branchId}/{calendarId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/{branchId}/{date}", method = RequestMethod.POST)
+    public List<AppointmentSlot> getAppointmentSlots(@PathVariable("branchId") int branchId, @PathVariable("date") String date, @RequestBody int[] serviceIds){
+        List<Calendar> calendar = calendarDAO.list();
+
+        String[] dateParts = date.split("-");
+
+        int calendarId = calendar.parallelStream()
+                .filter(c -> c.getDate().isEqual(
+                        LocalDate.of(
+                                Integer.valueOf(dateParts[0]),
+                                Integer.valueOf(dateParts[1]),
+                                Integer.valueOf(dateParts[2]))))
+                .findFirst()
+                .get()
+                .getCalendarId();
+
+        return getAppointmentSlots(branchId, calendarId, serviceIds);
+    }
+
     public List<AppointmentSlot> getAppointmentSlots(@PathVariable("branchId") int branchId, @PathVariable("calendarId") int calendarId, @RequestBody int[] serviceIds){
         List<AppointmentSlot> appointmentSlots = new ArrayList<>();
 
@@ -130,6 +148,11 @@ public class AppointmentSlotController {
 
         // If the branch has hours for the day
         if(hours.isPresent()) {
+            // Check if the current time is past the close time for current day
+            if(currentTime.isAfter(hours.get().getCloseTime()) && calendarId == todayCalendarId){
+                return appointmentSlots;
+            }
+
             // Loop from start hour to close hour
             for (int hour = hours.get().getOpenTime().getHour(); hour < hours.get().getCloseTime().getHour(); hour++) {
                 final int slotHour = hour;
