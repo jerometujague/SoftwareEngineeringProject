@@ -18,8 +18,52 @@
     border-top: 1px solid #006747;
 }
 
+.sideBarItem:hover {
+    cursor: pointer;
+    background-color: #006747;
+    color: white;
+}
+
+.selectedArrow {
+    width: 0; 
+    height: 0; 
+    border-top: 24.5px solid transparent;
+    border-bottom: 24.5px solid transparent;
+    border-left: 12px solid #006747;
+    position: relative;
+    float: right;
+    right: -23px;
+    top: -11px;
+}
+
+.itemSelected {
+    background-color: #006747;
+    color: white;
+}
+
 .mainViewHolder {
-    margin-left: 300px
+    position: absolute;
+    left: 300px;
+    padding: 20px;
+}
+
+/* View transitions */
+.view-enter {
+    opacity: 0.01;
+}
+
+.view-enter.view-enter-active {
+    opacity: 1;
+    transition: opacity 400ms ease-in;
+}
+
+.view-exit {
+    opacity: 1;
+}
+
+.view-exit.view-exit-active {
+    opacity: 0.01;
+    transition: opacity 400ms ease-out;
 }
 
 /* Appointment view */
