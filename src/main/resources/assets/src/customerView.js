@@ -147,6 +147,8 @@ class CustomerView extends React.Component {
                     unmountOnExit>
                     <AppointmentSlots
                         appointmentSlots={this.state.appointmentSlots}
+                        branchId={this.state.branchId}
+                        serviceIds={this.state.serviceIds}
                         goForward={this.goForward.bind(this)}
                         setStateValue={this.setStateValue.bind(this)} />
                 </CSSTransition>
