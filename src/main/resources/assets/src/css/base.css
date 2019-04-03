@@ -93,7 +93,7 @@ input[type="submit"]:focus {
     opacity: 1;
 }
 
-.loading-exit.page-exit-active {
+.loading-exit.loading-exit-active {
     opacity: 0.01;
 }
 
