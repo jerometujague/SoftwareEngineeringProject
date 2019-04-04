@@ -18,6 +18,8 @@ export default class AppointmentsView extends React.Component {
             masterSearchFilter: "",
             editAppointment: { time: "", branch: "", manager: "", customer: "", services: "" },
             showEditDialog: false,
+            editErrors: [],
+            editPosition: 0,
         }
 
         this.timeFilter = React.createRef();
@@ -209,30 +211,94 @@ export default class AppointmentsView extends React.Component {
             url: '/api/appointments/delete/' + id + '/'
         });
 
-        this.loadAppointments();
+        await this.loadAppointments();
 
         this.props.setStateValue('loading', false);
     }
 
-    editAppointment(time, branchName, managerName, customerName, serviceString) {
+    editAppointment(index, id, time, branchName, managerName, customerName, serviceString) {
         const appointment = {
-            "time": time,
-            "branch": branchName,
-            "manager": managerName,
-            "customer": customerName,
-            "services": serviceString,
+            id: id,
+            time: time,
+            branch: branchName,
+            manager: managerName,
+            customer: customerName,
+            services: serviceString,
         }
 
         this.setState({
             editAppointment: appointment,
             showEditDialog: true,
+            editErrors: [],
+            editPosition: index * 35 + 125,
         })
     }
 
-    saveEdits() {
+    closeEditor() {
         this.setState({
             showEditDialog: false,
         })
+    }
+
+    async saveEdits(itemId, newValues) {
+        this.props.setStateValue('loading', true);
+
+        const branch = this.state.branches.find(b => b.name == newValues[1]);
+        const manager = this.state.managers.find(m => m.firstName + " " + m.lastName == newValues[2]);
+        const customer = this.state.customers.find(c => c.firstName + " " + c.lastName == newValues[3]);
+
+        // Check if the data is valid
+        if (!branch || !manager || !customer) {
+            const newEditErrors = this.state.editErrors;
+
+            if (!branch) {
+                newEditErrors[1] = "Invalid branch name";
+            }
+
+            if (!manager) {
+                newEditErrors[2] = "Invalid manager name";
+            }
+
+            if (!customer) {
+                newEditErrors[3] = "Invalid customer name";
+            }
+
+            this.setState({
+                editErrors: newEditErrors,
+            })
+
+            this.props.setStateValue('loading', false);
+            return;
+        }
+
+        const branchId = branch.id;
+        const managerId = manager.id;
+        const customerId = customer.id;
+
+        await $.ajax({
+            type: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: '/api/appointments/update',
+            data: JSON.stringify({
+                id: itemId,
+                calendarId: 1,
+                time: "12:00",
+                branchId: branchId,
+                managerId: managerId,
+                customerId: customerId,
+            })
+        });
+
+        this.setState({
+            showEditDialog: false,
+        })
+
+        await this.loadAppointments();
+
+        this.props.setStateValue('loading', false);
     }
 
     render() {
@@ -327,7 +393,7 @@ export default class AppointmentsView extends React.Component {
                     </thead>
                     <tbody>
                         {
-                            this.state.appointments.map(appointment => {
+                            this.state.appointments.map((appointment, index) => {
                                 const customer = this.state.customers.find(c => { return c.id == appointment.customerId });
                                 const customerName = customer.firstName + " " + customer.lastName;
                                 const manager = this.state.managers.find(m => { return m.id == appointment.managerId });
@@ -374,7 +440,7 @@ export default class AppointmentsView extends React.Component {
                                         <td className="appointmentData">{customerName}</td>
                                         <td className="appointmentData">{serviceString}</td>
                                         <td className="appointmentData actionStart">
-                                            <input type="submit" value="Edit" onClick={this.editAppointment.bind(this, time, branchName, managerName, customerName, serviceString)} />
+                                            <input type="submit" value="Edit" onClick={this.editAppointment.bind(this, index, appointment.id, time, branchName, managerName, customerName, serviceString)} />
                                         </td>
                                         <td className="appointmentData">
                                             <input type="submit" value="Cancel" onClick={this.cancelAppointment.bind(this, appointment.id)} />
@@ -391,13 +457,16 @@ export default class AppointmentsView extends React.Component {
                     classNames="view"
                     unmountOnExit>
                     <EditDialog
+                        editId={this.state.editAppointment.id}
                         editItems={[this.state.editAppointment.time,
                         this.state.editAppointment.branch,
                         this.state.editAppointment.manager,
                         this.state.editAppointment.customer,
                         this.state.editAppointment.services]}
+                        editErrors={this.state.editErrors}
                         saveHandler={this.saveEdits.bind(this)}
-                        topPosition="0" />
+                        closeHandler={this.closeEditor.bind(this)}
+                        topPosition={this.state.editPosition + "px"} />
                 </CSSTransition>
             </div>
         )

@@ -67,6 +67,11 @@ public class AppointmentController {
         appointmentDAO.delete(id);
     }
 
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    void updateAppointment(@RequestBody Appointment appointment){
+        appointmentDAO.update(appointment);
+    }
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     void scheduleAppointment(@RequestBody Appointment appointment) throws MessagingException, IOException, Exception {
 

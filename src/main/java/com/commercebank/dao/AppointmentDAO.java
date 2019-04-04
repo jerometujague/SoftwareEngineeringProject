@@ -47,6 +47,11 @@ public class AppointmentDAO {
         this.jdbcTemplate.update("DELETE FROM appointment WHERE id = ?", id);
     }
 
+    public void update(Appointment appointment){
+        this.jdbcTemplate.update("UPDATE appointment SET calendar_id = ?, branch_id = ?, manager_id = ?, customer_id = ? WHERE id = ?",
+                appointment.getCalendarId(), appointment.getBranchId(), appointment.getManagerId(), appointment.getCustomerId(), appointment.getId());
+    }
+
     public void insert(Appointment appointment){
         this.jdbcTemplate.update("INSERT INTO appointment (calendar_id, time, branch_id, manager_id, customer_id, customer_note) VALUES (?, ?, ?, ?, ?, ?)",
                 appointment.getCalendarId(),
