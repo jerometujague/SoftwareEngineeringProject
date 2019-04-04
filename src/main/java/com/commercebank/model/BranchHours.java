@@ -20,6 +20,9 @@ public class BranchHours {
         this.dayOfWeek = dayOfWeek;
     }
 
+    // Default constructor used when a post request is made
+    public BranchHours() { }
+
     public int getId() {
         return id;
     }

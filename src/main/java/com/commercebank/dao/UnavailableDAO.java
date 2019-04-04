@@ -44,4 +44,47 @@ public class UnavailableDAO {
                 "JOIN unavailable " +
                 "ON manager_unavailable.unavailable_id = unavailable.id", unavailableMapper);
     }
+
+    public void insertManagerUnavailable(Unavailable unavailable){
+        // Run the SQL queries on the database to add a new manager unavailable
+        this.jdbcTemplate.update("INSERT INTO unavailable (calendar_id, time) VALUES (?, ?)",
+                unavailable.getCalendarId(),
+                unavailable.getTime());
+
+        // Get the id for just inserted unavailable row
+        List<Unavailable> unavailables = list();
+        Unavailable unavailable1 = unavailables.get(unavailables.size());
+        int newId = unavailable1.getId();
+
+        this.jdbcTemplate.update("INSERT INTO manager_unavailable (calendar_id, manager_id) VALUES (?, ?)",
+                newId,
+                unavailable.getReferId());
+    }
+
+    public void deleteManagerUnavailable(int id){
+        // Run the SQL query to delete a manager unavailable
+        this.jdbcTemplate.update("DELETE FROM manager_unavailable WHERE unavailable_id = ?", id);
+    }
+
+    public void insertBranchUnavailable(Unavailable unavailable){
+        // Run the SQL query on the database to add a new unavailable row
+        this.jdbcTemplate.update("INSERT INTO unavailable (calendar_id, time) VALUES (?, ?)",
+                unavailable.getCalendarId(),
+                unavailable.getTime());
+
+        // Get the id for just inserted unavailable row
+        List<Unavailable> unavailables = list();
+        Unavailable unavailable1 = unavailables.get(unavailables.size());
+        int newId = unavailable1.getId();
+
+        // Run the SQL query on the database to add a new row to branch_unavailable
+        this.jdbcTemplate.update("INSERT INTO branch_unavailable (unavailable_id, branch_id) VALUES (?,?)",
+                newId,
+                unavailable.getReferId());
+    }
+
+    public void deleteBranchUnavailable(int id){
+        // Run the SQL query to delete a branch unavailable
+        this.jdbcTemplate.update("DELETE FROM branch_unavailable WHERE unavailable_id = ?", id);
+    }
 }

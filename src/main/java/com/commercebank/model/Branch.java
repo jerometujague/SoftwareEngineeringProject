@@ -22,6 +22,9 @@ public class Branch {
         this.appointmentCount = 0;
     }
 
+    // Default constructor used when a post request is made
+    public Branch() { }
+
     public int getId() {
         return id;
     }

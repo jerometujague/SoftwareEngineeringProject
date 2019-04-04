@@ -18,6 +18,9 @@ public class Manager {
         this.branchId = branchId;
     }
 
+    // Default constructor used when a post request is made
+    public Manager() { }
+
     public int getId() {
         return id;
     }

@@ -17,6 +17,9 @@ public class Unavailable {
         this.referId = referId;
     }
 
+    // Default constructor used when a post request is made
+    public Unavailable() { }
+
     public int getId() {
         return id;
     }
