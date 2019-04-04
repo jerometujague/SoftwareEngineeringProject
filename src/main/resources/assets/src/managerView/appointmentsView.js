@@ -122,6 +122,10 @@ export default class AppointmentsView extends React.Component {
     }
 
     handleOutsideClick(event) {
+        if (!this.timeFilter.current) {
+            return;
+        }
+
         if (!this.timeFilter.current.contains(event.target)) {
             this.timeFilter.current.open = false;
             this.timeFilter.current.getElementsByTagName('input')[0].value = "";
@@ -325,9 +329,34 @@ export default class AppointmentsView extends React.Component {
         this.props.setStateValue('loading', false);
     }
 
+    getBranchName(id) {
+        return this.state.branches.find(b => { return b.id == id }).name;
+    }
+
+    getCustomerName(id) {
+        const customer = this.state.customers.find(c => { return c.id == id });
+        return customer.firstName + " " + customer.lastName;
+    }
+
+    getManagerName(id) {
+        const manager = this.state.managers.find(m => { return m.id == id });
+        return manager.firstName + " " + manager.lastName;
+    }
+
+    getServiceName(id) {
+        return this.state.services.find(s => { return s.id == id }).service;
+    }
+
     render() {
         const headerNames = ["Time", "Branch", "Manager", "Customer", "Service"];
         const numPreviewFilters = 5;
+
+        const editOptions = [
+            getTopResults(this.state.appointments.map(a => a.time[0])).map(r => convertTime24to12(r.item)),
+            getTopResults(this.state.appointments.map(a => a.branchId)).map(r => this.getBranchName(r.item)),
+            getTopResults(this.state.appointments.map(a => a.managerId)).map(r => this.getManagerName(r.item)),
+            getTopResults(this.state.appointments.map(a => a.customerId)).map(r => this.getCustomerName(r.item)),
+            getTopResults(this.state.appointments.map(a => a.serviceIds).flat()).map(r => this.getServiceName(r.item))];
 
         return (
             <div className="mainViewHolder">
@@ -375,16 +404,10 @@ export default class AppointmentsView extends React.Component {
                                                             if (counter < numPreviewFilters) {
                                                                 // Get the item name for the current filter
                                                                 let name = headerIndex == 0 ? convertTime24to12(result.item)
-                                                                    : headerIndex == 1 ? this.state.branches.find(b => { return b.id == result.item }).name
-                                                                        : headerIndex == 4 ? this.state.services.find(s => { return s.id == result.item }).service : undefined;
-
-                                                                if (headerIndex == 2) {
-                                                                    const manager = this.state.managers.find(m => { return m.id == result.item });
-                                                                    name = manager.firstName + " " + manager.lastName;
-                                                                } else if (headerIndex == 3) {
-                                                                    const customer = this.state.customers.find(c => { return c.id == result.item });
-                                                                    name = customer.firstName + " " + customer.lastName;
-                                                                }
+                                                                    : headerIndex == 1 ? this.getBranchName(result.item)
+                                                                        : headerIndex == 2 ? this.getManagerName(result.item)
+                                                                            : headerIndex == 3 ? this.getCustomerName(result.item)
+                                                                                : headerIndex == 4 ? this.getServiceName(result.item) : undefined;
 
                                                                 // Filter by search input
                                                                 if (this.state.itemFilterInput.length > 0 && !name.toLowerCase().match(this.state.itemFilterInput.toLowerCase())) {
@@ -418,11 +441,9 @@ export default class AppointmentsView extends React.Component {
                     <tbody>
                         {
                             this.state.appointments.map((appointment, index) => {
-                                const customer = this.state.customers.find(c => { return c.id == appointment.customerId });
-                                const customerName = customer.firstName + " " + customer.lastName;
-                                const manager = this.state.managers.find(m => { return m.id == appointment.managerId });
-                                const managerName = manager.firstName + " " + manager.lastName;
-                                const branchName = this.state.branches.find(b => { return b.id == appointment.branchId }).name;
+                                const customerName = this.getCustomerName(appointment.customerId)
+                                const managerName = this.getManagerName(appointment.managerId);
+                                const branchName = this.getBranchName(appointment.branchId);
 
                                 const time = convertTime24to12(appointment.time[0]);
 
@@ -487,6 +508,7 @@ export default class AppointmentsView extends React.Component {
                         this.state.editAppointment.manager,
                         this.state.editAppointment.customer,
                         this.state.editAppointment.services]}
+                        editOptions={editOptions}
                         editErrors={this.state.editErrors}
                         saveHandler={this.saveEdits.bind(this)}
                         closeHandler={this.closeEditor.bind(this)}

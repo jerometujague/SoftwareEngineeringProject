@@ -21,6 +21,8 @@ export function convertTime12to24(oldTime) {
     // Check if hour is single digit
     if (array[0] < 10) {
         time = "0" + array[0] + ":00";
+    } else {
+        time = array[0] + ":00";
     }
 
     return time.replace(/\s+/g, '');

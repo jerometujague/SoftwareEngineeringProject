@@ -114,7 +114,6 @@
     border-radius: 3px;
     box-shadow: 0 3px 12px rgba(27,31,35,.15);
     color: #586069;
-    font-size: 12px;
     margin-bottom: 20px;
     margin-top: 4px;
     overflow: hidden;
@@ -169,6 +168,7 @@ details:focus {
 
 a:hover {
     cursor: pointer;
+    color: #006747;
 }
 
 .masterSearchInput {
@@ -192,12 +192,46 @@ a:hover {
     width: 1031px;
 }
 
-.editDialog input {
+.editItem {
     display: inline-block;
     margin-right: 10px;
+}
+
+.editItem input {
     max-width: 150px;
+}
+
+.editDialog > input {
+    margin-right: 10px;
 }
 
 .editError {
     border: 2px solid red!important;
+}
+
+.editOptions {
+    position: absolute!important;
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid rgba(27,31,35,.15);
+    border-radius: 3px;
+    box-shadow: 0 3px 12px rgba(27,31,35,.15);
+    color: #586069;
+    margin-bottom: 20px;
+    margin-top: 4px;
+    overflow: hidden;
+    width: 150px;
+    z-index: 99;
+    font-size: 14px;
+}
+
+.editOptionItem {
+    border-top: 1px solid #eaecef;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.editOptionItem:hover {
+    background-color: #006747;
+    color: white;
 }
