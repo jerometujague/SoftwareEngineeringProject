@@ -48,8 +48,11 @@ public class AppointmentDAO {
     }
 
     public void update(Appointment appointment){
-        this.jdbcTemplate.update("UPDATE appointment SET calendar_id = ?, branch_id = ?, manager_id = ?, customer_id = ? WHERE id = ?",
-                appointment.getCalendarId(), appointment.getBranchId(), appointment.getManagerId(), appointment.getCustomerId(), appointment.getId());
+        this.jdbcTemplate.update("UPDATE appointment SET calendar_id = ?, time = ?, branch_id = ?, manager_id = ?, customer_id = ? WHERE id = ?",
+                appointment.getCalendarId(), appointment.getTime(), appointment.getBranchId(), appointment.getManagerId(), appointment.getCustomerId(), appointment.getId());
+
+        deleteServices(appointment.getId());
+        insertServices(appointment.getId(), appointment.getServiceIds());
     }
 
     public void insert(Appointment appointment){
@@ -66,10 +69,18 @@ public class AppointmentDAO {
         List<Appointment> appointments = list();
         int id = appointments.get(appointments.size() - 1).getId();
 
+        insertServices(id, appointment.getServiceIds());
+    }
+
+    public void insertServices(int id, int[] services){
         // Insert all of the appointment services
-        for(int service : appointment.getServiceIds()){
+        for(int service : services){
             this.jdbcTemplate.update("INSERT INTO appointment_services (service_id, appointment_id) VALUES (?, ?)", service, id);
         }
+    }
+
+    public void deleteServices(int id){
+        this.jdbcTemplate.update("DELETE FROM appointment_services WHERE appointment_id = ?", id);
     }
 
     public List<AppointmentService> listServices(){

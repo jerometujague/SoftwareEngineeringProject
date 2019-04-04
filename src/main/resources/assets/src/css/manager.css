@@ -198,10 +198,6 @@ a:hover {
     max-width: 150px;
 }
 
-.editDialog input:first-child {
-    width: 50px;
-}
-
 .editError {
     border: 2px solid red!important;
 }
