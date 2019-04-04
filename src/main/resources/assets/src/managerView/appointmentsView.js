@@ -1,6 +1,8 @@
 import $ from 'jquery';
 import React from 'react';
 import { convertTime24to12, getTopResults } from '../functions';
+import EditDialog from './editDialog';
+import { CSSTransition } from 'react-transition-group';
 
 export default class AppointmentsView extends React.Component {
     constructor(props) {
@@ -14,6 +16,8 @@ export default class AppointmentsView extends React.Component {
             filters: [[], [], [], [], []],
             itemFilterInput: "",
             masterSearchFilter: "",
+            editAppointment: { time: "", branch: "", manager: "", customer: "", services: "" },
+            showEditDialog: false,
         }
 
         this.timeFilter = React.createRef();
@@ -26,14 +30,18 @@ export default class AppointmentsView extends React.Component {
     componentDidMount() {
         // Load all of the data
         this.props.setStateValue('loading', true);
-        this.loadCustomers();
-        this.loadBranches();
-        this.loadServices();
-        this.loadManagers();
-        this.loadAppointments();
+        this.loadData();
         this.props.setStateValue('loading', false);
 
         document.addEventListener('click', this.handleOutsideClick.bind(this), false);
+    }
+
+    async loadData() {
+        await this.loadCustomers();
+        await this.loadBranches();
+        await this.loadServices();
+        await this.loadManagers();
+        await this.loadAppointments();
     }
 
     async loadAppointments() {
@@ -188,6 +196,45 @@ export default class AppointmentsView extends React.Component {
         })
     }
 
+    async cancelAppointment(id) {
+        this.props.setStateValue('loading', true);
+
+        // Send the delete request
+        await $.ajax({
+            type: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            url: '/api/appointments/delete/' + id + '/'
+        });
+
+        this.loadAppointments();
+
+        this.props.setStateValue('loading', false);
+    }
+
+    editAppointment(time, branchName, managerName, customerName, serviceString) {
+        const appointment = {
+            "time": time,
+            "branch": branchName,
+            "manager": managerName,
+            "customer": customerName,
+            "services": serviceString,
+        }
+
+        this.setState({
+            editAppointment: appointment,
+            showEditDialog: true,
+        })
+    }
+
+    saveEdits() {
+        this.setState({
+            showEditDialog: false,
+        })
+    }
+
     render() {
         const headerNames = ["Time", "Branch", "Manager", "Customer", "Service"];
         const numPreviewFilters = 5;
@@ -275,6 +322,7 @@ export default class AppointmentsView extends React.Component {
                                     );
                                 })
                             }
+                            <td colSpan="2"></td>
                         </tr>
                     </thead>
                     <tbody>
@@ -325,12 +373,32 @@ export default class AppointmentsView extends React.Component {
                                         <td className="appointmentData">{managerName}</td>
                                         <td className="appointmentData">{customerName}</td>
                                         <td className="appointmentData">{serviceString}</td>
+                                        <td className="appointmentData actionStart">
+                                            <input type="submit" value="Edit" onClick={this.editAppointment.bind(this, time, branchName, managerName, customerName, serviceString)} />
+                                        </td>
+                                        <td className="appointmentData">
+                                            <input type="submit" value="Cancel" onClick={this.cancelAppointment.bind(this, appointment.id)} />
+                                        </td>
                                     </tr>
                                 );
                             })
                         }
                     </tbody>
                 </table>
+                <CSSTransition // Show the edit dialog
+                    in={this.state.showEditDialog}
+                    timeout={400}
+                    classNames="view"
+                    unmountOnExit>
+                    <EditDialog
+                        editItems={[this.state.editAppointment.time,
+                        this.state.editAppointment.branch,
+                        this.state.editAppointment.manager,
+                        this.state.editAppointment.customer,
+                        this.state.editAppointment.services]}
+                        saveHandler={this.saveEdits.bind(this)}
+                        topPosition="0" />
+                </CSSTransition>
             </div>
         )
     }
