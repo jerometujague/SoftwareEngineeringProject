@@ -3,6 +3,7 @@ import React from 'react';
 import { convertTime24to12, getTopResults, convertTime12to24 } from '../functions';
 import EditDialog from './editDialog';
 import { CSSTransition } from 'react-transition-group';
+import HeaderFilters from './headerFilters';
 
 export default class AppointmentsView extends React.Component {
     constructor(props) {
@@ -14,7 +15,6 @@ export default class AppointmentsView extends React.Component {
             services: [],
             managers: [],
             filters: [[], [], [], [], []],
-            itemFilterInput: "",
             masterSearchFilter: "",
             editAppointment: { time: "", branch: "", manager: "", customer: "", services: "" },
             showEditDialog: false,
@@ -22,160 +22,31 @@ export default class AppointmentsView extends React.Component {
             editPosition: 0,
         }
 
-        this.timeFilter = React.createRef();
-        this.branchFilter = React.createRef();
-        this.managerFilter = React.createRef();
-        this.customerFilter = React.createRef();
-        this.serviceFilter = React.createRef();
-    }
+        this.headerNames = ["Time", "Branch", "Manager", "Customer", "Service"];
+        this.dataNeeded = ["customers", "branches", "services", "managers", "appointments"];
 
-    componentDidMount() {
-        // Load all of the data
-        this.props.setStateValue('loading', true);
         this.loadData();
-        this.props.setStateValue('loading', false);
-
-        document.addEventListener('click', this.handleOutsideClick.bind(this), false);
     }
 
     async loadData() {
-        await this.loadCustomers();
-        await this.loadBranches();
-        await this.loadServices();
-        await this.loadManagers();
-        await this.loadAppointments();
-    }
+        this.props.setStateValue('loading', true);
 
-    async loadAppointments() {
-        let url = "/api/appointments";
+        await this.dataNeeded.forEach(async data => {
+            const url = "/api/" + data;
 
-        await $.getJSON(url, appointmentsList => {
-            const newAppointments = [];
-            appointmentsList.forEach(appointment => {
-                newAppointments.push(appointment);
+            await $.getJSON(url, dataList => {
+                const newData = [];
+                dataList.forEach(dataItem => {
+                    newData.push(dataItem);
+                });
+
+                this.setState({
+                    [data]: newData,
+                });
             });
-
-            this.setState({
-                appointments: newAppointments,
-            });
-        });
-    }
-
-    async loadCustomers() {
-        let url = "/api/customers";
-
-        await $.getJSON(url, customersList => {
-            const newCustomers = [];
-            customersList.forEach(customer => {
-                newCustomers.push(customer);
-            });
-
-            this.setState({
-                customers: newCustomers,
-            });
-        });
-    }
-
-    async loadServices() {
-        let url = "/api/services";
-
-        await $.getJSON(url, servicesList => {
-            const newServices = [];
-            servicesList.forEach(service => {
-                newServices.push(service);
-            });
-
-            this.setState({
-                services: newServices,
-            });
-        });
-    }
-
-    async loadBranches() {
-        let url = "/api/branches";
-
-        await $.getJSON(url, branchesList => {
-            const newBranches = [];
-            branchesList.forEach(branch => {
-                newBranches.push(branch);
-            });
-
-            this.setState({
-                branches: newBranches,
-            });
-        });
-    }
-
-    async loadManagers() {
-        let url = "/api/managers";
-
-        await $.getJSON(url, managersList => {
-            const newManagers = [];
-            managersList.forEach(manager => {
-                newManagers.push(manager);
-            });
-
-            this.setState({
-                managers: newManagers,
-            });
-        });
-    }
-
-    handleOutsideClick(event) {
-        if (!this.timeFilter.current) {
-            return;
-        }
-
-        if (!this.timeFilter.current.contains(event.target)) {
-            this.timeFilter.current.open = false;
-            this.timeFilter.current.getElementsByTagName('input')[0].value = "";
-            this.clearFilterInput();
-        }
-
-        if (!this.branchFilter.current.contains(event.target)) {
-            this.branchFilter.current.open = false;
-            this.branchFilter.current.getElementsByTagName('input')[0].value = "";
-            this.clearFilterInput();
-        }
-
-        if (!this.managerFilter.current.contains(event.target)) {
-            this.managerFilter.current.open = false;
-            this.managerFilter.current.getElementsByTagName('input')[0].value = "";
-            this.clearFilterInput();
-        }
-
-        if (!this.customerFilter.current.contains(event.target)) {
-            this.customerFilter.current.open = false;
-            this.customerFilter.current.getElementsByTagName('input')[0].value = "";
-            this.clearFilterInput();
-        }
-
-        if (!this.serviceFilter.current.contains(event.target)) {
-            this.serviceFilter.current.open = false;
-            this.serviceFilter.current.getElementsByTagName('input')[0].value = "";
-            this.clearFilterInput();
-        }
-    }
-
-    addFilter(newFilter, type) {
-        const filters = this.state.filters;
-
-        const index = filters[type].indexOf(newFilter);
-        if (index == -1) {
-            filters[type].push(newFilter);
-        } else {
-            filters[type].splice(index, 1);
-        }
-
-        this.setState({
-            filters: filters,
         })
 
-        this.timeFilter.current.open = false;
-        this.branchFilter.current.open = false;
-        this.managerFilter.current.open = false;
-        this.customerFilter.current.open = false;
-        this.serviceFilter.current.open = false;
+        this.props.setStateValue('loading', false);
     }
 
     clearFilters() {
@@ -184,15 +55,9 @@ export default class AppointmentsView extends React.Component {
         })
     }
 
-    itemFilterInput(e) {
+    setFilters(newFilters) {
         this.setState({
-            itemFilterInput: e.target.value,
-        })
-    }
-
-    clearFilterInput() {
-        this.setState({
-            itemFilterInput: "",
+            filters: newFilters,
         })
     }
 
@@ -348,15 +213,20 @@ export default class AppointmentsView extends React.Component {
     }
 
     render() {
-        const headerNames = ["Time", "Branch", "Manager", "Customer", "Service"];
-        const numPreviewFilters = 5;
-
-        const editOptions = [
+        const previewOptions = [
             getTopResults(this.state.appointments.map(a => a.time[0])).map(r => convertTime24to12(r.item)),
             getTopResults(this.state.appointments.map(a => a.branchId)).map(r => this.getBranchName(r.item)),
             getTopResults(this.state.appointments.map(a => a.managerId)).map(r => this.getManagerName(r.item)),
             getTopResults(this.state.appointments.map(a => a.customerId)).map(r => this.getCustomerName(r.item)),
             getTopResults(this.state.appointments.map(a => a.serviceIds).flat()).map(r => this.getServiceName(r.item))];
+
+        const editOptions = [
+            getTopResults(this.state.appointments.map(a => a.time[0])).map(r => convertTime24to12(r.item)),
+            getTopResults(this.state.branches.map(a => a.id)).map(r => this.getBranchName(r.item)),
+            getTopResults(this.state.managers.map(a => a.id)).map(r => this.getManagerName(r.item)),
+            getTopResults(this.state.customers.map(a => a.id)).map(r => this.getCustomerName(r.item)),
+            getTopResults(this.state.services.map(a => a.id).flat()).map(r => this.getServiceName(r.item))
+        ];
 
         return (
             <div className="mainViewHolder">
@@ -375,66 +245,11 @@ export default class AppointmentsView extends React.Component {
                 <table>
                     <thead>
                         <tr>
-                            {
-                                headerNames.map((headerName, headerIndex) => {
-                                    // Find the ref for this header
-                                    const headerRef = headerIndex == 0 ? this.timeFilter
-                                        : headerIndex == 1 ? this.branchFilter
-                                            : headerIndex == 2 ? this.managerFilter
-                                                : headerIndex == 3 ? this.customerFilter
-                                                    : headerIndex == 4 ? this.serviceFilter : undefined;
-
-                                    // Get the top results for the current filter
-                                    const topResults = headerIndex == 0 ? getTopResults(this.state.appointments.map(a => a.time[0]))
-                                        : headerIndex == 1 ? getTopResults(this.state.appointments.map(a => a.branchId))
-                                            : headerIndex == 2 ? getTopResults(this.state.appointments.map(a => a.managerId))
-                                                : headerIndex == 3 ? getTopResults(this.state.appointments.map(a => a.customerId))
-                                                    : headerIndex == 4 ? getTopResults(this.state.appointments.map(a => a.serviceIds).flat()) : undefined;
-
-                                    let counter = 0;
-
-                                    return (
-                                        <td key={headerIndex}>
-                                            <details ref={headerRef}>
-                                                <summary className="filterHeader">{headerName}</summary>
-                                                <details-menu class="filterMenu">
-                                                    <input type="text" placeholder={"Filter " + headerName.toLowerCase()} className="filterInput" onChange={this.itemFilterInput.bind(this)} />
-                                                    {
-                                                        topResults.map((result, index) => {
-                                                            if (counter < numPreviewFilters) {
-                                                                // Get the item name for the current filter
-                                                                let name = headerIndex == 0 ? convertTime24to12(result.item)
-                                                                    : headerIndex == 1 ? this.getBranchName(result.item)
-                                                                        : headerIndex == 2 ? this.getManagerName(result.item)
-                                                                            : headerIndex == 3 ? this.getCustomerName(result.item)
-                                                                                : headerIndex == 4 ? this.getServiceName(result.item) : undefined;
-
-                                                                // Filter by search input
-                                                                if (this.state.itemFilterInput.length > 0 && !name.toLowerCase().match(this.state.itemFilterInput.toLowerCase())) {
-                                                                    return;
-                                                                }
-
-                                                                counter++;
-
-                                                                return (
-                                                                    <div key={index} className="filterItem" onClick={this.addFilter.bind(this, name, headerIndex)}>
-                                                                        {
-                                                                            this.state.filters[headerIndex].includes(name) &&
-                                                                            <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
-                                                                        }
-                                                                        <p className="filterItemText">{name}</p>
-                                                                    </div>
-                                                                );
-                                                            }
-                                                        })
-                                                    }
-
-                                                </details-menu>
-                                            </details>
-                                        </td>
-                                    );
-                                })
-                            }
+                            <HeaderFilters
+                                headerNames={this.headerNames}
+                                previewOptions={previewOptions}
+                                filters={this.state.filters}
+                                setFilters={this.setFilters.bind(this)} />
                             <td colSpan="2"></td>
                         </tr>
                     </thead>

@@ -65,12 +65,14 @@ export default class EditDialog extends React.Component {
     }
 
     render() {
+        const numOptions = 5;
+
         const styles = {
             top: this.props.topPosition
         }
 
         return (
-            <div className="editDialog" style={styles} key={this.props.editId}>
+            <div className="editDialog" style={styles} key={this.props.editId} >
                 {
                     this.props.editItems.map((item, index) => {
                         return (
@@ -87,11 +89,13 @@ export default class EditDialog extends React.Component {
                                     <div ref={this.optionRefs[index]} className="editOptions">
                                         {
                                             this.props.editOptions[this.state.optionsId].map((optionItem, i) => {
-                                                return (
-                                                    <div key={i} className="editOptionItem" onClick={this.optionClicked.bind(this, index, optionItem)}>
-                                                        {optionItem}
-                                                    </div>
-                                                );
+                                                if (i < numOptions) {
+                                                    return (
+                                                        <div key={i} className="editOptionItem" onClick={this.optionClicked.bind(this, index, optionItem)}>
+                                                            {optionItem}
+                                                        </div>
+                                                    );
+                                                }
                                             })
                                         }
                                     </div>
@@ -100,7 +104,7 @@ export default class EditDialog extends React.Component {
                         )
                     })
                 }
-                <input type="submit" value="Save" onClick={this.props.saveHandler.bind(this, this.props.editId, this.state.editValues)} />
+                < input type="submit" value="Save" onClick={this.props.saveHandler.bind(this, this.props.editId, this.state.editValues)} />
                 <input type="submit" value="X" onClick={this.props.closeHandler.bind(this)} />
             </div>
         );
