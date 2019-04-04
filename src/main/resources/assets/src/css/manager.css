@@ -166,3 +166,7 @@ details:focus {
 .filterItemText {
     margin-left: 20px;
 }
+
+a:hover {
+    cursor: pointer;
+}

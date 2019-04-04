@@ -12,6 +12,7 @@ export default class AppointmentsView extends React.Component {
             services: [],
             managers: [],
             filters: [[], [], [], [], []],
+            itemFilterInput: "",
         }
 
         this.timeFilter = React.createRef();
@@ -112,22 +113,32 @@ export default class AppointmentsView extends React.Component {
     handleOutsideClick(event) {
         if (!this.timeFilter.current.contains(event.target)) {
             this.timeFilter.current.open = false;
+            this.timeFilter.current.getElementsByTagName('input')[0].value = "";
+            this.clearFilterInput();
         }
 
         if (!this.branchFilter.current.contains(event.target)) {
             this.branchFilter.current.open = false;
+            this.branchFilter.current.getElementsByTagName('input')[0].value = "";
+            this.clearFilterInput();
         }
 
         if (!this.managerFilter.current.contains(event.target)) {
             this.managerFilter.current.open = false;
+            this.managerFilter.current.getElementsByTagName('input')[0].value = "";
+            this.clearFilterInput();
         }
 
         if (!this.customerFilter.current.contains(event.target)) {
             this.customerFilter.current.open = false;
+            this.customerFilter.current.getElementsByTagName('input')[0].value = "";
+            this.clearFilterInput();
         }
 
         if (!this.serviceFilter.current.contains(event.target)) {
             this.serviceFilter.current.open = false;
+            this.serviceFilter.current.getElementsByTagName('input')[0].value = "";
+            this.clearFilterInput();
         }
     }
 
@@ -152,6 +163,24 @@ export default class AppointmentsView extends React.Component {
         this.serviceFilter.current.open = false;
     }
 
+    clearFilters() {
+        this.setState({
+            filters: [[], [], [], [], []],
+        })
+    }
+
+    itemFilterInput(e) {
+        this.setState({
+            itemFilterInput: e.target.value,
+        })
+    }
+
+    clearFilterInput() {
+        this.setState({
+            itemFilterInput: "",
+        })
+    }
+
     render() {
         const headerNames = ["Time", "Branch", "Manager", "Customer", "Service"];
         const numPreviewFilters = 5;
@@ -159,6 +188,15 @@ export default class AppointmentsView extends React.Component {
         return (
             <div className="mainViewHolder">
                 <h2 className="viewHeader">Appointments</h2>
+                {
+                    (this.state.filters[0].length > 0 ||
+                        this.state.filters[1].length > 0 ||
+                        this.state.filters[2].length > 0 ||
+                        this.state.filters[3].length > 0 ||
+                        this.state.filters[4].length > 0) &&
+                    <a onClick={this.clearFilters.bind(this)}>Clear current filters</a>
+                }
+
                 <table>
                     <thead>
                         <tr>
@@ -171,21 +209,24 @@ export default class AppointmentsView extends React.Component {
                                                 : headerIndex == 3 ? this.customerFilter
                                                     : headerIndex == 4 ? this.serviceFilter : undefined;
 
+                                    // Get the top results for the current filter
                                     const topResults = headerIndex == 0 ? getTopResults(this.state.appointments.map(a => a.time[0]))
                                         : headerIndex == 1 ? getTopResults(this.state.appointments.map(a => a.branchId))
                                             : headerIndex == 2 ? getTopResults(this.state.appointments.map(a => a.managerId))
                                                 : headerIndex == 3 ? getTopResults(this.state.appointments.map(a => a.customerId))
                                                     : headerIndex == 4 ? getTopResults(this.state.appointments.map(a => a.serviceIds).flat()) : undefined;
 
+                                    let counter = 0;
+
                                     return (
                                         <td key={headerIndex}>
                                             <details ref={headerRef}>
                                                 <summary className="filterHeader">{headerName}</summary>
                                                 <details-menu class="filterMenu">
-                                                    <input type="text" placeholder={"Filter " + headerName.toLowerCase()} className="filterInput" />
+                                                    <input type="text" placeholder={"Filter " + headerName.toLowerCase()} className="filterInput" onChange={this.itemFilterInput.bind(this)} />
                                                     {
                                                         topResults.map((result, index) => {
-                                                            if (index < numPreviewFilters) {
+                                                            if (counter < numPreviewFilters) {
                                                                 // Get the item name for the current filter
                                                                 let name = headerIndex == 0 ? convertTime24to12(result.item)
                                                                     : headerIndex == 1 ? this.state.branches.find(b => { return b.id == result.item }).name
@@ -199,6 +240,13 @@ export default class AppointmentsView extends React.Component {
                                                                     name = customer.firstName + " " + customer.lastName;
                                                                 }
 
+                                                                // Filter by search input
+                                                                if (this.state.itemFilterInput.length > 0 && !name.toLowerCase().match(this.state.itemFilterInput.toLowerCase())) {
+                                                                    return;
+                                                                }
+
+                                                                counter++;
+
                                                                 return (
                                                                     <div key={index} className="filterItem" onClick={this.addFilter.bind(this, name, headerIndex)}>
                                                                         {
@@ -211,6 +259,7 @@ export default class AppointmentsView extends React.Component {
                                                             }
                                                         })
                                                     }
+
                                                 </details-menu>
                                             </details>
                                         </td>
