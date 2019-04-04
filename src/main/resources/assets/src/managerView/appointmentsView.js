@@ -11,11 +11,7 @@ export default class AppointmentsView extends React.Component {
             branches: [],
             services: [],
             managers: [],
-            timeFilters: [],
-            branchFilters: [],
-            managerFilters: [],
-            customerFilters: [],
-            serviceFilters: [],
+            filters: [[], [], [], [], []],
         }
 
         this.timeFilter = React.createRef();
@@ -135,92 +131,29 @@ export default class AppointmentsView extends React.Component {
         }
     }
 
-    addTimeFilter(time) {
-        const filters = this.state.timeFilters;
+    addFilter(newFilter, type) {
+        const filters = this.state.filters;
 
-        const index = filters.indexOf(time);
+        const index = filters[type].indexOf(newFilter);
         if (index == -1) {
-            filters.push(time);
+            filters[type].push(newFilter);
         } else {
-            filters.splice(index, 1);
+            filters[type].splice(index, 1);
         }
 
         this.setState({
-            timeFilters: filters,
+            filters: filters,
         })
 
         this.timeFilter.current.open = false;
-    }
-
-    addBranchFilter(branch) {
-        const filters = this.state.branchFilters;
-
-        const index = filters.indexOf(branch);
-        if (index == -1) {
-            filters.push(branch);
-        } else {
-            filters.splice(index, 1);
-        }
-
-        this.setState({
-            branchFilters: filters,
-        })
-
         this.branchFilter.current.open = false;
-    }
-
-    addManagerFilter(manager) {
-        const filters = this.state.managerFilters;
-
-        const index = filters.indexOf(manager);
-        if (index == -1) {
-            filters.push(manager);
-        } else {
-            filters.splice(index, 1);
-        }
-
-        this.setState({
-            managerFilters: filters,
-        })
-
         this.managerFilter.current.open = false;
-    }
-
-    addCustomerFilter(customer) {
-        const filters = this.state.customerFilters;
-
-        const index = filters.indexOf(customer);
-        if (index == -1) {
-            filters.push(customer);
-        } else {
-            filters.splice(index, 1);
-        }
-
-        this.setState({
-            customerFilters: filters,
-        })
-
         this.customerFilter.current.open = false;
-    }
-
-    addServiceFilter(service) {
-        const filters = this.state.serviceFilters;
-
-        const index = filters.indexOf(service);
-        if (index == -1) {
-            filters.push(service);
-        } else {
-            filters.splice(index, 1);
-        }
-
-        this.setState({
-            serviceFilters: filters,
-        })
-
         this.serviceFilter.current.open = false;
     }
 
     render() {
+        const headerNames = ["Time", "Branch", "Manager", "Customer", "Service"];
         const numPreviewFilters = 5;
 
         return (
@@ -229,130 +162,61 @@ export default class AppointmentsView extends React.Component {
                 <table>
                     <thead>
                         <tr>
-                            <td>
-                                <details ref={this.timeFilter}>
-                                    <summary className="filterHeader">Time</summary>
-                                    <details-menu class="filterMenu">
-                                        <input type="text" placeholder="Filter time" className="filterInput" />
-                                        {
-                                            getTopResults(this.state.appointments.map(a => a.time[0])).map((t, index) => {
-                                                if (index < numPreviewFilters) {
-                                                    const time = convertTime24to12(t.item);
-                                                    return (
-                                                        <div key={index} className="filterItem" onClick={this.addTimeFilter.bind(this, time)}>
-                                                            {
-                                                                this.state.timeFilters.includes(time) &&
-                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
-                                                            }
-                                                            <p className="filterItemText">{time}</p>
-                                                        </div>);
-                                                }
-                                            })
-                                        }
-                                    </details-menu>
-                                </details>
-                            </td>
-                            <td>
-                                <details ref={this.branchFilter}>
-                                    <summary className="filterHeader">Branch</summary>
-                                    <details-menu class="filterMenu">
-                                        <input type="text" placeholder="Filter branch" className="filterInput" />
-                                        {
-                                            getTopResults(this.state.appointments.map(a => a.branchId)).map((branch, index) => {
-                                                if (index < numPreviewFilters) {
-                                                    const branchName = this.state.branches.find(b => { return b.id == branch.item }).name;
-                                                    return (
-                                                        <div key={index} className="filterItem" onClick={this.addBranchFilter.bind(this, branchName)}>
-                                                            {
-                                                                this.state.branchFilters.includes(branchName) &&
-                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
-                                                            }
-                                                            <p className="filterItemText">{branchName}</p>
-                                                        </div>
-                                                    );
-                                                }
-                                            })
-                                        }
-                                    </details-menu>
-                                </details>
-                            </td>
-                            <td>
-                                <details ref={this.managerFilter}>
-                                    <summary className="filterHeader">Manager</summary>
-                                    <details-menu class="filterMenu">
-                                        <input type="text" placeholder="Filter manager" className="filterInput" />
-                                        {
-                                            getTopResults(this.state.appointments.map(a => a.managerId)).map((man, index) => {
-                                                if (index < numPreviewFilters) {
-                                                    const manager = this.state.managers.find(m => { return m.id == man.item });
-                                                    const managerName = manager.firstName + " " + manager.lastName;
+                            {
+                                headerNames.map((headerName, headerIndex) => {
+                                    // Find the ref for this header
+                                    const headerRef = headerIndex == 0 ? this.timeFilter
+                                        : headerIndex == 1 ? this.branchFilter
+                                            : headerIndex == 2 ? this.managerFilter
+                                                : headerIndex == 3 ? this.customerFilter
+                                                    : headerIndex == 4 ? this.serviceFilter : undefined;
 
-                                                    return (
-                                                        <div key={index} className="filterItem" onClick={this.addManagerFilter.bind(this, managerName)}>
-                                                            {
-                                                                this.state.managerFilters.includes(managerName) &&
-                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
-                                                            }
-                                                            <p className="filterItemText">{managerName}</p>
-                                                        </div>
-                                                    );
-                                                }
-                                            })
-                                        }
-                                    </details-menu>
-                                </details>
-                            </td>
-                            <td>
-                                <details ref={this.customerFilter}>
-                                    <summary className="filterHeader">Customer</summary>
-                                    <details-menu class="filterMenu">
-                                        <input type="text" placeholder="Filter customer" className="filterInput" />
-                                        {
-                                            getTopResults(this.state.appointments.map(a => a.customerId)).map((cust, index) => {
-                                                if (index < numPreviewFilters) {
-                                                    const customer = this.state.customers.find(c => { return c.id == cust.item });
-                                                    const customerName = customer.firstName + " " + customer.lastName;
+                                    const topResults = headerIndex == 0 ? getTopResults(this.state.appointments.map(a => a.time[0]))
+                                        : headerIndex == 1 ? getTopResults(this.state.appointments.map(a => a.branchId))
+                                            : headerIndex == 2 ? getTopResults(this.state.appointments.map(a => a.managerId))
+                                                : headerIndex == 3 ? getTopResults(this.state.appointments.map(a => a.customerId))
+                                                    : headerIndex == 4 ? getTopResults(this.state.appointments.map(a => a.serviceIds).flat()) : undefined;
 
-                                                    return (
-                                                        <div key={index} className="filterItem" onClick={this.addCustomerFilter.bind(this, customerName)}>
-                                                            {
-                                                                this.state.customerFilters.includes(customerName) &&
-                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
-                                                            }
-                                                            <p className="filterItemText">{customerName}</p>
-                                                        </div>
-                                                    );
-                                                }
-                                            })
-                                        }
-                                    </details-menu>
-                                </details>
-                            </td>
-                            <td>
-                                <details ref={this.serviceFilter}>
-                                    <summary className="filterHeader">Service</summary>
-                                    <details-menu class="filterMenu">
-                                        <input type="text" placeholder="Filter services" className="filterInput" />
-                                        {
-                                            getTopResults(this.state.appointments.map(a => a.serviceIds).flat()).map((serviceId, index) => {
-                                                if (index < numPreviewFilters) {
-                                                    const service = this.state.services.find(s => { return s.id == serviceId.item }).service;
+                                    return (
+                                        <td key={headerIndex}>
+                                            <details ref={headerRef}>
+                                                <summary className="filterHeader">{headerName}</summary>
+                                                <details-menu class="filterMenu">
+                                                    <input type="text" placeholder={"Filter " + headerName.toLowerCase()} className="filterInput" />
+                                                    {
+                                                        topResults.map((result, index) => {
+                                                            if (index < numPreviewFilters) {
+                                                                // Get the item name for the current filter
+                                                                let name = headerIndex == 0 ? convertTime24to12(result.item)
+                                                                    : headerIndex == 1 ? this.state.branches.find(b => { return b.id == result.item }).name
+                                                                        : headerIndex == 4 ? this.state.services.find(s => { return s.id == result.item }).service : undefined;
 
-                                                    return (
-                                                        <div key={index} className="filterItem" onClick={this.addServiceFilter.bind(this, service)}>
-                                                            {
-                                                                this.state.serviceFilters.includes(service) &&
-                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
+                                                                if (headerIndex == 2) {
+                                                                    const manager = this.state.managers.find(m => { return m.id == result.item });
+                                                                    name = manager.firstName + " " + manager.lastName;
+                                                                } else if (headerIndex == 3) {
+                                                                    const customer = this.state.customers.find(c => { return c.id == result.item });
+                                                                    name = customer.firstName + " " + customer.lastName;
+                                                                }
+
+                                                                return (
+                                                                    <div key={index} className="filterItem" onClick={this.addFilter.bind(this, name, headerIndex)}>
+                                                                        {
+                                                                            this.state.filters[headerIndex].includes(name) &&
+                                                                            <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
+                                                                        }
+                                                                        <p className="filterItemText">{name}</p>
+                                                                    </div>
+                                                                );
                                                             }
-                                                            <p className="filterItemText">{service}</p>
-                                                        </div>
-                                                    );
-                                                }
-                                            })
-                                        }
-                                    </details-menu>
-                                </details>
-                            </td>
+                                                        })
+                                                    }
+                                                </details-menu>
+                                            </details>
+                                        </td>
+                                    );
+                                })
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -378,11 +242,11 @@ export default class AppointmentsView extends React.Component {
                                 }
 
                                 // Check for filtering
-                                if ((this.state.timeFilters.length > 0 && !this.state.timeFilters.includes(time)) ||
-                                    (this.state.branchFilters.length > 0 && !this.state.branchFilters.includes(branchName)) ||
-                                    (this.state.managerFilters.length > 0 && !this.state.managerFilters.includes(managerName)) ||
-                                    (this.state.customerFilters.length > 0 && !this.state.customerFilters.includes(customerName)) ||
-                                    (this.state.serviceFilters.length > 0 && !this.state.serviceFilters.some(s => serviceNames.indexOf(s) >= 0))) {
+                                if ((this.state.filters[0].length > 0 && !this.state.filters[0].includes(time)) ||
+                                    (this.state.filters[1].length > 0 && !this.state.filters[1].includes(branchName)) ||
+                                    (this.state.filters[2].length > 0 && !this.state.filters[2].includes(managerName)) ||
+                                    (this.state.filters[3].length > 0 && !this.state.filters[3].includes(customerName)) ||
+                                    (this.state.filters[4].length > 0 && !this.state.filters[4].some(s => serviceNames.indexOf(s) >= 0))) {
                                     return;
                                 }
 
