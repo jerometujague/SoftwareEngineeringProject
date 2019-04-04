@@ -68,4 +68,19 @@ public class BranchController {
                                 .anyMatch(skill -> skill.getServiceId() == service
                                         && skill.getManagerId() == m.getId())));
     }
+
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    void addBranch(@RequestBody Branch branch){
+        branchDAO.insert(branch);
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    void updateBranch(@RequestBody Branch branch) {
+        branchDAO.update(branch);
+    }
+
+    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.DELETE)
+    void deleteBranch(@PathVariable("id") int id){
+        branchDAO.delete(id);
+    }
 }

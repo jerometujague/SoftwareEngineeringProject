@@ -3,9 +3,7 @@ package com.commercebank.controller;
 import com.commercebank.dao.ServiceDAO;
 import com.commercebank.model.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,4 +24,18 @@ public class ServiceController {
         return serviceDAO.list();
     }
 
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    void addService(@RequestBody Service service){
+        serviceDAO.insert(service);
+    }
+
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    void updateService(@RequestBody Service service) {
+        serviceDAO.update(service);
+    }
+
+    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.DELETE)
+    void deleteService(@PathVariable("id") int id){
+        serviceDAO.delete(id);
+    }
 }
