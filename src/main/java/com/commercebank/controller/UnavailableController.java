@@ -3,10 +3,7 @@ package com.commercebank.controller;
 import com.commercebank.dao.UnavailableDAO;
 import com.commercebank.model.Unavailable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,7 +29,22 @@ public class UnavailableController {
     //String post(){ return "something was posted";}
 
     @RequestMapping(value = "/branch/add", method = RequestMethod.POST)
-    void addUnavailableBranch(@RequestBody Unavailable unavailable) {
+    void addBranchUnavailable(@RequestBody Unavailable unavailable) {
         unavailableDAO.insertBranchUnavailable(unavailable);
+    }
+
+    @RequestMapping(value = "/manager/add", method = RequestMethod.POST)
+    void addManagerUnavailable(@RequestBody Unavailable unavailable) {
+        unavailableDAO.insertManagerUnavailable(unavailable);
+    }
+
+    @RequestMapping(value = "/branch/delete/{id}/", method = RequestMethod.DELETE)
+    void deleteBranchUnavailable(@PathVariable("id") int id){
+        unavailableDAO.deleteBranchUnavailable(id);
+    }
+
+    @RequestMapping(value = "/manager/delete/{id}/", method = RequestMethod.DELETE)
+    void deleteManagerUnavailable(@PathVariable("id") int id){
+        unavailableDAO.deleteManagerUnavailable(id);
     }
 }
