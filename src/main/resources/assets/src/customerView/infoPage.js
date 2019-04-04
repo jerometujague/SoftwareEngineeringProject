@@ -1,6 +1,6 @@
 import React from 'react';
 import $ from 'jquery';
-import { fixTime } from '../functions';
+import { convertTime12to24 } from '../functions';
 
 export default class Info extends React.Component {
     constructor(props) {
@@ -104,7 +104,7 @@ export default class Info extends React.Component {
             url: '/api/appointments/add',
             data: JSON.stringify({
                 calendarId: this.props.appointmentSlot.calendarId,
-                time: fixTime(this.props.appointmentSlot.time),
+                time: convertTime12to24(this.props.appointmentSlot.time),
                 branchId: this.props.branchId,
                 customerId: customerId,
                 serviceIds: this.props.serviceIds,

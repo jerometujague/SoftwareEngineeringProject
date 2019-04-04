@@ -10,6 +10,8 @@ import ManagersView from './managerView/managersView';
 import ManagerSchedulingView from './managerView/managerSchedulingView';
 import BranchSchedulingView from './managerView/branchSchedulingView';
 import BranchHoursView from './managerView/branchHoursView';
+import BranchesView from './managerView/branchesView';
+import ServicesView from './managerView/servicesView';
 
 class ManagerView extends React.Component {
     constructor(props) {
@@ -33,7 +35,7 @@ class ManagerView extends React.Component {
     }
 
     render() {
-        const sideBarItems = ["Appointments", "Managers", "Manager Scheduling", "Branch Scheduling", "Branch Hours"];
+        const sideBarItems = ["Appointments", "Managers", "Branches", "Services", "Manager Scheduling", "Branch Scheduling", "Branch Hours"];
         return (
             <div>
                 <div id="sideBar">
@@ -70,8 +72,26 @@ class ManagerView extends React.Component {
                         setStateValue={this.setStateValue.bind(this)} />
                 </CSSTransition>
 
-                <CSSTransition // Show the manager scheduling view
+                <CSSTransition // Show the branches view
                     in={this.state.selectedId == 2}
+                    timeout={400}
+                    classNames="view"
+                    unmountOnExit>
+                    <BranchesView
+                        setStateValue={this.setStateValue.bind(this)} />
+                </CSSTransition>
+
+                <CSSTransition // Show the services view
+                    in={this.state.selectedId == 3}
+                    timeout={400}
+                    classNames="view"
+                    unmountOnExit>
+                    <ServicesView
+                        setStateValue={this.setStateValue.bind(this)} />
+                </CSSTransition>
+
+                <CSSTransition // Show the manager scheduling view
+                    in={this.state.selectedId == 4}
                     timeout={400}
                     classNames="view"
                     unmountOnExit>
@@ -80,7 +100,7 @@ class ManagerView extends React.Component {
                 </CSSTransition>
 
                 <CSSTransition // Show the branch scheduling view
-                    in={this.state.selectedId == 3}
+                    in={this.state.selectedId == 5}
                     timeout={400}
                     classNames="view"
                     unmountOnExit>
@@ -89,7 +109,7 @@ class ManagerView extends React.Component {
                 </CSSTransition>
 
                 <CSSTransition // Show the branch hours view
-                    in={this.state.selectedId == 4}
+                    in={this.state.selectedId == 6}
                     timeout={400}
                     classNames="view"
                     unmountOnExit>
