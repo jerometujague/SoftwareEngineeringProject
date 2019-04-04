@@ -25,4 +25,25 @@ public class BranchDAO {
         // Run the SQL query on the database to select all branches and return a List of Branch objects
         return this.jdbcTemplate.query("SELECT * FROM branch", branchMapper);
     }
+
+    public void insert(Branch branch){
+        // Run the SQL query on the database to add a new branch
+        this.jdbcTemplate.update("INSERT INTO branch (street_address, city, state, zip, name) VALUES (?, ?, ?, ?, ?)",
+                branch.getStreetAddress(),
+                branch.getCity(),
+                branch.getState(),
+                branch.getZipCode(),
+                branch.getName());
+    }
+
+    public void update(Branch branch){
+        // Run the SQL query on the database to make changes to a branch
+        String sql = "UPDATE branch SET street_address=?, city=?, state=?, zip = ?, name=? WHERE id = ?";
+        this.jdbcTemplate.update(sql, branch.getStreetAddress(), branch.getCity(),
+                branch.getState(), branch.getZipCode(), branch.getName(), branch.getId());
+    }
+
+    public void delete(int id){
+        // Run the SQL query on the database to delete a branch
+        this.jdbcTemplate.update("DELETE FROM branch WHERE id = ?", id); }
 }

@@ -25,4 +25,20 @@ public class ServiceDAO {
         // Run the SQL query on the database to select all services and return a List of Service objects
         return this.jdbcTemplate.query("SELECT * FROM service", serviceMapper);
     }
+
+    public void insert(Service service){
+        // Run the SQL query on the database to add a new service
+        this.jdbcTemplate.update("INSERT INTO service (service) VALUES (?)",
+                service.getService());
+    }
+
+    public void update(Service service){
+        // Run the SQL query on the database to make changes to a service
+        String sql = "UPDATE service SET service=? WHERE id = ?";
+        this.jdbcTemplate.update(sql, service.getService(), service.getId());
+    }
+
+    public void delete(int id){
+        // Run the SQL query on the database to delete a service
+        this.jdbcTemplate.update("DELETE FROM service WHERE id = ?", id); }
 }
