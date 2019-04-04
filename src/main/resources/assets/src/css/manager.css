@@ -153,3 +153,7 @@ td {
 thead {
     background-color: #eaecef;
 }
+
+details:focus {
+    outline: none;
+}
