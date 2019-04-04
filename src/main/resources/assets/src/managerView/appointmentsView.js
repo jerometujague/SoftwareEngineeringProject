@@ -13,6 +13,7 @@ export default class AppointmentsView extends React.Component {
             managers: [],
             filters: [[], [], [], [], []],
             itemFilterInput: "",
+            masterSearchFilter: "",
         }
 
         this.timeFilter = React.createRef();
@@ -181,6 +182,12 @@ export default class AppointmentsView extends React.Component {
         })
     }
 
+    masterSearchInput(e) {
+        this.setState({
+            masterSearchFilter: e.target.value,
+        })
+    }
+
     render() {
         const headerNames = ["Time", "Branch", "Manager", "Customer", "Service"];
         const numPreviewFilters = 5;
@@ -188,13 +195,15 @@ export default class AppointmentsView extends React.Component {
         return (
             <div className="mainViewHolder">
                 <h2 className="viewHeader">Appointments</h2>
+                <input type="text" placeholder="Find an appointment..." className="masterSearchInput" onChange={this.masterSearchInput.bind(this)} />
                 {
+                    // Show a clear all link if there is a filter
                     (this.state.filters[0].length > 0 ||
                         this.state.filters[1].length > 0 ||
                         this.state.filters[2].length > 0 ||
                         this.state.filters[3].length > 0 ||
                         this.state.filters[4].length > 0) &&
-                    <a onClick={this.clearFilters.bind(this)}>Clear current filters</a>
+                    <a onClick={this.clearFilters.bind(this)}>Clear all current filters</a>
                 }
 
                 <table>
@@ -296,6 +305,16 @@ export default class AppointmentsView extends React.Component {
                                     (this.state.filters[2].length > 0 && !this.state.filters[2].includes(managerName)) ||
                                     (this.state.filters[3].length > 0 && !this.state.filters[3].includes(customerName)) ||
                                     (this.state.filters[4].length > 0 && !this.state.filters[4].some(s => serviceNames.indexOf(s) >= 0))) {
+                                    return;
+                                }
+
+                                // Check for master search filtering
+                                if (this.state.masterSearchFilter.length > 0 &&
+                                    !time.toLowerCase().match(this.state.masterSearchFilter.toLowerCase()) &&
+                                    !branchName.toLowerCase().match(this.state.masterSearchFilter.toLowerCase()) &&
+                                    !managerName.toLowerCase().match(this.state.masterSearchFilter.toLowerCase()) &&
+                                    !customerName.toLowerCase().match(this.state.masterSearchFilter.toLowerCase()) &&
+                                    !serviceString.toLowerCase().match(this.state.masterSearchFilter.toLowerCase())) {
                                     return;
                                 }
 
