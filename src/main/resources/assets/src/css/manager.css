@@ -170,3 +170,8 @@ details:focus {
 a:hover {
     cursor: pointer;
 }
+
+.masterSearchInput {
+    margin-bottom: 10px;
+    width: 200px
+}
