@@ -66,13 +66,90 @@
     transition: opacity 400ms ease-out;
 }
 
-/* Appointment view */
-.appointment {
-    border-bottom: 1px solid #006747;
+.viewHeader {
+    margin: 5px;
+    text-align: center;
 }
 
+/* Appointment view */
 .appointmentData {
-    padding: 5px;
-    /* border-right: 1px solid #006747; */
-    margin-right: 10px;
+    padding: 3px 10px;
+}
+
+.filterHeader {
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    user-select: none;
+}
+
+.filterHeader:hover {
+    color: #006747;
+}
+
+.filterHeader:focus {
+    outline: none;
+}
+
+.filterHeader::before {
+    display: none;
+}
+
+.filterHeader::after {
+    border: 4px solid transparent;
+    border-top-color: currentcolor;
+    content: "";
+    display: inline-block;
+    height: 0;
+    vertical-align: -2px;
+    width: 0;
+    margin-left: 3px;
+}
+
+.filterMenu {
+    position: absolute!important;
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid rgba(27,31,35,.15);
+    border-radius: 3px;
+    box-shadow: 0 3px 12px rgba(27,31,35,.15);
+    color: #586069;
+    font-size: 12px;
+    margin-bottom: 20px;
+    margin-top: 4px;
+    overflow: hidden;
+    width: 200px;
+    z-index: 99;
+    font-size: 14px;
+}
+
+.filterInput {
+    margin: 10px;
+}
+
+.filterItem {
+    border-top: 1px solid #eaecef;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.filterItem:hover {
+    background-color: #006747;
+    color: white;
+}
+
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #006747;
+}
+
+thead {
+    background-color: #eaecef;
 }

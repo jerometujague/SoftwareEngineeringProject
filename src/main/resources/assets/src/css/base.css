@@ -68,6 +68,15 @@ input[type="submit"]:focus {
     outline:none;
 }
 
+/* Text input */
+input[type="text"], input[type="email"], input[type="tel"], textarea {
+    border: 1px solid #dfe2e5;
+    border-radius: 3px;
+    display: block;
+    padding: 5px;
+    box-shadow: inset 0 1px 2px rgba(27,31,35,.075);
+}
+
 /* Loading image */
 #loadingDiv {
     position: absolute;

@@ -1,4 +1,4 @@
-export function fixTime(oldTime) {
+export function convertTime12to24(oldTime) {
     // Get AM or PM
     let t = oldTime.slice(-2);
 
@@ -22,4 +22,18 @@ export function fixTime(oldTime) {
     }
 
     return time;
+}
+
+export function convertTime24to12(oldTime) {
+    if (oldTime > 12) {
+        return (oldTime - 12) + " PM";
+    }
+
+    return oldTime + " AM"
+}
+
+export function getTopResults(items) {
+    const count = items.reduce((counts, curr) => (counts[curr] = ++counts[curr] || 1, counts), {});
+    const countArray = Object.entries(count).map(([item, count]) => ({ item, count }));
+    return countArray.sort((a, b) => b.count - a.count);
 }
