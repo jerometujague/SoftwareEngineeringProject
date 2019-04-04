@@ -47,4 +47,14 @@ public class UnavailableController {
     void deleteManagerUnavailable(@PathVariable("id") int id){
         unavailableDAO.deleteManagerUnavailable(id);
     }
+
+    @RequestMapping(value = "/branch/update", method = RequestMethod.POST)
+    void updateBranchUnavailable(@RequestBody Unavailable unavailable) {
+        unavailableDAO.updateBranchUnavailable(unavailable);
+    }
+
+    @RequestMapping(value = "/manager/update", method = RequestMethod.POST)
+    void updateManagerUnavailable(@RequestBody Unavailable unavailable) {
+        unavailableDAO.updateManagerUnavailable(unavailable);
+    }
 }

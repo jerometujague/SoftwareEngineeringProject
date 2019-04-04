@@ -53,10 +53,10 @@ public class UnavailableDAO {
 
         // Get the id for just inserted unavailable row
         List<Unavailable> unavailables = list();
-        Unavailable unavailable1 = unavailables.get(unavailables.size());
+        Unavailable unavailable1 = unavailables.get(unavailables.size()-1);
         int newId = unavailable1.getId();
 
-        this.jdbcTemplate.update("INSERT INTO manager_unavailable (calendar_id, manager_id) VALUES (?, ?)",
+        this.jdbcTemplate.update("INSERT INTO manager_unavailable (unavailable_id, manager_id) VALUES (?, ?)",
                 newId,
                 unavailable.getReferId());
     }
@@ -64,6 +64,12 @@ public class UnavailableDAO {
     public void deleteManagerUnavailable(int id){
         // Run the SQL query to delete a manager unavailable
         this.jdbcTemplate.update("DELETE FROM manager_unavailable WHERE unavailable_id = ?", id);
+    }
+
+    public void updateManagerUnavailable(Unavailable unavailable) {
+        // Run the SQL queries (delete then add) on the database to make changes to a manager unavailable
+        deleteManagerUnavailable(unavailable.getId());
+        insertManagerUnavailable(unavailable);
     }
 
     public void insertBranchUnavailable(Unavailable unavailable){
@@ -74,7 +80,7 @@ public class UnavailableDAO {
 
         // Get the id for just inserted unavailable row
         List<Unavailable> unavailables = list();
-        Unavailable unavailable1 = unavailables.get(unavailables.size());
+        Unavailable unavailable1 = unavailables.get(unavailables.size()-1);
         int newId = unavailable1.getId();
 
         // Run the SQL query on the database to add a new row to branch_unavailable
@@ -87,4 +93,11 @@ public class UnavailableDAO {
         // Run the SQL query to delete a branch unavailable
         this.jdbcTemplate.update("DELETE FROM branch_unavailable WHERE unavailable_id = ?", id);
     }
+
+    public void updateBranchUnavailable(Unavailable unavailable) {
+        // Run the SQL queries (delete then add) on the database to make changes to a branch unavailable
+        deleteBranchUnavailable(unavailable.getId());
+        insertBranchUnavailable(unavailable);
+    }
 }
+
