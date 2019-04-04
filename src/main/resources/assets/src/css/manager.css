@@ -176,6 +176,15 @@ a:hover {
     width: 200px
 }
 
+/*Branch Hours View */
+.branchHours {
+    border-bottom: 1px solid #006747;
+}
+
+.branchHoursData{
+    padding: 5px;
+    margin-right: 10px;
+}
 .actionStart {
     border-left: 1px solid #006747;
 }
