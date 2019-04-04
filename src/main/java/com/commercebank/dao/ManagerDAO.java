@@ -28,6 +28,7 @@ public class ManagerDAO {
     }
 
     public void insert(Manager manager){
+        // Run the SQL query on the database to add a new manager
         this.jdbcTemplate.update("INSERT INTO manager (f_name, l_name, phone_num, email, branch_id) VALUES (?, ?, ?, ?, ?)",
                 manager.getFirstName(),
                 manager.getLastName(),
@@ -36,13 +37,16 @@ public class ManagerDAO {
                 manager.getBranchId());
     }
 
-    public void update(int id, Manager manager){
+    public void update(Manager manager){
+        // Run the SQL query on the database to make changes to a manager
         String sql = "UPDATE manager SET f_name=?, l_name=?, phone_num=?, email = ?, branch_id=? WHERE id = ?";
         this.jdbcTemplate.update(sql, manager.getFirstName(), manager.getLastName(),
-                manager.getPhoneNumber(), manager.getEmail(), manager.getBranchId(), id);
+                manager.getPhoneNumber(), manager.getEmail(), manager.getBranchId(), manager.getId());
     }
 
-    public void delete(int id){this.jdbcTemplate.update("DELETE FROM manager WHERE id = ?", id); }
+    public void delete(int id){
+        // Run the SQL query on the database to delete a manager
+        this.jdbcTemplate.update("DELETE FROM manager WHERE id = ?", id); }
 
 
 

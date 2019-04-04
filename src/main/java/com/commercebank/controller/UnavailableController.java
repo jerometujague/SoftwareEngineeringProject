@@ -3,6 +3,7 @@ package com.commercebank.controller;
 import com.commercebank.dao.UnavailableDAO;
 import com.commercebank.model.Unavailable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,7 +28,11 @@ public class UnavailableController {
     }
 
     // Note: still need to figure out how to do this...
-    @RequestMapping(value = "/add", method = RequestMethod.POST) // called when there is a POST request
-    String post(){ return "something was posted";}
+    //@RequestMapping(value = "/add", method = RequestMethod.POST) // called when there is a POST request
+    //String post(){ return "something was posted";}
 
+    @RequestMapping(value = "/branch/add", method = RequestMethod.POST)
+    void addUnavailableBranch(@RequestBody Unavailable unavailable) {
+        unavailableDAO.insertBranchUnavailable(unavailable);
+    }
 }

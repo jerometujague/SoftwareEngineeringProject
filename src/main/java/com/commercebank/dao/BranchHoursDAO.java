@@ -27,6 +27,7 @@ public class BranchHoursDAO {
     }
 
     public void insert(BranchHours branchHours){
+        // Run the SQL query on the database to add a new row of branch hours
         this.jdbcTemplate.update("INSERT INTO branch_hours (open_time, close_time, branch_id, day_of_week) VALUES (?, ?, ?, ?)",
                 branchHours.getOpenTime(),
                 branchHours.getCloseTime(),
@@ -34,9 +35,14 @@ public class BranchHoursDAO {
                 branchHours.getDayOfWeek());
     }
 
-    public void update(int id, BranchHours branchHours){
+    public void update(BranchHours branchHours){
+        // Run the SQL query on the database to make changes to a row of branch hours
         String sql = "UPDATE branch_hours SET open_time=?, close_time=?, branch_id=?, day_of_week=? WHERE id =?";
         this.jdbcTemplate.update(sql, branchHours.getOpenTime(), branchHours.getCloseTime(),
-                branchHours.getBranchId(), branchHours.getDayOfWeek(), id);
+                branchHours.getBranchId(), branchHours.getDayOfWeek(), branchHours.getId());
     }
+
+    public void delete(int id){
+        // Run the SQL query on the database to delete a branch hours row
+        this.jdbcTemplate.update("DELETE FROM branch_hours WHERE id = ?", id); }
 }

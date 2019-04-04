@@ -30,7 +30,12 @@ public class BranchHoursController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    void updateHours(@PathVariable("id") int id, @RequestBody BranchHours branchHours) {
-        branchHoursDAO.update(id, branchHours);
+    void updateHours(@RequestBody BranchHours branchHours) {
+        branchHoursDAO.update(branchHours);
+    }
+
+    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.DELETE)
+    void deleteHours(@PathVariable("id") int id){
+        branchHoursDAO.delete(id);
     }
 }

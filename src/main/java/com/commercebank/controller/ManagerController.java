@@ -30,8 +30,13 @@ public class ManagerController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    void updateManager(@PathVariable("id") int id, @RequestBody Manager manager) {
-        managerDAO.update(id, manager);
+    void updateManager(@RequestBody Manager manager) {
+        managerDAO.update(manager);
+    }
+
+    @RequestMapping(value = "/delete/{id}/", method = RequestMethod.DELETE)
+    void deleteManager(@PathVariable("id") int id){
+        managerDAO.delete(id);
     }
 
 }

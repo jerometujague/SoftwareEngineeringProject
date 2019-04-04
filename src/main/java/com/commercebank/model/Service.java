@@ -10,6 +10,10 @@ public class Service {
         this.service = service;
     }
 
+    // Default constructor used when a post request is made
+    public Service() { }
+
+
     public int getId() {
         return id;
     }
