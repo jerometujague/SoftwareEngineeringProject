@@ -1,6 +1,6 @@
 import $ from 'jquery';
 import React from 'react';
-import { convertTime24to12, getTopResults } from '../functions';
+import { convertTime24to12, getTopResults, convertTime12to24 } from '../functions';
 import EditDialog from './editDialog';
 import { CSSTransition } from 'react-transition-group';
 
@@ -243,13 +243,32 @@ export default class AppointmentsView extends React.Component {
     async saveEdits(itemId, newValues) {
         this.props.setStateValue('loading', true);
 
+        const time = convertTime12to24(newValues[0]);
         const branch = this.state.branches.find(b => b.name == newValues[1]);
         const manager = this.state.managers.find(m => m.firstName + " " + m.lastName == newValues[2]);
         const customer = this.state.customers.find(c => c.firstName + " " + c.lastName == newValues[3]);
 
+        const newServices = newValues[4].split(', ');
+
+        let validServices = true;
+        const serviceIds = newServices.map(s => {
+            const found = this.state.services.find(service => service.service == s)
+            if (found) {
+                return found.id;
+            } else {
+                validServices = false;
+            }
+        });
+
+        const validTime = time.match('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$');
+
         // Check if the data is valid
-        if (!branch || !manager || !customer) {
+        if (!branch || !manager || !customer || !validTime || !validServices) {
             const newEditErrors = this.state.editErrors;
+
+            if (!validTime) {
+                newEditErrors[0] = "Invalid time";
+            }
 
             if (!branch) {
                 newEditErrors[1] = "Invalid branch name";
@@ -261,6 +280,10 @@ export default class AppointmentsView extends React.Component {
 
             if (!customer) {
                 newEditErrors[3] = "Invalid customer name";
+            }
+
+            if (!validServices) {
+                newEditErrors[4] = "Invalid services";
             }
 
             this.setState({
@@ -285,10 +308,11 @@ export default class AppointmentsView extends React.Component {
             data: JSON.stringify({
                 id: itemId,
                 calendarId: 1,
-                time: "12:00",
+                time: time,
                 branchId: branchId,
                 managerId: managerId,
                 customerId: customerId,
+                serviceIds: serviceIds
             })
         });
 

@@ -6,11 +6,13 @@ export function convertTime12to24(oldTime) {
     let time = oldTime.slice(0, oldTime.length - 2);
 
     // Add 12 to hour if PM
-    if (t == "PM") {
+    if (t.toLowerCase() == "pm") {
         let array = time.split(":");
         if (array[0] != 12) {
             let newHour = Number(array[0]) + 12;
             time = newHour + ":00";
+        } else {
+            time = "12:00";
         }
     }
 
@@ -21,12 +23,14 @@ export function convertTime12to24(oldTime) {
         time = "0" + array[0] + ":00";
     }
 
-    return time;
+    return time.replace(/\s+/g, '');
 }
 
 export function convertTime24to12(oldTime) {
     if (oldTime > 12) {
         return (oldTime - 12) + " PM";
+    } else if (oldTime == 12) {
+        return "12 PM"
     }
 
     return oldTime + " AM"
