@@ -13,6 +13,14 @@ export default class AppointmentsView extends React.Component {
             managers: [],
         }
 
+        this.timeFilter = React.createRef();
+        this.branchFilter = React.createRef();
+        this.managerFilter = React.createRef();
+        this.customerFilter = React.createRef();
+        this.serviceFilter = React.createRef();
+    }
+
+    componentDidMount() {
         // Load all of the data
         this.props.setStateValue('loading', true);
         this.loadCustomers();
@@ -21,6 +29,8 @@ export default class AppointmentsView extends React.Component {
         this.loadManagers();
         this.loadAppointments();
         this.props.setStateValue('loading', false);
+
+        document.addEventListener('click', this.handleOutsideClick.bind(this), false);
     }
 
     async loadAppointments() {
@@ -98,17 +108,31 @@ export default class AppointmentsView extends React.Component {
         });
     }
 
+    handleOutsideClick(event) {
+        if (!this.timeFilter.current.contains(event.target)) {
+            this.timeFilter.current.open = false;
+        }
+
+        if (!this.branchFilter.current.contains(event.target)) {
+            this.branchFilter.current.open = false;
+        }
+
+        if (!this.managerFilter.current.contains(event.target)) {
+            this.managerFilter.current.open = false;
+        }
+
+        if (!this.customerFilter.current.contains(event.target)) {
+            this.customerFilter.current.open = false;
+        }
+
+        if (!this.serviceFilter.current.contains(event.target)) {
+            this.serviceFilter.current.open = false;
+        }
+    }
+
     render() {
         const numPreviewFilters = 5;
 
-        // eslint-disable-next-line no-console
-        console.log(this.state.services);
-
-        // eslint-disable-next-line no-console
-        console.log(this.state.appointments.map(a => a.serviceIds).flat())
-
-        // eslint-disable-next-line no-console
-        console.log(getTopResults(this.state.appointments.map(a => a.serviceIds).flat()))
         return (
             <div className="mainViewHolder">
                 <h2 className="viewHeader">Appointments</h2>
@@ -116,7 +140,7 @@ export default class AppointmentsView extends React.Component {
                     <thead>
                         <tr>
                             <td>
-                                <details>
+                                <details ref={this.timeFilter}>
                                     <summary className="filterHeader">Time</summary>
                                     <details-menu class="filterMenu">
                                         <input type="text" placeholder="Filter time" className="filterInput" />
@@ -131,7 +155,7 @@ export default class AppointmentsView extends React.Component {
                                 </details>
                             </td>
                             <td>
-                                <details>
+                                <details ref={this.branchFilter}>
                                     <summary className="filterHeader">Branch</summary>
                                     <details-menu class="filterMenu">
                                         <input type="text" placeholder="Filter branch" className="filterInput" />
@@ -152,7 +176,7 @@ export default class AppointmentsView extends React.Component {
                                 </details>
                             </td>
                             <td>
-                                <details>
+                                <details ref={this.managerFilter}>
                                     <summary className="filterHeader">Manager</summary>
                                     <details-menu class="filterMenu">
                                         <input type="text" placeholder="Filter manager" className="filterInput" />
@@ -170,7 +194,7 @@ export default class AppointmentsView extends React.Component {
                                 </details>
                             </td>
                             <td>
-                                <details>
+                                <details ref={this.customerFilter}>
                                     <summary className="filterHeader">Customer</summary>
                                     <details-menu class="filterMenu">
                                         <input type="text" placeholder="Filter customer" className="filterInput" />
@@ -188,7 +212,7 @@ export default class AppointmentsView extends React.Component {
                                 </details>
                             </td>
                             <td>
-                                <details>
+                                <details ref={this.serviceFilter}>
                                     <summary className="filterHeader">Service</summary>
                                     <details-menu class="filterMenu">
                                         <input type="text" placeholder="Filter services" className="filterInput" />
