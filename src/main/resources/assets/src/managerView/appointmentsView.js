@@ -11,6 +11,11 @@ export default class AppointmentsView extends React.Component {
             branches: [],
             services: [],
             managers: [],
+            timeFilters: [],
+            branchFilters: [],
+            managerFilters: [],
+            customerFilters: [],
+            serviceFilters: [],
         }
 
         this.timeFilter = React.createRef();
@@ -130,6 +135,91 @@ export default class AppointmentsView extends React.Component {
         }
     }
 
+    addTimeFilter(time) {
+        const filters = this.state.timeFilters;
+
+        const index = filters.indexOf(time);
+        if (index == -1) {
+            filters.push(time);
+        } else {
+            filters.splice(index, 1);
+        }
+
+        this.setState({
+            timeFilters: filters,
+        })
+
+        this.timeFilter.current.open = false;
+    }
+
+    addBranchFilter(branch) {
+        const filters = this.state.branchFilters;
+
+        const index = filters.indexOf(branch);
+        if (index == -1) {
+            filters.push(branch);
+        } else {
+            filters.splice(index, 1);
+        }
+
+        this.setState({
+            branchFilters: filters,
+        })
+
+        this.branchFilter.current.open = false;
+    }
+
+    addManagerFilter(manager) {
+        const filters = this.state.managerFilters;
+
+        const index = filters.indexOf(manager);
+        if (index == -1) {
+            filters.push(manager);
+        } else {
+            filters.splice(index, 1);
+        }
+
+        this.setState({
+            managerFilters: filters,
+        })
+
+        this.managerFilter.current.open = false;
+    }
+
+    addCustomerFilter(customer) {
+        const filters = this.state.customerFilters;
+
+        const index = filters.indexOf(customer);
+        if (index == -1) {
+            filters.push(customer);
+        } else {
+            filters.splice(index, 1);
+        }
+
+        this.setState({
+            customerFilters: filters,
+        })
+
+        this.customerFilter.current.open = false;
+    }
+
+    addServiceFilter(service) {
+        const filters = this.state.serviceFilters;
+
+        const index = filters.indexOf(service);
+        if (index == -1) {
+            filters.push(service);
+        } else {
+            filters.splice(index, 1);
+        }
+
+        this.setState({
+            serviceFilters: filters,
+        })
+
+        this.serviceFilter.current.open = false;
+    }
+
     render() {
         const numPreviewFilters = 5;
 
@@ -145,9 +235,17 @@ export default class AppointmentsView extends React.Component {
                                     <details-menu class="filterMenu">
                                         <input type="text" placeholder="Filter time" className="filterInput" />
                                         {
-                                            getTopResults(this.state.appointments.map(a => a.time[0])).map((time, index) => {
+                                            getTopResults(this.state.appointments.map(a => a.time[0])).map((t, index) => {
                                                 if (index < numPreviewFilters) {
-                                                    return <div key={index} className="filterItem">{convertTime24to12(time.item)}</div>;
+                                                    const time = convertTime24to12(t.item);
+                                                    return (
+                                                        <div key={index} className="filterItem" onClick={this.addTimeFilter.bind(this, time)}>
+                                                            {
+                                                                this.state.timeFilters.includes(time) &&
+                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
+                                                            }
+                                                            <p className="filterItemText">{time}</p>
+                                                        </div>);
                                                 }
                                             })
                                         }
@@ -162,11 +260,14 @@ export default class AppointmentsView extends React.Component {
                                         {
                                             getTopResults(this.state.appointments.map(a => a.branchId)).map((branch, index) => {
                                                 if (index < numPreviewFilters) {
+                                                    const branchName = this.state.branches.find(b => { return b.id == branch.item }).name;
                                                     return (
-                                                        <div key={index} className="filterItem">
+                                                        <div key={index} className="filterItem" onClick={this.addBranchFilter.bind(this, branchName)}>
                                                             {
-                                                                this.state.branches.find(b => { return b.id == branch.item }).name
+                                                                this.state.branchFilters.includes(branchName) &&
+                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
                                                             }
+                                                            <p className="filterItemText">{branchName}</p>
                                                         </div>
                                                     );
                                                 }
@@ -186,7 +287,15 @@ export default class AppointmentsView extends React.Component {
                                                     const manager = this.state.managers.find(m => { return m.id == man.item });
                                                     const managerName = manager.firstName + " " + manager.lastName;
 
-                                                    return <div key={index} className="filterItem">{managerName}</div>;
+                                                    return (
+                                                        <div key={index} className="filterItem" onClick={this.addManagerFilter.bind(this, managerName)}>
+                                                            {
+                                                                this.state.managerFilters.includes(managerName) &&
+                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
+                                                            }
+                                                            <p className="filterItemText">{managerName}</p>
+                                                        </div>
+                                                    );
                                                 }
                                             })
                                         }
@@ -204,7 +313,15 @@ export default class AppointmentsView extends React.Component {
                                                     const customer = this.state.customers.find(c => { return c.id == cust.item });
                                                     const customerName = customer.firstName + " " + customer.lastName;
 
-                                                    return <div key={index} className="filterItem">{customerName}</div>;
+                                                    return (
+                                                        <div key={index} className="filterItem" onClick={this.addCustomerFilter.bind(this, customerName)}>
+                                                            {
+                                                                this.state.customerFilters.includes(customerName) &&
+                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
+                                                            }
+                                                            <p className="filterItemText">{customerName}</p>
+                                                        </div>
+                                                    );
                                                 }
                                             })
                                         }
@@ -221,7 +338,15 @@ export default class AppointmentsView extends React.Component {
                                                 if (index < numPreviewFilters) {
                                                     const service = this.state.services.find(s => { return s.id == serviceId.item }).service;
 
-                                                    return <div key={index} className="filterItem">{service}</div>;
+                                                    return (
+                                                        <div key={index} className="filterItem" onClick={this.addServiceFilter.bind(this, service)}>
+                                                            {
+                                                                this.state.serviceFilters.includes(service) &&
+                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
+                                                            }
+                                                            <p className="filterItemText">{service}</p>
+                                                        </div>
+                                                    );
                                                 }
                                             })
                                         }
@@ -239,7 +364,9 @@ export default class AppointmentsView extends React.Component {
                                 const managerName = manager.firstName + " " + manager.lastName;
                                 const branchName = this.state.branches.find(b => { return b.id == appointment.branchId }).name;
 
-                                const time = convertTime24to12(appointment.time.slice(0, appointment.time.length - 1));
+                                const time = convertTime24to12(appointment.time[0]);
+
+                                const serviceNames = [];
 
                                 let serviceString = "";
                                 for (let i = 0; i < appointment.serviceIds.length; i++) {
@@ -247,6 +374,16 @@ export default class AppointmentsView extends React.Component {
                                         serviceString += this.state.services[appointment.serviceIds[i] - 1].service + ", ";
                                     else
                                         serviceString += this.state.services[appointment.serviceIds[i] - 1].service;
+                                    serviceNames.push(this.state.services[appointment.serviceIds[i] - 1].service);
+                                }
+
+                                // Check for filtering
+                                if ((this.state.timeFilters.length > 0 && !this.state.timeFilters.includes(time)) ||
+                                    (this.state.branchFilters.length > 0 && !this.state.branchFilters.includes(branchName)) ||
+                                    (this.state.managerFilters.length > 0 && !this.state.managerFilters.includes(managerName)) ||
+                                    (this.state.customerFilters.length > 0 && !this.state.customerFilters.includes(customerName)) ||
+                                    (this.state.serviceFilters.length > 0 && !this.state.serviceFilters.some(s => serviceNames.indexOf(s) >= 0))) {
+                                    return;
                                 }
 
                                 return (

@@ -157,3 +157,12 @@ thead {
 details:focus {
     outline: none;
 }
+
+.filterCheckmark {
+    vertical-align: middle;
+    float: left;
+}
+
+.filterItemText {
+    margin-left: 20px;
+}
