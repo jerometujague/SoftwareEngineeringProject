@@ -183,7 +183,25 @@ a:hover {
 /* Edit dialog */
 .editDialog {
     position: absolute;
-    background-color: white;
+    background-color: #eaecef;
+    padding: 5px;
+    border: 1px solid #006747;
+    border-radius: 3px;
     z-index: 99;
-    top: 0px;
+    left: 30px;
+    width: 1031px;
+}
+
+.editDialog input {
+    display: inline-block;
+    margin-right: 10px;
+    max-width: 150px;
+}
+
+.editDialog input:first-child {
+    width: 50px;
+}
+
+.editError {
+    border: 2px solid red!important;
 }
