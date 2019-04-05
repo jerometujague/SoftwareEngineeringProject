@@ -4,7 +4,6 @@ export default class HeaderFilters extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            filters: this.props.filters,
             itemFilterInput: "",
         }
 
@@ -26,7 +25,7 @@ export default class HeaderFilters extends React.Component {
     }
 
     addFilter(newFilter, type) {
-        const filters = this.state.filters;
+        const filters = this.props.filters;
 
         const index = filters[type].indexOf(newFilter);
         if (index == -1) {
@@ -89,7 +88,7 @@ export default class HeaderFilters extends React.Component {
                                                 return (
                                                     <div key={index} className="filterItem" onClick={this.addFilter.bind(this, name, headerIndex)}>
                                                         {
-                                                            this.state.filters[headerIndex].includes(name) &&
+                                                            this.props.filters[headerIndex].includes(name) &&
                                                             <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
                                                         }
                                                         <p className="filterItemText">{name}</p>
