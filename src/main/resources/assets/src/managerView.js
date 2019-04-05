@@ -1,4 +1,5 @@
 import 'babel-polyfill';
+import 'details-element-polyfill';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
