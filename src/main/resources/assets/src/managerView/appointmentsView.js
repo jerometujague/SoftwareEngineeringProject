@@ -5,6 +5,8 @@ import EditDialog from './editDialog';
 import { CSSTransition } from 'react-transition-group';
 import HeaderFilters from './headerFilters';
 
+Array.prototype.flat = function () { return this.reduce((acc, val) => acc.concat(val), []); }
+
 export default class AppointmentsView extends React.Component {
     constructor(props) {
         super(props);
@@ -32,7 +34,7 @@ export default class AppointmentsView extends React.Component {
     async loadData() {
         this.props.setStateValue('loading', true);
 
-        await this.dataNeeded.forEach(async data => {
+        for (let data of this.dataNeeded) {
             const url = "/api/" + data;
 
             await $.getJSON(url, dataList => {
@@ -45,7 +47,7 @@ export default class AppointmentsView extends React.Component {
                     [data]: newData,
                 });
             });
-        })
+        }
 
         await this.loadAppointments();
 
