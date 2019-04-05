@@ -39,13 +39,41 @@ export default class EditDialog extends React.Component {
 
     optionClicked(index, optionItem) {
         const newEditValues = this.state.editValues;
-        newEditValues[index] = optionItem;
 
-        this.itemRefs[index].current.value = optionItem;
+        // Check if this is a multi select input
+        if (this.props.multiSelect && this.props.multiSelect[index]) {
+            // Check if this option is already checked
+            if (this.itemRefs[index].current.value.indexOf(optionItem) >= 0) {
+                if (this.itemRefs[index].current.value.indexOf(',') >= 0) {
+                    // Check if this is the first option
+                    if (this.itemRefs[index].current.value.indexOf(optionItem) == 0) {
+                        this.itemRefs[index].current.value = this.itemRefs[index].current.value.replace(optionItem + ', ', '')
+                    } else {
+                        this.itemRefs[index].current.value = this.itemRefs[index].current.value.replace(', ' + optionItem, '')
+                    }
+                } else {
+                    this.itemRefs[index].current.value = this.itemRefs[index].current.value.replace(optionItem, '')
+                }
+            } else {
+                // Check if there are any options clicked
+                if (this.itemRefs[index].current.value.length > 0) {
+                    this.itemRefs[index].current.value = this.itemRefs[index].current.value + ', ' + optionItem;
+                } else {
+                    this.itemRefs[index].current.value = optionItem;
+                }
+            }
+        } else {
+            this.itemRefs[index].current.value = optionItem;
+
+            this.setState({
+                showOptions: false,
+            })
+        }
+
+        newEditValues[index] = this.itemRefs[index].current.value;
 
         this.setState({
             editValues: newEditValues,
-            showOptions: false,
         })
     }
 
@@ -55,8 +83,10 @@ export default class EditDialog extends React.Component {
                 return;
             }
 
-            if (!r.current.contains(event.target) && event.target != this.itemRefs[i].current) {
-
+            if (!r.current.contains(event.target) &&
+                event.target != this.itemRefs[i].current &&
+                event.target.className != 'filterItemText' &&
+                event.target.className != 'editOptionItem') {
                 this.setState({
                     showOptions: false,
                 })
@@ -65,11 +95,12 @@ export default class EditDialog extends React.Component {
     }
 
     render() {
-        const numOptions = 5;
+        const numOptions = 12;
 
         const styles = {
             top: this.props.topPosition
         }
+        let counter = 0;
 
         return (
             <div className="editDialog" style={styles} key={this.props.editId} >
@@ -87,12 +118,30 @@ export default class EditDialog extends React.Component {
                                     this.props.editOptions[this.state.optionsId] &&
                                     index == this.state.optionsId &&
                                     <div ref={this.optionRefs[index]} className="editOptions">
-                                        {
+                                        {// Print items that are checked
                                             this.props.editOptions[this.state.optionsId].map((optionItem, i) => {
-                                                if (i < numOptions) {
+                                                if (counter < numOptions && (optionItem.match('^' + this.itemRefs[this.state.optionsId].current.value + '$') ||
+                                                    (this.props.multiSelect && this.props.multiSelect[this.state.optionsId] &&
+                                                        this.itemRefs[this.state.optionsId].current.value.match(optionItem)))) {
+                                                    counter++;
                                                     return (
                                                         <div key={i} className="editOptionItem" onClick={this.optionClicked.bind(this, index, optionItem)}>
-                                                            {optionItem}
+                                                            <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
+                                                            <p className="filterItemText">{optionItem}</p>
+                                                        </div>
+                                                    );
+                                                }
+                                            })
+                                        }
+                                        {// Print the rest of the items
+                                            this.props.editOptions[this.state.optionsId].map((optionItem, i) => {
+                                                if (counter < numOptions && !(optionItem.match('^' + this.itemRefs[this.state.optionsId].current.value + '$') ||
+                                                    (this.props.multiSelect && this.props.multiSelect[this.state.optionsId] &&
+                                                        this.itemRefs[this.state.optionsId].current.value.match(optionItem)))) {
+                                                    counter++;
+                                                    return (
+                                                        <div key={i} className="editOptionItem" onClick={this.optionClicked.bind(this, index, optionItem)}>
+                                                            <p className="filterItemText">{optionItem}</p>
                                                         </div>
                                                     );
                                                 }
