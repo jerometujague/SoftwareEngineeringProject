@@ -15,6 +15,7 @@ export default class ManagersView extends React.Component {
             editPosition: 0,
             editId: 0,
             editItems: [],
+            editErrors: [],
             filters: [[], [], [], []],
         }
 
@@ -57,7 +58,7 @@ export default class ManagersView extends React.Component {
             showEditDialog: true,
             editPosition: this.state.managers.length * 35 + 93,
             editId: -1,
-            editItem: "",
+            editItems: ["", "", "", ""],
         })
     }
 
@@ -73,13 +74,50 @@ export default class ManagersView extends React.Component {
             url: '/api/managers/delete/' + id + '/'
         });
 
-        this.loadManagers();
+        this.loadData();
 
         this.props.setStateValue('loading', false);
     }
 
     async saveEdits(id, newValues) {
         this.props.setStateValue('loading', true);
+
+        const names = newValues[0].split(' ');
+
+        const firstName = names[0];
+        const lastName = names[1];
+        const phoneNumber = newValues[1].replace(/\(|\)|\s|-/g, '');
+        const email = newValues[2];
+        const branch = this.state.branches.find(b => b.name == newValues[3]);
+
+        const validPhoneNumber = phoneNumber.length == 10;
+        const pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+        const validEmail = pattern.test(email);
+
+        if (!branch || !validPhoneNumber || !validEmail) {
+            const newEditErrors = this.state.editErrors;
+
+            if (!validPhoneNumber) {
+                newEditErrors[1] = "Invalid phone number";
+            }
+
+            if (!validEmail) {
+                newEditErrors[2] = "Invalid email";
+            }
+
+            if (!branch) {
+                newEditErrors[3] = "Invalid branch";
+            }
+
+            this.setState({
+                editErrors: newEditErrors,
+            })
+
+            this.props.setStateValue('loading', false);
+            return;
+        }
+
+        const branchId = branch.id;
 
         if (id == -1) {
             await $.ajax({
@@ -90,7 +128,11 @@ export default class ManagersView extends React.Component {
                 },
                 url: '/api/managers/add',
                 data: JSON.stringify({
-                    service: newValues[0]
+                    firstName: firstName,
+                    lastName: lastName,
+                    phoneNumber: phoneNumber,
+                    email: email,
+                    branchId: branchId,
                 })
             });
         } else {
@@ -103,12 +145,16 @@ export default class ManagersView extends React.Component {
                 url: '/api/managers/update',
                 data: JSON.stringify({
                     id: id,
-                    service: newValues[0]
+                    firstName: firstName,
+                    lastName: lastName,
+                    phoneNumber: phoneNumber,
+                    email: email,
+                    branchId: branchId,
                 })
             });
         }
 
-        await this.loadManagers();
+        await this.loadData();
 
         this.setState({
             showEditDialog: false,
@@ -127,9 +173,37 @@ export default class ManagersView extends React.Component {
         return this.state.branches.find(b => { return b.id == id }).name;
     }
 
+    getPhoneNumber(phone) {
+        let phoneNumber = "";
+        for (let i = 0; i < phone.length; i++) {
+            if (i == 0) {
+                phoneNumber += '(';
+            }
+
+            phoneNumber += phone.charAt(i);
+
+            if (i == 2) {
+                phoneNumber += ') ';
+            }
+
+            if (i == 5) {
+                phoneNumber += '-';
+            }
+
+        }
+
+        return phoneNumber;
+    }
+
     setFilters(newFilters) {
         this.setState({
             filters: newFilters,
+        })
+    }
+
+    clearFilters() {
+        this.setState({
+            filters: [[], [], [], []],
         })
     }
 
@@ -139,9 +213,16 @@ export default class ManagersView extends React.Component {
         // Only show filter options for branch
         const filterOptions = [[], [], [], getTopResults(this.state.managers.map(m => m.branchId)).map(r => this.getBranchName(r.item))];
 
+        const editOptions = [[], [], [], getTopResults(this.state.branches.map(b => b.id)).map(r => this.getBranchName(r.item))];
+
         return (
             <div className="mainViewHolder">
                 <h2 className="viewHeader">Managers</h2>
+                {
+                    // Show a clear all link if there is a filter
+                    this.state.filters[3].length > 0 &&
+                    <a onClick={this.clearFilters.bind(this)}>Clear all current filters</a>
+                }
                 <table>
                     <thead>
                         <tr>
@@ -158,15 +239,21 @@ export default class ManagersView extends React.Component {
                             this.state.managers.map((manager, index) => {
                                 const name = manager.firstName + " " + manager.lastName;
                                 const branch = this.getBranchName(manager.branchId);
+                                const phoneNumber = this.getPhoneNumber(manager.phoneNumber);
+
+                                // Check for filtering
+                                if (this.state.filters[3].length > 0 && !this.state.filters[3].includes(branch)) {
+                                    return;
+                                }
 
                                 return (
                                     <tr key={manager.id}>
                                         <td className="tableData">{name}</td>
-                                        <td className="tableData">{manager.phoneNumber}</td>
+                                        <td className="tableData">{phoneNumber}</td>
                                         <td className="tableData">{manager.email}</td>
                                         <td className="tableData">{branch}</td>
                                         <td className="tableData actionStart">
-                                            <input type="submit" value="Edit" onClick={this.editManager.bind(this, index, manager.id, name, manager.phoneNumber, manager.email, branch)} />
+                                            <input type="submit" value="Edit" onClick={this.editManager.bind(this, index, manager.id, name, phoneNumber, manager.email, branch)} />
                                         </td>
                                         <td className="tableData">
                                             <input type="submit" value="Delete" onClick={this.deleteManager.bind(this, manager.id)} />
@@ -186,6 +273,8 @@ export default class ManagersView extends React.Component {
                     <EditDialog
                         editId={this.state.editId}
                         editItems={this.state.editItems}
+                        editOptions={editOptions}
+                        editErrors={this.state.editErrors}
                         saveHandler={this.saveEdits.bind(this)}
                         closeHandler={this.closeEditor.bind(this)}
                         topPosition={this.state.editPosition + "px"} />
