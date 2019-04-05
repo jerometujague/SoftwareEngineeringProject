@@ -24,7 +24,7 @@ export default class AppointmentsView extends React.Component {
         }
 
         this.headerNames = ["Date", "Time", "Branch", "Manager", "Customer", "Service"];
-        this.dataNeeded = ["calendar", "customers", "branches", "services", "managers", "appointments"];
+        this.dataNeeded = ["calendar", "customers", "branches", "services", "managers"];
 
         this.loadData();
     }
@@ -47,7 +47,24 @@ export default class AppointmentsView extends React.Component {
             });
         })
 
+        await this.loadAppointments();
+
         this.props.setStateValue('loading', false);
+    }
+
+    async loadAppointments() {
+        const url = "/api/appointments";
+
+        await $.getJSON(url, dataList => {
+            const newData = [];
+            dataList.forEach(dataItem => {
+                newData.push(dataItem);
+            });
+
+            this.setState({
+                appointments: newData,
+            });
+        });
     }
 
     clearFilters() {
@@ -319,17 +336,17 @@ export default class AppointmentsView extends React.Component {
                                 }
 
                                 return (
-                                    <tr key={appointment.id} className="appointment">
-                                        <td className="appointmentData">{date}</td>
-                                        <td className="appointmentData">{time}</td>
-                                        <td className="appointmentData">{branchName}</td>
-                                        <td className="appointmentData">{managerName}</td>
-                                        <td className="appointmentData">{customerName}</td>
-                                        <td className="appointmentData">{serviceString}</td>
-                                        <td className="appointmentData actionStart">
+                                    <tr key={appointment.id}>
+                                        <td className="tableData">{date}</td>
+                                        <td className="tableData">{time}</td>
+                                        <td className="tableData">{branchName}</td>
+                                        <td className="tableData">{managerName}</td>
+                                        <td className="tableData">{customerName}</td>
+                                        <td className="tableData">{serviceString}</td>
+                                        <td className="tableData actionStart">
                                             <input type="submit" value="Edit" onClick={this.editAppointment.bind(this, index, appointment.id, date, time, branchName, managerName, customerName, serviceString)} />
                                         </td>
-                                        <td className="appointmentData">
+                                        <td className="tableData">
                                             <input type="submit" value="Cancel" onClick={this.cancelAppointment.bind(this, appointment.id)} />
                                         </td>
                                     </tr>

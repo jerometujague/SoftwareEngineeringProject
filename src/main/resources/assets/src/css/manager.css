@@ -72,11 +72,11 @@
 }
 
 /* Appointment view */
-.appointmentData {
+.tableData {
     padding: 3px 10px;
 }
 
-.filterHeader {
+.filterHeader, .headerData {
     cursor: pointer;
     padding-left: 10px;
     padding-right: 10px;
@@ -189,7 +189,7 @@ a:hover {
     border-radius: 3px;
     z-index: 99;
     left: 30px;
-    width: 1031px;
+    /* width: 1031px; */
 }
 
 .editItem {
@@ -198,7 +198,7 @@ a:hover {
 }
 
 .editItem input {
-    max-width: 150px;
+    max-width: 127px;
 }
 
 .editDialog > input {
@@ -234,4 +234,9 @@ a:hover {
 .editOptionItem:hover {
     background-color: #006747;
     color: white;
+}
+
+/* Services view */
+#newServiceButton {
+    margin-top: 10px;
 }
