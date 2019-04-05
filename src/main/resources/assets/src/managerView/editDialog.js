@@ -109,7 +109,7 @@ export default class EditDialog extends React.Component {
                         return (
                             <div key={index} className="editItem">
                                 <input ref={this.itemRefs[index]} type="text" defaultValue={item}
-                                    className={this.props.editErrors[index] ? "editError" : ""}
+                                    className={this.props.editErrors && this.props.editErrors[index] ? "editError" : ""}
                                     onChange={this.handleChange.bind(this, index)}
                                     onClick={this.showOptions.bind(this, index)} />
                                 {
@@ -153,7 +153,7 @@ export default class EditDialog extends React.Component {
                         )
                     })
                 }
-                < input type="submit" value="Save" onClick={this.props.saveHandler.bind(this, this.props.editId, this.state.editValues)} />
+                <input type="submit" value="Save" onClick={this.props.saveHandler.bind(this, this.props.editId, this.state.editValues)} />
                 <input type="submit" value="X" onClick={this.props.closeHandler.bind(this)} />
             </div>
         );
