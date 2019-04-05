@@ -49,7 +49,10 @@ export default class HeaderFilters extends React.Component {
 
             if (!ref.current.contains(event.target)) {
                 ref.current.open = false;
-                ref.current.getElementsByTagName('input')[0].value = "";
+                const input = ref.current.getElementsByTagName('input')[0];
+                if (input) {
+                    input.value = "";
+                }
                 this.clearFilterInput();
             }
         })
@@ -73,32 +76,34 @@ export default class HeaderFilters extends React.Component {
                         <td key={headerIndex}>
                             <details ref={this.filterRefs[headerIndex]}>
                                 <summary className="filterHeader">{headerName}</summary>
-                                <details-menu class="filterMenu">
-                                    <input type="text" placeholder={"Filter " + headerName.toLowerCase()} className="filterInput" onChange={this.itemFilterInput.bind(this)} />
-                                    {
-                                        this.props.previewOptions[headerIndex].map((name, index) => {
-                                            if (counter < numPreviewFilters) {
-                                                // Filter by search input
-                                                if (this.state.itemFilterInput.length > 0 && !name.toLowerCase().match(this.state.itemFilterInput.toLowerCase())) {
-                                                    return;
+                                {this.props.filterOptions[headerIndex].length > 0 &&
+                                    <details-menu class="filterMenu">
+                                        <input type="text" placeholder={"Filter " + headerName.toLowerCase()} className="filterInput" onChange={this.itemFilterInput.bind(this)} />
+                                        {
+                                            this.props.filterOptions[headerIndex].map((name, index) => {
+                                                if (counter < numPreviewFilters) {
+                                                    // Filter by search input
+                                                    if (this.state.itemFilterInput.length > 0 && !name.toLowerCase().match(this.state.itemFilterInput.toLowerCase())) {
+                                                        return;
+                                                    }
+
+                                                    counter++;
+
+                                                    return (
+                                                        <div key={index} className="filterItem" onClick={this.addFilter.bind(this, name, headerIndex)}>
+                                                            {
+                                                                this.props.filters[headerIndex].includes(name) &&
+                                                                <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
+                                                            }
+                                                            <p className="filterItemText">{name}</p>
+                                                        </div>
+                                                    );
                                                 }
+                                            })
+                                        }
 
-                                                counter++;
-
-                                                return (
-                                                    <div key={index} className="filterItem" onClick={this.addFilter.bind(this, name, headerIndex)}>
-                                                        {
-                                                            this.props.filters[headerIndex].includes(name) &&
-                                                            <svg className="filterCheckmark" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fillRule="evenodd" d="M12 5l-8 8-4-4 1.5-1.5L4 10l6.5-6.5L12 5z"></path></svg>
-                                                        }
-                                                        <p className="filterItemText">{name}</p>
-                                                    </div>
-                                                );
-                                            }
-                                        })
-                                    }
-
-                                </details-menu>
+                                    </details-menu>
+                                }
                             </details>
                         </td>
                     );

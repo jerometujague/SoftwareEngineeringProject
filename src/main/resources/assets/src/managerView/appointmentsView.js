@@ -244,7 +244,7 @@ export default class AppointmentsView extends React.Component {
     }
 
     render() {
-        const previewOptions = [
+        const filterOptions = [
             getTopResults(this.state.appointments.map(a => a.calendarId)).map(r => this.getDate(r.item)),
             getTopResults(this.state.appointments.map(a => a.time[0])).map(r => convertTime24to12(r.item)),
             getTopResults(this.state.appointments.map(a => a.branchId)).map(r => this.getBranchName(r.item)),
@@ -289,7 +289,7 @@ export default class AppointmentsView extends React.Component {
                         <tr>
                             <HeaderFilters
                                 headerNames={this.headerNames}
-                                previewOptions={previewOptions}
+                                filterOptions={filterOptions}
                                 filters={this.state.filters}
                                 setFilters={this.setFilters.bind(this)} />
                             <td colSpan="2"></td>
