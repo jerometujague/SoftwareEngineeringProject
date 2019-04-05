@@ -142,7 +142,7 @@ export default class ServicesView extends React.Component {
                         }
                     </tbody>
                 </table>
-                <input type="submit" value="Add new service" id="newServiceButton" onClick={this.addService.bind(this)} />
+                <input type="submit" value="Add new service" className="newItemButton" onClick={this.addService.bind(this)} />
                 <CSSTransition // Show the edit dialog
                     in={this.state.showEditDialog}
                     timeout={400}

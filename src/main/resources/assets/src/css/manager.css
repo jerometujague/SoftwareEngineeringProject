@@ -237,6 +237,6 @@ a:hover {
 }
 
 /* Services view */
-#newServiceButton {
+.newItemButton {
     margin-top: 10px;
 }
