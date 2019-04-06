@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import React from 'react';
 import { convertTime24to12, getTopResults, convertTime12to24 } from '../functions';
-import { EditDialog, EditorData } from './editDialog';
+import { EditDialog, EditorData, EditItem } from './editDialog';
 import { CSSTransition } from 'react-transition-group';
 import HeaderFilters from './headerFilters';
 
@@ -143,34 +143,34 @@ export default class AppointmentsView extends React.Component {
 
         // Check if the data is valid
         if (!branch || !manager || !customer || !validTime || !validServices || !date) {
-            const newEditErrors = this.state.editErrors;
+            const newEditorData = this.state.editorData;
 
             if (!date) {
-                newEditErrors[0] = "Invalid date";
+                newEditorData.editErrors[0] = "Invalid date";
             }
 
             if (!validTime) {
-                newEditErrors[1] = "Invalid time";
+                newEditorData.editErrors[1] = "Invalid time";
             }
 
             if (!branch) {
-                newEditErrors[2] = "Invalid branch name";
+                newEditorData.editErrors[2] = "Invalid branch name";
             }
 
             if (!manager) {
-                newEditErrors[3] = "Invalid manager name";
+                newEditorData.editErrors[3] = "Invalid manager name";
             }
 
             if (!customer) {
-                newEditErrors[4] = "Invalid customer name";
+                newEditorData.editErrors[4] = "Invalid customer name";
             }
 
             if (!validServices) {
-                newEditErrors[5] = "Invalid services";
+                newEditorData.editErrors[5] = "Invalid services";
             }
 
             this.setState({
-                editErrors: newEditErrors,
+                editorData: newEditorData,
             })
 
             this.props.setStateValue('loading', false);
@@ -280,11 +280,11 @@ export default class AppointmentsView extends React.Component {
                         {
                             this.state.appointments.map((appointment, index) => {
                                 const tableData = [];
-                                tableData.push(this.getDate(appointment.calendarId));
-                                tableData.push(convertTime24to12(appointment.time[0]));
-                                tableData.push(this.getBranchName(appointment.branchId));
-                                tableData.push(this.getManagerName(appointment.managerId));
-                                tableData.push(this.getCustomerName(appointment.customerId));
+                                tableData.push(new EditItem("Date", this.getDate(appointment.calendarId), editOptions[0]));
+                                tableData.push(new EditItem("Time", convertTime24to12(appointment.time[0]), editOptions[1]));
+                                tableData.push(new EditItem("Branch", this.getBranchName(appointment.branchId), editOptions[2]));
+                                tableData.push(new EditItem("Manager", this.getManagerName(appointment.managerId), editOptions[3]));
+                                tableData.push(new EditItem("Customer", this.getCustomerName(appointment.customerId), editOptions[4]));
 
                                 const serviceNames = [];
 
@@ -297,11 +297,11 @@ export default class AppointmentsView extends React.Component {
                                     serviceNames.push(this.state.services[appointment.serviceIds[i] - 1].service);
                                 }
 
-                                tableData.push(serviceString);
+                                tableData.push(new EditItem("Services", serviceString, editOptions[5], true));
 
                                 // Check for filtering
                                 for (let i = 0; i < tableData.length - 1; i++) {
-                                    if (this.state.filters[i].length > 0 && !this.state.filters[i].includes(tableData[i])) {
+                                    if (this.state.filters[i].length > 0 && !this.state.filters[i].includes(tableData[i].value)) {
                                         return;
                                     }
                                 }
@@ -313,11 +313,11 @@ export default class AppointmentsView extends React.Component {
 
                                 let match = false;
                                 // Check for master search filtering
-                                for (let data of tableData) {
-                                    if (data.toLowerCase().match(this.state.masterSearchFilter.toLowerCase())) {
+                                tableData.forEach(data => {
+                                    if (data.value.toLowerCase().match(this.state.masterSearchFilter.toLowerCase())) {
                                         match = true;
                                     }
-                                }
+                                });
 
                                 if (!match && this.state.masterSearchFilter.length > 0) {
                                     return
@@ -327,7 +327,7 @@ export default class AppointmentsView extends React.Component {
                                     <tr key={appointment.id}>
                                         {
                                             tableData.map((data, index) => {
-                                                return <td key={index} className="tableData">{data}</td>;
+                                                return <td key={index} className="tableData">{data.value}</td>;
                                             })
                                         }
                                         <td className="tableData actionStart">
@@ -348,8 +348,6 @@ export default class AppointmentsView extends React.Component {
                     classNames="view"
                     unmountOnExit>
                     <EditDialog
-                        multiSelect={[false, false, false, false, false, true]}
-                        editOptions={editOptions}
                         editorData={this.state.editorData}
                         saveHandler={this.saveEdits.bind(this)}
                         closeHandler={this.closeEditor.bind(this)} />

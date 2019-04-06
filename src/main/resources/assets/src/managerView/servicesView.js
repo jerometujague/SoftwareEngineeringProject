@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import React from 'react';
 import { CSSTransition } from 'react-transition-group';
-import EditDialog from './editDialog';
+import { EditDialog, EditorData, EditItem } from './editDialog';
 
 export default class ServicesView extends React.Component {
     constructor(props) {
@@ -9,9 +9,7 @@ export default class ServicesView extends React.Component {
         this.state = {
             services: [],
             showEditDialog: false,
-            editPosition: 0,
-            editId: 0,
-            editItem: "",
+            editorData: undefined,
         }
 
         this.loadServices();
@@ -35,18 +33,14 @@ export default class ServicesView extends React.Component {
     editService(index, id, service) {
         this.setState({
             showEditDialog: true,
-            editPosition: index * 35 + 87,
-            editId: id,
-            editItem: service,
+            editorData: new EditorData(id, [new EditItem('Service', service)], [], index * 35 + 87),
         })
     }
 
     addService() {
         this.setState({
             showEditDialog: true,
-            editPosition: this.state.services.length * 35 + 93,
-            editId: -1,
-            editItem: "",
+            editorData: new EditorData(-1, [new EditItem('Service', '')], [], this.state.services.length * 35 + 93),
         })
     }
 
@@ -149,11 +143,9 @@ export default class ServicesView extends React.Component {
                     classNames="view"
                     unmountOnExit>
                     <EditDialog
-                        editId={this.state.editId}
-                        editItems={[this.state.editItem]}
+                        editorData={this.state.editorData}
                         saveHandler={this.saveEdits.bind(this)}
-                        closeHandler={this.closeEditor.bind(this)}
-                        topPosition={this.state.editPosition + "px"} />
+                        closeHandler={this.closeEditor.bind(this)} />
                 </CSSTransition>
             </div>
         );
