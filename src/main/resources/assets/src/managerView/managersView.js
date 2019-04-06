@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import React from 'react';
 import { CSSTransition } from 'react-transition-group';
-import EditDialog from './editDialog';
+import { EditDialog, EditorData, EditItem } from './editDialog';
 import { getTopResults } from '../functions';
 import HeaderFilters from './headerFilters';
 
@@ -12,10 +12,7 @@ export default class ManagersView extends React.Component {
             managers: [],
             branches: [],
             showEditDialog: false,
-            editPosition: 0,
-            editId: 0,
-            editItems: [],
-            editErrors: [],
+            editorData: undefined,
             filters: [[], [], [], []],
         }
 
@@ -44,21 +41,18 @@ export default class ManagersView extends React.Component {
         this.props.setStateValue('loading', false);
     }
 
-    editManager(index, id, name, email, phoneNumber, branch) {
+    editManager(index, id, ...items) {
+        items.pop();
         this.setState({
             showEditDialog: true,
-            editPosition: index * 35 + 87,
-            editId: id,
-            editItems: [name, email, phoneNumber, branch],
+            editorData: new EditorData(id, items, [], index * 35 + 87),
         })
     }
 
-    addManager() {
+    addManager(editItems) {
         this.setState({
             showEditDialog: true,
-            editPosition: this.state.managers.length * 35 + 93,
-            editId: -1,
-            editItems: ["", "", "", ""],
+            editorData: new EditorData(-1, editItems, [], this.state.managers.length * 35 + 93),
         })
     }
 
@@ -95,22 +89,22 @@ export default class ManagersView extends React.Component {
         const validEmail = pattern.test(email);
 
         if (!branch || !validPhoneNumber || !validEmail) {
-            const newEditErrors = this.state.editErrors;
+            const newEditorData = this.state.editorData;
 
             if (!validPhoneNumber) {
-                newEditErrors[1] = "Invalid phone number";
+                newEditorData.editErrors[1] = "Invalid phone number";
             }
 
             if (!validEmail) {
-                newEditErrors[2] = "Invalid email";
+                newEditorData.editErrors[2] = "Invalid email";
             }
 
             if (!branch) {
-                newEditErrors[3] = "Invalid branch";
+                newEditorData.editErrors[3] = "Invalid branch";
             }
 
             this.setState({
-                editErrors: newEditErrors,
+                editorData: newEditorData,
             })
 
             this.props.setStateValue('loading', false);
@@ -213,7 +207,13 @@ export default class ManagersView extends React.Component {
         // Only show filter options for branch
         const filterOptions = [[], [], [], getTopResults(this.state.managers.map(m => m.branchId)).map(r => this.getBranchName(r.item))];
 
-        const editOptions = [[], [], [], getTopResults(this.state.branches.map(b => b.id)).map(r => this.getBranchName(r.item))];
+        const branchOptions = getTopResults(this.state.branches.map(b => b.id)).map(r => this.getBranchName(r.item));
+
+        const newEditItems = [
+            new EditItem('Manager', ''),
+            new EditItem('Phone number', ''),
+            new EditItem('Email', ''),
+            new EditItem('Branch', '', branchOptions)];
 
         return (
             <div className="mainViewHolder">
@@ -237,23 +237,26 @@ export default class ManagersView extends React.Component {
                     <tbody>
                         {
                             this.state.managers.map((manager, index) => {
-                                const name = manager.firstName + " " + manager.lastName;
-                                const branch = this.getBranchName(manager.branchId);
-                                const phoneNumber = this.getPhoneNumber(manager.phoneNumber);
+                                const tableData = [];
+                                tableData.push(new EditItem('Name', manager.firstName + " " + manager.lastName));
+                                tableData.push(new EditItem('Phone number', this.getPhoneNumber(manager.phoneNumber)));
+                                tableData.push(new EditItem('Email', manager.email));
+                                tableData.push(new EditItem('Branch', this.getBranchName(manager.branchId), branchOptions));
 
                                 // Check for filtering
-                                if (this.state.filters[3].length > 0 && !this.state.filters[3].includes(branch)) {
+                                if (this.state.filters[3].length > 0 && !this.state.filters[3].includes(tableData[3])) {
                                     return;
                                 }
 
                                 return (
                                     <tr key={manager.id}>
-                                        <td className="tableData">{name}</td>
-                                        <td className="tableData">{phoneNumber}</td>
-                                        <td className="tableData">{manager.email}</td>
-                                        <td className="tableData">{branch}</td>
+                                        {
+                                            tableData.map((data, index) => {
+                                                return <td key={index} className="tableData">{data.value}</td>;
+                                            })
+                                        }
                                         <td className="tableData actionStart">
-                                            <input type="submit" value="Edit" onClick={this.editManager.bind(this, index, manager.id, name, phoneNumber, manager.email, branch)} />
+                                            <input type="submit" value="Edit" onClick={this.editManager.bind(this, index, manager.id, ...tableData)} />
                                         </td>
                                         <td className="tableData">
                                             <input type="submit" value="Delete" onClick={this.deleteManager.bind(this, manager.id)} />
@@ -264,20 +267,16 @@ export default class ManagersView extends React.Component {
                         }
                     </tbody>
                 </table>
-                <input type="submit" value="Add new manager" className="newItemButton" onClick={this.addManager.bind(this)} />
+                <input type="submit" value="Add new manager" className="newItemButton" onClick={this.addManager.bind(this, newEditItems)} />
                 <CSSTransition // Show the edit dialog
                     in={this.state.showEditDialog}
                     timeout={400}
                     classNames="view"
                     unmountOnExit>
                     <EditDialog
-                        editId={this.state.editId}
-                        editItems={this.state.editItems}
-                        editOptions={editOptions}
-                        editErrors={this.state.editErrors}
+                        editorData={this.state.editorData}
                         saveHandler={this.saveEdits.bind(this)}
-                        closeHandler={this.closeEditor.bind(this)}
-                        topPosition={this.state.editPosition + "px"} />
+                        closeHandler={this.closeEditor.bind(this)} />
                 </CSSTransition>
             </div>
         );

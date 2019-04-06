@@ -2,15 +2,17 @@ import React from 'react'
 
 export class EditItem {
     /**
-    * The EditItem object that is used in the EditorData for the EditorDialog.
+    * The EditItem object that is a field in the EditorDialog.
     * @param name The name of the editable field.
     * @param value The initial value of the item.
-    * @param multipleSelect A boolean value that determines if this field accepts multiple select.
+    * @param options The array of options that are suggestions for this field
+    * @param multiSelect A boolean value that determines if this field accepts multiple select.
     */
-    constructor(name, value, multipleSelect) {
+    constructor(name, value, options, multiSelect = false) {
         this.name = name;
         this.value = value;
-        this.multipleSelect = multipleSelect;
+        this.options = options;
+        this.multiSelect = multiSelect;
     }
 }
 
@@ -34,7 +36,7 @@ export class EditDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editValues: this.props.editorData.editItems,
+            editValues: this.props.editorData.editItems.map(i => i.value),
             showOptions: false,
             optionsId: 0,
         }
@@ -67,11 +69,11 @@ export class EditDialog extends React.Component {
         })
     }
 
-    optionClicked(index, optionItem) {
+    optionClicked(index, optionItem, multiSelect) {
         const newEditValues = this.state.editValues;
 
         // Check if this is a multi select input
-        if (this.props.multiSelect && this.props.multiSelect[index]) {
+        if (multiSelect) {
             // Check if this option is already checked
             if (this.itemRefs[index].current.value.indexOf(optionItem) >= 0) {
                 if (this.itemRefs[index].current.value.indexOf(',') >= 0) {
@@ -139,21 +141,19 @@ export class EditDialog extends React.Component {
                     this.props.editorData.editItems.map((item, index) => {
                         return (
                             <div key={index} className="editItem">
-                                <input ref={this.itemRefs[index]} type="text" defaultValue={item}
+                                <input ref={this.itemRefs[index]} type="text" defaultValue={item.value} placeholder={item.name + '...'}
                                     className={this.props.editorData.editErrors && this.props.editorData.editErrors[index] ? "editError" : ""}
                                     onChange={this.handleChange.bind(this, index)}
                                     onClick={this.showOptions.bind(this, index)} />
                                 {
                                     this.state.showOptions &&
-                                    this.props.editOptions &&
-                                    this.props.editOptions[this.state.optionsId] &&
+                                    item.options &&
                                     index == this.state.optionsId &&
                                     <div ref={this.optionRefs[index]} className="editOptions">
                                         {// Print items that are checked
-                                            this.props.editOptions[this.state.optionsId].map((optionItem, i) => {
+                                            item.options.map((optionItem, i) => {
                                                 if (counter < numOptions && (optionItem.match('^' + this.itemRefs[this.state.optionsId].current.value + '$') ||
-                                                    (this.props.multiSelect && this.props.multiSelect[this.state.optionsId] &&
-                                                        this.itemRefs[this.state.optionsId].current.value.match(optionItem)))) {
+                                                    (item.multiSelect && this.itemRefs[this.state.optionsId].current.value.match(optionItem)))) {
                                                     counter++;
                                                     return (
                                                         <div key={i} className="editOptionItem" onClick={this.optionClicked.bind(this, index, optionItem)}>
@@ -165,13 +165,12 @@ export class EditDialog extends React.Component {
                                             })
                                         }
                                         {// Print the rest of the items
-                                            this.props.editOptions[this.state.optionsId].map((optionItem, i) => {
+                                            item.options.map((optionItem, i) => {
                                                 if (counter < numOptions && !(optionItem.match('^' + this.itemRefs[this.state.optionsId].current.value + '$') ||
-                                                    (this.props.multiSelect && this.props.multiSelect[this.state.optionsId] &&
-                                                        this.itemRefs[this.state.optionsId].current.value.match(optionItem)))) {
+                                                    (item.multiSelect && this.itemRefs[this.state.optionsId].current.value.match(optionItem)))) {
                                                     counter++;
                                                     return (
-                                                        <div key={i} className="editOptionItem" onClick={this.optionClicked.bind(this, index, optionItem)}>
+                                                        <div key={i} className="editOptionItem" onClick={this.optionClicked.bind(this, index, optionItem, item.multiSelect)}>
                                                             <p className="filterItemText">{optionItem}</p>
                                                         </div>
                                                     );
