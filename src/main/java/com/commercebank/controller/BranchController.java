@@ -9,10 +9,8 @@ import com.commercebank.model.Skill;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 // @RestController means Spring will automatically create and manager and instance of this class
 @RestController // Make this class a REST controller that accept HTTP requests

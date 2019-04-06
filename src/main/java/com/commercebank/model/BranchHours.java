@@ -1,7 +1,5 @@
 package com.commercebank.model;
 
-import org.apache.tomcat.jni.Local;
-
 import java.time.LocalTime;
 
 // Basic object with getters and setters that matches the database row

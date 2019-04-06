@@ -13,7 +13,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -33,9 +32,6 @@ public class AppointmentSlotControllerTests {
 
     @Autowired
     private CalendarDAO calendarDAO;
-
-    @Autowired
-    private ServiceDAO serviceDAO;
 
     private AppointmentSlotController appointmentSlotController;
 
@@ -71,7 +67,6 @@ public class AppointmentSlotControllerTests {
                 unavailableDAO,
                 appointmentDAO,
                 calendarDAO,
-                serviceDAO,
                 skillDAO,
                 managerDAO);
     }

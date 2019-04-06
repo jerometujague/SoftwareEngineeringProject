@@ -2,7 +2,6 @@ package com.commercebank.controller;
 
 import com.commercebank.dao.CustomerDAO;
 import com.commercebank.model.Customer;
-import com.fasterxml.jackson.core.JsonEncoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -2,7 +2,6 @@ package com.commercebank.util;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
 
 public class DateUtil {
     // Get the 12 hour time from a hour

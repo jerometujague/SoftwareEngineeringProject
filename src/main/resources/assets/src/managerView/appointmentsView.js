@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import React from 'react';
 import { convertTime24to12, getTopResults, convertTime12to24 } from '../functions';
-import EditDialog from './editDialog';
+import { EditDialog, EditorData } from './editDialog';
 import { CSSTransition } from 'react-transition-group';
 import HeaderFilters from './headerFilters';
 
@@ -19,10 +19,8 @@ export default class AppointmentsView extends React.Component {
             calendar: [],
             filters: [[], [], [], [], [], []],
             masterSearchFilter: "",
-            editAppointment: { date: "", time: "", branch: "", manager: "", customer: "", services: "" },
             showEditDialog: false,
-            editErrors: [],
-            editPosition: 0,
+            editorData: undefined,
         }
 
         this.headerNames = ["Date", "Time", "Branch", "Manager", "Customer", "Service"];
@@ -105,22 +103,11 @@ export default class AppointmentsView extends React.Component {
         this.props.setStateValue('loading', false);
     }
 
-    editAppointment(index, id, date, time, branchName, managerName, customerName, serviceString) {
-        const appointment = {
-            id: id,
-            date: date,
-            time: time,
-            branch: branchName,
-            manager: managerName,
-            customer: customerName,
-            services: serviceString,
-        }
-
+    editAppointment(index, id, ...items) {
+        items.pop();
         this.setState({
-            editAppointment: appointment,
             showEditDialog: true,
-            editErrors: [],
-            editPosition: index * 35 + 125,
+            editorData: new EditorData(id, items, [], index * 35 + 125),
         })
     }
 
@@ -213,11 +200,11 @@ export default class AppointmentsView extends React.Component {
             })
         });
 
+        await this.loadData();
+
         this.setState({
             showEditDialog: false,
         })
-
-        await this.loadData();
 
         this.props.setStateValue('loading', false);
     }
@@ -254,17 +241,9 @@ export default class AppointmentsView extends React.Component {
             getTopResults(this.state.appointments.map(a => a.customerId)).map(r => this.getCustomerName(r.item)),
             getTopResults(this.state.appointments.map(a => a.serviceIds).flat()).map(r => this.getServiceName(r.item))];
 
-        const editItems = [
-            this.state.editAppointment.date,
-            this.state.editAppointment.time,
-            this.state.editAppointment.branch,
-            this.state.editAppointment.manager,
-            this.state.editAppointment.customer,
-            this.state.editAppointment.services];
-
         const editOptions = [
-            getTopResults(this.state.appointments.map(a => a.calendarId)).map(r => this.getDate(r.item)),
-            getTopResults(this.state.appointments.map(a => a.time[0])).map(r => convertTime24to12(r.item)),
+            filterOptions[0],
+            filterOptions[1],
             getTopResults(this.state.branches.map(a => a.id)).map(r => this.getBranchName(r.item)),
             getTopResults(this.state.managers.map(a => a.id)).map(r => this.getManagerName(r.item)),
             getTopResults(this.state.customers.map(a => a.id)).map(r => this.getCustomerName(r.item)),
@@ -300,11 +279,12 @@ export default class AppointmentsView extends React.Component {
                     <tbody>
                         {
                             this.state.appointments.map((appointment, index) => {
-                                const customerName = this.getCustomerName(appointment.customerId)
-                                const managerName = this.getManagerName(appointment.managerId);
-                                const branchName = this.getBranchName(appointment.branchId);
-                                const date = this.getDate(appointment.calendarId)
-                                const time = convertTime24to12(appointment.time[0]);
+                                const tableData = [];
+                                tableData.push(this.getDate(appointment.calendarId));
+                                tableData.push(convertTime24to12(appointment.time[0]));
+                                tableData.push(this.getBranchName(appointment.branchId));
+                                tableData.push(this.getManagerName(appointment.managerId));
+                                tableData.push(this.getCustomerName(appointment.customerId));
 
                                 const serviceNames = [];
 
@@ -317,36 +297,41 @@ export default class AppointmentsView extends React.Component {
                                     serviceNames.push(this.state.services[appointment.serviceIds[i] - 1].service);
                                 }
 
+                                tableData.push(serviceString);
+
                                 // Check for filtering
-                                if ((this.state.filters[0].length > 0 && !this.state.filters[0].includes(date)) ||
-                                    (this.state.filters[1].length > 0 && !this.state.filters[1].includes(time)) ||
-                                    (this.state.filters[2].length > 0 && !this.state.filters[2].includes(branchName)) ||
-                                    (this.state.filters[3].length > 0 && !this.state.filters[3].includes(managerName)) ||
-                                    (this.state.filters[4].length > 0 && !this.state.filters[4].includes(customerName)) ||
-                                    (this.state.filters[5].length > 0 && !this.state.filters[5].some(s => serviceNames.indexOf(s) >= 0))) {
+                                for (let i = 0; i < tableData.length - 1; i++) {
+                                    if (this.state.filters[i].length > 0 && !this.state.filters[i].includes(tableData[i])) {
+                                        return;
+                                    }
+                                }
+
+                                // Special check for services
+                                if ((this.state.filters[5].length > 0 && !this.state.filters[5].some(s => serviceNames.indexOf(s) >= 0))) {
                                     return;
                                 }
 
+                                let match = false;
                                 // Check for master search filtering
-                                if (this.state.masterSearchFilter.length > 0 &&
-                                    !time.toLowerCase().match(this.state.masterSearchFilter.toLowerCase()) &&
-                                    !branchName.toLowerCase().match(this.state.masterSearchFilter.toLowerCase()) &&
-                                    !managerName.toLowerCase().match(this.state.masterSearchFilter.toLowerCase()) &&
-                                    !customerName.toLowerCase().match(this.state.masterSearchFilter.toLowerCase()) &&
-                                    !serviceString.toLowerCase().match(this.state.masterSearchFilter.toLowerCase())) {
-                                    return;
+                                for (let data of tableData) {
+                                    if (data.toLowerCase().match(this.state.masterSearchFilter.toLowerCase())) {
+                                        match = true;
+                                    }
+                                }
+
+                                if (!match && this.state.masterSearchFilter.length > 0) {
+                                    return
                                 }
 
                                 return (
                                     <tr key={appointment.id}>
-                                        <td className="tableData">{date}</td>
-                                        <td className="tableData">{time}</td>
-                                        <td className="tableData">{branchName}</td>
-                                        <td className="tableData">{managerName}</td>
-                                        <td className="tableData">{customerName}</td>
-                                        <td className="tableData">{serviceString}</td>
+                                        {
+                                            tableData.map((data, index) => {
+                                                return <td key={index} className="tableData">{data}</td>;
+                                            })
+                                        }
                                         <td className="tableData actionStart">
-                                            <input type="submit" value="Edit" onClick={this.editAppointment.bind(this, index, appointment.id, date, time, branchName, managerName, customerName, serviceString)} />
+                                            <input type="submit" value="Edit" onClick={this.editAppointment.bind(this, index, appointment.id, ...tableData)} />
                                         </td>
                                         <td className="tableData">
                                             <input type="submit" value="Cancel" onClick={this.cancelAppointment.bind(this, appointment.id)} />
@@ -363,14 +348,11 @@ export default class AppointmentsView extends React.Component {
                     classNames="view"
                     unmountOnExit>
                     <EditDialog
-                        editId={this.state.editAppointment.id}
-                        editItems={editItems}
                         multiSelect={[false, false, false, false, false, true]}
                         editOptions={editOptions}
-                        editErrors={this.state.editErrors}
+                        editorData={this.state.editorData}
                         saveHandler={this.saveEdits.bind(this)}
-                        closeHandler={this.closeEditor.bind(this)}
-                        topPosition={this.state.editPosition + "px"} />
+                        closeHandler={this.closeEditor.bind(this)} />
                 </CSSTransition>
             </div >
         )

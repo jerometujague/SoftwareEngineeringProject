@@ -1,9 +1,7 @@
 package com.commercebank.controller;
 
 import com.commercebank.dao.CalendarDAO;
-import com.commercebank.dao.CustomerDAO;
 import com.commercebank.model.Calendar;
-import com.commercebank.model.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

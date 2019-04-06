@@ -24,7 +24,6 @@ public class AppointmentSlotController {
     private final UnavailableDAO unavailableDAO;
     private final AppointmentDAO appointmentDAO;
     private final CalendarDAO calendarDAO;
-    private final ServiceDAO serviceDAO;
     private final SkillDAO skillDAO;
     private final ManagerDAO managerDAO;
 
@@ -43,14 +42,12 @@ public class AppointmentSlotController {
             UnavailableDAO unavailableDAO,
             AppointmentDAO appointmentDAO,
             CalendarDAO calendarDAO,
-            ServiceDAO serviceDAO,
             SkillDAO skillDAO,
             ManagerDAO managerDAO) {
         this.branchHoursDAO = branchHoursDAO;
         this.unavailableDAO = unavailableDAO;
         this.appointmentDAO = appointmentDAO;
         this.calendarDAO = calendarDAO;
-        this.serviceDAO = serviceDAO;
         this.skillDAO = skillDAO;
         this.managerDAO = managerDAO;
     }
