@@ -4,11 +4,8 @@ import com.commercebank.model.Unavailable;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Component
 public class UnavailableMapper implements RowMapper<Unavailable> {

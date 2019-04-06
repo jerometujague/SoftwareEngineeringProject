@@ -1,17 +1,47 @@
 import React from 'react'
 
-export default class EditDialog extends React.Component {
+export class EditItem {
+    /**
+    * The EditItem object that is used in the EditorData for the EditorDialog.
+    * @param name The name of the editable field.
+    * @param value The initial value of the item.
+    * @param multipleSelect A boolean value that determines if this field accepts multiple select.
+    */
+    constructor(name, value, multipleSelect) {
+        this.name = name;
+        this.value = value;
+        this.multipleSelect = multipleSelect;
+    }
+}
+
+export class EditorData {
+    /**
+    * The EditorData object to be passed into the EditDialog component.
+    * @param editId The unique id of the row being edited.
+    * @param editItems The array of values of fields to edit.
+    * @param editErrors The array of error messages to show for each field.
+    * @param editPosition The y position from the top of the page.
+    */
+    constructor(editId, editItems, editErrors, editPosition) {
+        this.editId = editId;
+        this.editItems = editItems;
+        this.editErrors = editErrors;
+        this.editPosition = editPosition;
+    }
+}
+
+export class EditDialog extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            editValues: this.props.editItems,
+            editValues: this.props.editorData.editItems,
             showOptions: false,
             optionsId: 0,
         }
 
         this.itemRefs = [];
         this.optionRefs = [];
-        this.props.editItems.forEach(() => {
+        this.props.editorData.editItems.forEach(() => {
             this.itemRefs.push(React.createRef());
             this.optionRefs.push(React.createRef());
         });
@@ -98,18 +128,19 @@ export default class EditDialog extends React.Component {
         const numOptions = 12;
 
         const styles = {
-            top: this.props.topPosition
+            top: this.props.editorData.editPosition + 'px'
         }
+
         let counter = 0;
 
         return (
-            <div className="editDialog" style={styles} key={this.props.editId} >
+            <div className="editDialog" style={styles} key={this.props.editorData.editId} >
                 {
-                    this.props.editItems.map((item, index) => {
+                    this.props.editorData.editItems.map((item, index) => {
                         return (
                             <div key={index} className="editItem">
                                 <input ref={this.itemRefs[index]} type="text" defaultValue={item}
-                                    className={this.props.editErrors && this.props.editErrors[index] ? "editError" : ""}
+                                    className={this.props.editorData.editErrors && this.props.editorData.editErrors[index] ? "editError" : ""}
                                     onChange={this.handleChange.bind(this, index)}
                                     onClick={this.showOptions.bind(this, index)} />
                                 {
@@ -153,7 +184,7 @@ export default class EditDialog extends React.Component {
                         )
                     })
                 }
-                <input type="submit" value="Save" onClick={this.props.saveHandler.bind(this, this.props.editId, this.state.editValues)} />
+                <input type="submit" value="Save" onClick={this.props.saveHandler.bind(this, this.props.editorData.editId, this.state.editValues)} />
                 <input type="submit" value="X" onClick={this.props.closeHandler.bind(this)} />
             </div>
         );
