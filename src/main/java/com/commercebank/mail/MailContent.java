@@ -22,9 +22,6 @@ public class MailContent {
     private final BranchDAO branchDAO;
     private final ServiceDAO serviceDAO;
 
-//    private JavaMailSender javaMailSender;
-
-
     @Autowired
     public MailContent(CustomerDAO customerDAO,
                        CalendarDAO calendarDAO, BranchDAO branchDAO,
@@ -175,17 +172,5 @@ public class MailContent {
 
         mailSender.send(customerEmail, managerEmail, "Banking Appointment", messageBody, "appointmentInvite.ics");
      }
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
