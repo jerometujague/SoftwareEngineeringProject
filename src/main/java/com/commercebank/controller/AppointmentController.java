@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PathVariable;
 
-
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Arrays;
