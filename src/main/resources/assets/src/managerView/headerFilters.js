@@ -75,7 +75,7 @@ export default class HeaderFilters extends React.Component {
                     return (
                         <td key={headerIndex}>
                             <details ref={this.filterRefs[headerIndex]}>
-                                <summary className="filterHeader">{headerName}</summary>
+                                <summary className={this.props.filterOptions[headerIndex].length > 0 ? "filterHeader hasFilterItems" : "filterHeader"}>{headerName}</summary>
                                 {this.props.filterOptions[headerIndex].length > 0 &&
                                     <details-menu class="filterMenu">
                                         <input type="text" placeholder={"Filter " + headerName.toLowerCase()} className="filterInput" onChange={this.itemFilterInput.bind(this)} />

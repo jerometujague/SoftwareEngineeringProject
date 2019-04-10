@@ -244,7 +244,7 @@ export default class ManagersView extends React.Component {
                                 tableData.push(new EditItem('Branch', this.getBranchName(manager.branchId), branchOptions));
 
                                 // Check for filtering
-                                if (this.state.filters[3].length > 0 && !this.state.filters[3].includes(tableData[3])) {
+                                if (this.state.filters[3].length > 0 && !this.state.filters[3].includes(tableData[3].value)) {
                                     return;
                                 }
 
