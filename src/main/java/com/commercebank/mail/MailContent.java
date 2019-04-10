@@ -23,8 +23,7 @@ public class MailContent {
     private final ServiceDAO serviceDAO;
 
     @Autowired
-    public MailContent(CustomerDAO customerDAO,
-                       CalendarDAO calendarDAO, BranchDAO branchDAO,
+    public MailContent(CustomerDAO customerDAO, CalendarDAO calendarDAO, BranchDAO branchDAO,
                        ServiceDAO serviceDAO, MailSender smtp){
         this.mailSender = smtp;
         this.customerDAO = customerDAO;
@@ -33,9 +32,7 @@ public class MailContent {
         this.serviceDAO = serviceDAO;
     }
 
-     public void AppointmentEmail(
-             Appointment appointment,
-             Manager manager) throws Exception {
+     public void appointmentEmail(Appointment appointment, Manager manager, String type) throws Exception {
 
         // get appointment date
          List<Calendar> calendars = calendarDAO.list();
@@ -111,66 +108,103 @@ public class MailContent {
          String customerEmail = customer.getEmail();
         String customerName = customer.getFirstName() + " " + customer.getLastName();
 
-        // create the text to display in the email
-        String messageBody = "Dear " + customerName + ",<br><br>" + "Your appointment regarding " +
-                service + " is scheduled for " + dayOfWeek + ", " + month + " " + day + ", " + year +
-                " at " + apptTime + ".<br>" +
-                "You will be meeting with " + managerName + " at " + branchName + ".<br>" +
-                "The address is " + branchAddress + ".<br><br>";
+        // create the text to display in email
+         String messageBody;
+         if (type.equals("new")) {
+              messageBody = "Dear " + customerName + ",<br><br>" + "Your appointment regarding " +
+                     service + " is scheduled for " + dayOfWeek + ", " + month + " " + day + ", " + year +
+                     " at " + apptTime + ".<br>" +
+                     "You will be meeting with " + managerName + " at " + branchName + ".<br>" +
+                     "The address is " + branchAddress + ".<br><br>";
 
-        if(!note.isEmpty()){
-            messageBody += "You entered the following custom note: " + note + "<br><br>";
-        }
+             if (!note.isEmpty()) {
+                 messageBody += "You entered the following custom note: " + note + "<br><br>";
+             }
 
-        messageBody += "If you have questions, or need to reschedule, please contact " + managerName +
-                " at " + managerPhone + " or " + managerEmail;
+             messageBody += "If you have questions, or need to reschedule, please contact " + managerName +
+                     " at " + managerPhone + " or " + managerEmail;
+         }
+         else if (type.equals("delete")){
+              messageBody = "Dear " + customerName + ",<br><br>" + "Your appointment scheduled for " +
+                     dayOfWeek + ", " + month + " " + day + ", " + year +
+                     " at " + apptTime + "<br>" + "was cancelled.<br><br>";
+         }
+         else{ // appointment update
+             messageBody = "Dear " + customerName + ",<br><br>" + "Your appointment has been changed. " +
+                     "Your new appointment regarding " +
+                     service + " is scheduled for " + dayOfWeek + ", " + month + " " + day + ", " + year +
+                     " at " + apptTime + ".<br>" +
+                     "You will be meeting with " + managerName + " at " + branchName + ".<br>" +
+                     "The address is " + branchAddress + ".<br><br>";
 
-        // create the .ics file (calendar invite) to send as an attachment
-        File apptfile = new File("appointmentInvite.ics");
-        if (!apptfile.exists()){
-            apptfile.createNewFile();
-        }
-        PrintWriter pw = new PrintWriter(apptfile); // will overwrite existing file info
+             if (!note.isEmpty()) {
+                 messageBody += "You entered the following custom note: " + note + "<br><br>";
+             }
 
-        //get timestamp
-        String timeStamp = DateUtil.getTimeStamp();
+             messageBody += "If you have questions, or need to reschedule, please contact " + managerName +
+                     " at " + managerPhone + " or " + managerEmail;
+         }
 
-        // convert appointment date & time to required format
-        StringBuilder strDate = new StringBuilder(date.toString());
-        strDate.deleteCharAt(4);
-        strDate.deleteCharAt(6);
-        String dateStart = strDate.toString();
+        // create the .ics file (calendar invite) to send as an attachment (only for new or update appts)
+         if (type.equals("new") || type.equals("update")) {
+             File apptfile = new File("appointmentInvite.ics");
+             if (!apptfile.exists()) {
+                 apptfile.createNewFile();
+             }
+             PrintWriter pw = new PrintWriter(apptfile); // will overwrite existing file info
 
-        // change times to UTC for calendar invite
-        int startHourUTC = (time.getHour() + 5) % 24; // currently UTC = CDT + 5 hours
-        int endHourUTC = (startHourUTC + 1) % 24;
-        // todo: Add logic to switch date to next day if UTC time past 2400
+             //get timestamp
+             String timeStamp = DateUtil.getTimeStamp();
 
-        // add leading zero to hour if less than 10
-        String leadingZeroStart = "";
-        String leadingZeroEnd = "";
-        if (startHourUTC < 10) {leadingZeroStart = "0";}
-        if (endHourUTC < 10) {leadingZeroEnd = "0";}
-        String dateTimeStart = dateStart + "T" + leadingZeroStart + startHourUTC + "000000Z";
-        String dateTimeEnd = dateStart + "T" + leadingZeroEnd + endHourUTC + "000000Z";
+             // convert appointment date & time to required format
+             StringBuilder strDate = new StringBuilder(date.toString());
+             strDate.deleteCharAt(4);
+             strDate.deleteCharAt(6);
+             String dateStart = strDate.toString();
 
-        // put appointment info into .ics file
-        pw.println("BEGIN:VCALENDAR");
-        pw.println("VERSION: 2.0");
-        pw.println("PRODID:-//SE3910//Project//EN");
-        pw.println("BEGIN:VEVENT");
-        pw.println("UID:" + timeStamp + "SE1234@google.com");
-        pw.println("DTSTART:" + dateTimeStart);
-        pw.println("DTEND:" + dateTimeEnd);
-        pw.println("DTSTAMP:" + timeStamp);
-        pw.println("ORGANIZER;CN=" + managerName + ":mailto:" + managerEmail);
-        pw.println("SUMMARY:Commerce Bank Appointment");
-        pw.println("END:VEVENT");
-        pw.println("END:VCALENDAR");
+             // change times to UTC for calendar invite
+             int startHourUTC = (time.getHour() + 5) % 24; // currently UTC = CDT + 5 hours
+             int endHourUTC = (startHourUTC + 1) % 24;
+             // todo: Add logic to switch date to next day if UTC time past 2400
 
-        pw.close();
+             // add leading zero to hour if less than 10
+             String leadingZeroStart = "";
+             String leadingZeroEnd = "";
+             if (startHourUTC < 10) {
+                 leadingZeroStart = "0";
+             }
+             if (endHourUTC < 10) {
+                 leadingZeroEnd = "0";
+             }
+             String dateTimeStart = dateStart + "T" + leadingZeroStart + startHourUTC + "000000Z";
+             String dateTimeEnd = dateStart + "T" + leadingZeroEnd + endHourUTC + "000000Z";
 
-        mailSender.send(customerEmail, managerEmail, "Banking Appointment", messageBody, "appointmentInvite.ics");
+             // put appointment info into .ics file
+             pw.println("BEGIN:VCALENDAR");
+             pw.println("VERSION: 2.0");
+             pw.println("PRODID:-//SE3910//Project//EN");
+             pw.println("BEGIN:VEVENT");
+             pw.println("UID:" + timeStamp + "SE1234@google.com");
+             pw.println("DTSTART:" + dateTimeStart);
+             pw.println("DTEND:" + dateTimeEnd);
+             pw.println("DTSTAMP:" + timeStamp);
+             pw.println("ORGANIZER;CN=" + managerName + ":mailto:" + managerEmail);
+             pw.println("SUMMARY:Commerce Bank Appointment");
+             pw.println("END:VEVENT");
+             pw.println("END:VCALENDAR");
+
+             pw.close();
+         }
+         if (type.equals("new")) {
+             mailSender.send(customerEmail, managerEmail, "Banking Appointment", messageBody, "appointmentInvite.ics");
+         }
+         else if (type.equals("update")){
+             mailSender.send(customerEmail, managerEmail, "Banking Appointment Update", messageBody, "appointmentInvite.ics");
+         }
+         else { // don't send attachment for deleted appt
+             mailSender.send(customerEmail, managerEmail, "Cancelled Banking Appointment", messageBody);
+         }
      }
+
 
 }
