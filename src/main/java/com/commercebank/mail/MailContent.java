@@ -137,7 +137,7 @@ public class MailContent {
                      "You will be meeting with " + managerName + " at " + branchName + ".<br>" +
                      "The address is " + branchAddress + ".<br><br>";
 
-             if (!note.isEmpty()) {
+             if (note != null && !note.isEmpty()) {
                  messageBody += "You entered the following custom note: " + note + "<br><br>";
              }
 
