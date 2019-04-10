@@ -148,7 +148,8 @@ export default class AppointmentsView extends React.Component {
                 branchId: branchId,
                 managerId: managerId,
                 customerId: customerId,
-                serviceIds: serviceIds
+                serviceIds: serviceIds,
+                note: this.props.appointments.find(a => a.id == itemId).note
             })
         });
 
