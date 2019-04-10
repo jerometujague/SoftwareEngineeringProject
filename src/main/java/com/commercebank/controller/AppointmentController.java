@@ -49,17 +49,44 @@ public class AppointmentController {
     }
 
     @RequestMapping(value = "/delete/{id}/", method = RequestMethod.DELETE)
-    void deleteAppointment(@PathVariable("id") int id){
+    void deleteAppointment(@PathVariable("id") int id) throws Exception {
+
+        List<Appointment> appointments = appointmentDAO.list();
+        Optional<Appointment> appt = appointments.parallelStream()
+                .filter(b -> b.getId() == id)
+                .findFirst();
+
+        Appointment cancelledAppt = appt.get();
+
+        List<Manager> managers = managerDAO.list();
+        Optional<Manager> mgr = managers.parallelStream()
+                .filter(b -> b.getId() == cancelledAppt.getManagerId())
+                .findFirst();
+
+        Manager cancelledMgr = mgr.get();
+
+        mailContent.appointmentEmail(cancelledAppt, cancelledMgr, "delete");
+
         appointmentDAO.delete(id);
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    void updateAppointment(@RequestBody Appointment appointment){
+    void updateAppointment(@RequestBody Appointment appointment) throws Exception {
+
         appointmentDAO.update(appointment);
+
+        List<Manager> managers = managerDAO.list();
+        Optional<Manager> mgr = managers.parallelStream()
+                .filter(b -> b.getId() == appointment.getManagerId())
+                .findFirst();
+
+        Manager updateMgr = mgr.get();
+
+        mailContent.appointmentEmail(appointment, updateMgr, "update");
     }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    void scheduleAppointment(@RequestBody Appointment appointment) throws MessagingException, IOException, Exception {
+    void scheduleAppointment(@RequestBody Appointment appointment) throws Exception {
 
         // get list of available managers
         List<Manager> managers = managerDAO.list();
@@ -92,7 +119,7 @@ public class AppointmentController {
         }
 
         // send email to customer
-        mailContent.AppointmentEmail(appointment, apptManager);
+        mailContent.appointmentEmail(appointment, apptManager, "new");
 
     }
 }
