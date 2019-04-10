@@ -11,12 +11,6 @@ export default class AppointmentsView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            appointments: [],
-            customers: [],
-            branches: [],
-            services: [],
-            managers: [],
-            calendar: [],
             filters: [[], [], [], [], [], []],
             masterSearchFilter: "",
             showEditDialog: false,
@@ -24,47 +18,6 @@ export default class AppointmentsView extends React.Component {
         }
 
         this.headerNames = ["Date", "Time", "Branch", "Manager", "Customer", "Service"];
-        this.dataNeeded = ["calendar", "customers", "branches", "services", "managers"];
-
-        this.loadData();
-    }
-
-    async loadData() {
-        this.props.setStateValue('loading', true);
-
-        for (let data of this.dataNeeded) {
-            const url = "/api/" + data;
-
-            await $.getJSON(url, dataList => {
-                const newData = [];
-                dataList.forEach(dataItem => {
-                    newData.push(dataItem);
-                });
-
-                this.setState({
-                    [data]: newData,
-                });
-            });
-        }
-
-        await this.loadAppointments();
-
-        this.props.setStateValue('loading', false);
-    }
-
-    async loadAppointments() {
-        const url = "/api/appointments";
-
-        await $.getJSON(url, dataList => {
-            const newData = [];
-            dataList.forEach(dataItem => {
-                newData.push(dataItem);
-            });
-
-            this.setState({
-                appointments: newData,
-            });
-        });
     }
 
     clearFilters() {
@@ -98,8 +51,7 @@ export default class AppointmentsView extends React.Component {
             url: '/api/appointments/delete/' + id + '/'
         });
 
-        await this.loadData();
-
+        await this.props.loadData('appointments');
         this.props.setStateValue('loading', false);
     }
 
@@ -121,17 +73,17 @@ export default class AppointmentsView extends React.Component {
         this.props.setStateValue('loading', true);
 
         const dateArray = newValues[0].split('-');
-        const date = this.state.calendar.find(c => c.date[0] == '20' + dateArray[2] && c.date[1] == dateArray[0] && c.date[2] == dateArray[1]);
+        const date = this.props.calendar.find(c => c.date[0] == '20' + dateArray[2] && c.date[1] == dateArray[0] && c.date[2] == dateArray[1]);
         const time = convertTime12to24(newValues[1]);
-        const branch = this.state.branches.find(b => b.name == newValues[2]);
-        const manager = this.state.managers.find(m => m.firstName + " " + m.lastName == newValues[3]);
-        const customer = this.state.customers.find(c => c.firstName + " " + c.lastName == newValues[4]);
+        const branch = this.props.branches.find(b => b.name == newValues[2]);
+        const manager = this.props.managers.find(m => m.firstName + " " + m.lastName == newValues[3]);
+        const customer = this.props.customers.find(c => c.firstName + " " + c.lastName == newValues[4]);
 
         const newServices = newValues[5].split(', ');
 
         let validServices = true;
         const serviceIds = newServices.map(s => {
-            const found = this.state.services.find(service => service.service == s)
+            const found = this.props.services.find(service => service.service == s)
             if (found) {
                 return found.id;
             } else {
@@ -200,54 +152,53 @@ export default class AppointmentsView extends React.Component {
             })
         });
 
-        await this.loadData();
-
+        await this.props.loadData('appointments');
+        this.props.setStateValue('loading', false);
+        
         this.setState({
             showEditDialog: false,
         })
-
-        this.props.setStateValue('loading', false);
     }
 
     getBranchName(id) {
-        return this.state.branches.find(b => { return b.id == id }).name;
+        return this.props.branches.find(b => { return b.id == id }).name;
     }
 
     getCustomerName(id) {
-        const customer = this.state.customers.find(c => { return c.id == id });
+        const customer = this.props.customers.find(c => { return c.id == id });
         return customer.firstName + " " + customer.lastName;
     }
 
     getManagerName(id) {
-        const manager = this.state.managers.find(m => { return m.id == id });
+        const manager = this.props.managers.find(m => { return m.id == id });
         return manager.firstName + " " + manager.lastName;
     }
 
     getServiceName(id) {
-        return this.state.services.find(s => { return s.id == id }).service;
+        return this.props.services.find(s => { return s.id == id }).service;
     }
 
     getDate(id) {
-        const date = this.state.calendar.find(c => { return c.calendarId == id }).date;
+        const date = this.props.calendar.find(c => { return c.calendarId == id }).date;
         return date[1] + "-" + date[2] + "-" + String(date[0]).slice(2);
     }
 
     render() {
         const filterOptions = [
-            getTopResults(this.state.appointments.map(a => a.calendarId)).map(r => this.getDate(r.item)),
-            getTopResults(this.state.appointments.map(a => a.time[0])).map(r => convertTime24to12(r.item)),
-            getTopResults(this.state.appointments.map(a => a.branchId)).map(r => this.getBranchName(r.item)),
-            getTopResults(this.state.appointments.map(a => a.managerId)).map(r => this.getManagerName(r.item)),
-            getTopResults(this.state.appointments.map(a => a.customerId)).map(r => this.getCustomerName(r.item)),
-            getTopResults(this.state.appointments.map(a => a.serviceIds).flat()).map(r => this.getServiceName(r.item))];
+            getTopResults(this.props.appointments.map(a => a.calendarId)).map(r => this.getDate(r.item)),
+            getTopResults(this.props.appointments.map(a => a.time[0])).map(r => convertTime24to12(r.item)),
+            getTopResults(this.props.appointments.map(a => a.branchId)).map(r => this.getBranchName(r.item)),
+            getTopResults(this.props.appointments.map(a => a.managerId)).map(r => this.getManagerName(r.item)),
+            getTopResults(this.props.appointments.map(a => a.customerId)).map(r => this.getCustomerName(r.item)),
+            getTopResults(this.props.appointments.map(a => a.serviceIds).flat()).map(r => this.getServiceName(r.item))];
 
         const editOptions = [
             filterOptions[0],
             filterOptions[1],
-            getTopResults(this.state.branches.map(a => a.id)).map(r => this.getBranchName(r.item)),
-            getTopResults(this.state.managers.map(a => a.id)).map(r => this.getManagerName(r.item)),
-            getTopResults(this.state.customers.map(a => a.id)).map(r => this.getCustomerName(r.item)),
-            getTopResults(this.state.services.map(a => a.id).flat()).map(r => this.getServiceName(r.item))
+            getTopResults(this.props.branches.map(a => a.id)).map(r => this.getBranchName(r.item)),
+            getTopResults(this.props.managers.map(a => a.id)).map(r => this.getManagerName(r.item)),
+            getTopResults(this.props.customers.map(a => a.id)).map(r => this.getCustomerName(r.item)),
+            getTopResults(this.props.services.map(a => a.id).flat()).map(r => this.getServiceName(r.item))
         ];
 
         return (
@@ -278,7 +229,7 @@ export default class AppointmentsView extends React.Component {
                     </thead>
                     <tbody>
                         {
-                            this.state.appointments.map((appointment, index) => {
+                            this.props.appointments.map((appointment, index) => {
                                 const tableData = [];
                                 tableData.push(new EditItem("Date", this.getDate(appointment.calendarId), editOptions[0]));
                                 tableData.push(new EditItem("Time", convertTime24to12(appointment.time[0]), editOptions[1]));
@@ -291,10 +242,10 @@ export default class AppointmentsView extends React.Component {
                                 let serviceString = "";
                                 for (let i = 0; i < appointment.serviceIds.length; i++) {
                                     if (i < appointment.serviceIds.length - 1)
-                                        serviceString += this.state.services[appointment.serviceIds[i] - 1].service + ", ";
+                                        serviceString += this.props.services[appointment.serviceIds[i] - 1].service + ", ";
                                     else
-                                        serviceString += this.state.services[appointment.serviceIds[i] - 1].service;
-                                    serviceNames.push(this.state.services[appointment.serviceIds[i] - 1].service);
+                                        serviceString += this.props.services[appointment.serviceIds[i] - 1].service;
+                                    serviceNames.push(this.props.services[appointment.serviceIds[i] - 1].service);
                                 }
 
                                 tableData.push(new EditItem("Services", serviceString, editOptions[5], true));

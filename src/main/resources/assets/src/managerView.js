@@ -1,5 +1,6 @@
 import 'babel-polyfill';
 import 'details-element-polyfill';
+import $ from 'jquery';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { CSSTransition } from 'react-transition-group';
@@ -18,8 +19,55 @@ class ManagerView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            services: [],
+            calendar: [],
+            customers: [],
+            branches: [],
+            managers: [],
+            appointments: [],
             loading: false,
             selectedId: 0,
+        }
+
+        this.dataNeeded = ['services', 'calendar', 'customers', 'branches', 'managers', 'appointments'];
+    }
+
+    componentDidMount() {
+        this.loadAllData();
+    }
+
+    async loadAllData() {
+        for (let data of this.dataNeeded) {
+            await this.loadData(data, true);
+        }
+
+        this.setState({
+            loading: false,
+        })
+    }
+
+    async loadData(data, sequence) {
+        this.setState({
+            loading: true,
+        })
+
+        const url = "/api/" + data;
+
+        await $.getJSON(url, dataList => {
+            const newData = [];
+            dataList.forEach(dataItem => {
+                newData.push(dataItem);
+            });
+
+            this.setState({
+                [data]: newData,
+            });
+        });
+
+        if (!sequence) {
+            this.setState({
+                loading: false,
+            })
         }
     }
 
@@ -56,11 +104,18 @@ class ManagerView extends React.Component {
                 </div>
 
                 <CSSTransition // Show the appointments view
-                    in={this.state.selectedId == 0}
+                    in={this.state.selectedId == 0 && this.state.appointments.length > 0}
                     timeout={400}
                     classNames="view"
                     unmountOnExit>
                     <AppointmentsView
+                        appointments={this.state.appointments}
+                        calendar={this.state.calendar}
+                        services={this.state.services}
+                        managers={this.state.managers}
+                        branches={this.state.branches}
+                        customers={this.state.customers}
+                        loadData={this.loadData.bind(this)}
                         setStateValue={this.setStateValue.bind(this)} />
                 </CSSTransition>
 
@@ -70,6 +125,9 @@ class ManagerView extends React.Component {
                     classNames="view"
                     unmountOnExit>
                     <ManagersView
+                        branches={this.state.branches}
+                        managers={this.state.managers}
+                        loadData={this.loadData.bind(this)}
                         setStateValue={this.setStateValue.bind(this)} />
                 </CSSTransition>
 
@@ -79,6 +137,8 @@ class ManagerView extends React.Component {
                     classNames="view"
                     unmountOnExit>
                     <BranchesView
+                        branches={this.state.branches}
+                        loadData={this.loadData.bind(this)}
                         setStateValue={this.setStateValue.bind(this)} />
                 </CSSTransition>
 
@@ -88,6 +148,8 @@ class ManagerView extends React.Component {
                     classNames="view"
                     unmountOnExit>
                     <ServicesView
+                        services={this.state.services}
+                        loadData={this.loadData.bind(this)}
                         setStateValue={this.setStateValue.bind(this)} />
                 </CSSTransition>
 

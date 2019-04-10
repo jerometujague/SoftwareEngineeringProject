@@ -40,7 +40,7 @@ export default class ServicesView extends React.Component {
     addService() {
         this.setState({
             showEditDialog: true,
-            editorData: new EditorData(-1, [new EditItem('Service', '')], [], this.state.services.length * 35 + 93),
+            editorData: new EditorData(-1, [new EditItem('Service', '')], [], this.props.services.length * 35 + 93),
         })
     }
 
@@ -56,8 +56,7 @@ export default class ServicesView extends React.Component {
             url: '/api/services/delete/' + id + '/'
         });
 
-        this.loadServices();
-
+        await this.props.loadData('services');
         this.props.setStateValue('loading', false);
     }
 
@@ -91,13 +90,12 @@ export default class ServicesView extends React.Component {
             });
         }
 
-        await this.loadServices();
+        await this.props.loadData('services');
+        this.props.setStateValue('loading', false);
 
         this.setState({
             showEditDialog: false,
         })
-
-        this.props.setStateValue('loading', false);
     }
 
     closeEditor() {
@@ -119,7 +117,7 @@ export default class ServicesView extends React.Component {
                     </thead>
                     <tbody>
                         {
-                            this.state.services.map((service, index) => {
+                            this.props.services.map((service, index) => {
 
                                 return (
                                     <tr key={service.id}>
