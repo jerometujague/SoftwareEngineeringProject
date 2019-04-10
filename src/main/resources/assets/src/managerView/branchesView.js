@@ -9,35 +9,10 @@ export default class BranchesView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            branches: [],
             showEditDialog: false,
             editorData: undefined,
             filters: [[], [], [], [], []],
         }
-
-        this.dataNeeded = ['branches'];
-        this.loadData();
-    }
-
-    async loadData() {
-        this.props.setStateValue('loading', true);
-
-        for (let data of this.dataNeeded) {
-            const url = "/api/" + data;
-
-            await $.getJSON(url, dataList => {
-                const newData = [];
-                dataList.forEach(dataItem => {
-                    newData.push(dataItem);
-                });
-
-                this.setState({
-                    [data]: newData,
-                });
-            });
-        }
-
-        this.props.setStateValue('loading', false);
     }
 
     editBranch(index, id, ...items) {
@@ -67,8 +42,7 @@ export default class BranchesView extends React.Component {
             url: '/api/branches/delete/' + id + '/'
         });
 
-        this.loadData();
-
+        await this.props.loadData('branches');
         this.props.setStateValue('loading', false);
     }
 
@@ -148,13 +122,12 @@ export default class BranchesView extends React.Component {
             });
         }
 
-        await this.loadData();
+        await this.props.loadData('branches');
+        this.props.setStateValue('loading', false);
 
         this.setState({
             showEditDialog: false,
         })
-
-        this.props.setStateValue('loading', false);
     }
 
     closeEditor() {
@@ -179,7 +152,7 @@ export default class BranchesView extends React.Component {
         const headerNames = ['Name', 'Street Address', 'City', 'State', 'Zip Code'];
 
         // Filter options for city and state
-        const filterOptions = [[], [], getTopResults(this.state.branches.map(b => b.city)).map(r => r.item), getTopResults(this.state.branches.map(b => b.state)).map(r => r.item), []];
+        const filterOptions = [[], [], getTopResults(this.props.branches.map(b => b.city)).map(r => r.item), getTopResults(this.props.branches.map(b => b.state)).map(r => r.item), []];
 
         const newEditItems = [
             new EditItem('Name', ''),
@@ -210,7 +183,7 @@ export default class BranchesView extends React.Component {
                     </thead>
                     <tbody>
                         {
-                            this.state.branches.map((branch, index) => {
+                            this.props.branches.map((branch, index) => {
                                 const tableData = [];
                                 tableData.push(new EditItem('Name', branch.name));
                                 tableData.push(new EditItem('Street Address', branch.streetAddress));

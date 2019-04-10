@@ -9,36 +9,10 @@ export default class ManagersView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            managers: [],
-            branches: [],
             showEditDialog: false,
             editorData: undefined,
             filters: [[], [], [], []],
         }
-
-        this.dataNeeded = ['branches', 'managers'];
-        this.loadData();
-    }
-
-    async loadData() {
-        this.props.setStateValue('loading', true);
-
-        for (let data of this.dataNeeded) {
-            const url = "/api/" + data;
-
-            await $.getJSON(url, dataList => {
-                const newData = [];
-                dataList.forEach(dataItem => {
-                    newData.push(dataItem);
-                });
-
-                this.setState({
-                    [data]: newData,
-                });
-            });
-        }
-
-        this.props.setStateValue('loading', false);
     }
 
     editManager(index, id, ...items) {
@@ -52,7 +26,7 @@ export default class ManagersView extends React.Component {
     addManager(editItems) {
         this.setState({
             showEditDialog: true,
-            editorData: new EditorData(-1, editItems, [], this.state.managers.length * 35 + 93),
+            editorData: new EditorData(-1, editItems, [], this.props.managers.length * 35 + 93),
         })
     }
 
@@ -68,8 +42,8 @@ export default class ManagersView extends React.Component {
             url: '/api/managers/delete/' + id + '/'
         });
 
-        this.loadData();
-
+        // Load the new manager data
+        await this.props.loadData('managers');
         this.props.setStateValue('loading', false);
     }
 
@@ -82,7 +56,7 @@ export default class ManagersView extends React.Component {
         const lastName = names[1];
         const phoneNumber = newValues[1].replace(/\(|\)|\s|-/g, '');
         const email = newValues[2];
-        const branch = this.state.branches.find(b => b.name == newValues[3]);
+        const branch = this.props.branches.find(b => b.name == newValues[3]);
 
         const validPhoneNumber = phoneNumber.length == 10;
         const pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
@@ -148,13 +122,12 @@ export default class ManagersView extends React.Component {
             });
         }
 
-        await this.loadData();
+        await this.props.loadData('managers');
+        this.props.setStateValue('loading', false);
 
         this.setState({
             showEditDialog: false,
         })
-
-        this.props.setStateValue('loading', false);
     }
 
     closeEditor() {
@@ -164,7 +137,7 @@ export default class ManagersView extends React.Component {
     }
 
     getBranchName(id) {
-        return this.state.branches.find(b => { return b.id == id }).name;
+        return this.props.branches.find(b => { return b.id == id }).name;
     }
 
     getPhoneNumber(phone) {
@@ -205,9 +178,9 @@ export default class ManagersView extends React.Component {
         const headerNames = ['Manager', 'Phone number', 'Email', 'Branch'];
 
         // Only show filter options for branch
-        const filterOptions = [[], [], [], getTopResults(this.state.managers.map(m => m.branchId)).map(r => this.getBranchName(r.item))];
+        const filterOptions = [[], [], [], getTopResults(this.props.managers.map(m => m.branchId)).map(r => this.getBranchName(r.item))];
 
-        const branchOptions = getTopResults(this.state.branches.map(b => b.id)).map(r => this.getBranchName(r.item));
+        const branchOptions = getTopResults(this.props.branches.map(b => b.id)).map(r => this.getBranchName(r.item));
 
         const newEditItems = [
             new EditItem('Manager', ''),
@@ -236,7 +209,7 @@ export default class ManagersView extends React.Component {
                     </thead>
                     <tbody>
                         {
-                            this.state.managers.map((manager, index) => {
+                            this.props.managers.map((manager, index) => {
                                 const tableData = [];
                                 tableData.push(new EditItem('Name', manager.firstName + " " + manager.lastName));
                                 tableData.push(new EditItem('Phone number', this.getPhoneNumber(manager.phoneNumber)));
