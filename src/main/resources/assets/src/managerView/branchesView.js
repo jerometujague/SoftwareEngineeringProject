@@ -163,7 +163,7 @@ export default class BranchesView extends React.Component {
 
         return (
             <div className="mainViewHolder">
-                <h2 className="viewHeader">Managers</h2>
+                <h2 className="viewHeader">Branches</h2>
                 {
                     // Show a clear all link if there is a filter
                     (this.state.filters[2].length > 0 ||

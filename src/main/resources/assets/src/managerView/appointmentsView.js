@@ -155,7 +155,7 @@ export default class AppointmentsView extends React.Component {
 
         await this.props.loadData('appointments');
         this.props.setStateValue('loading', false);
-        
+
         this.setState({
             showEditDialog: false,
         })

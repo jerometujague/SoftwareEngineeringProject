@@ -9,7 +9,7 @@ import java.util.List;
 
 // @RestController means Spring will automatically create and manager and instance of this class
 @RestController // Make this class a REST controller that accept HTTP requests
-@RequestMapping(value = "/api/unavailables") // Map any HTTP requests at this url to this class
+@RequestMapping(value = "/api") // Map any HTTP requests at this url to this class
 public class UnavailableController {
     // Dependencies
     private final UnavailableDAO unavailableDAO;
@@ -24,36 +24,42 @@ public class UnavailableController {
         return unavailableDAO.list();
     }
 
-    // Note: still need to figure out how to do this...
-    //@RequestMapping(value = "/add", method = RequestMethod.POST) // called when there is a POST request
-    //String post(){ return "something was posted";}
+    @RequestMapping(value = "/branchUnavailables", method = RequestMethod.GET)
+    List<Unavailable> getBranchUnavailables(){
+        return unavailableDAO.listBranches();
+    }
 
-    @RequestMapping(value = "/branch/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/managerUnavailables", method = RequestMethod.GET)
+    List<Unavailable> getManagerUnavailables(){
+        return unavailableDAO.listManagers();
+    }
+
+    @RequestMapping(value = "/unavailables/branch/add", method = RequestMethod.POST)
     void addBranchUnavailable(@RequestBody Unavailable unavailable) {
         unavailableDAO.insertBranchUnavailable(unavailable);
     }
 
-    @RequestMapping(value = "/manager/add", method = RequestMethod.POST)
+    @RequestMapping(value = "/unavailables/manager/add", method = RequestMethod.POST)
     void addManagerUnavailable(@RequestBody Unavailable unavailable) {
         unavailableDAO.insertManagerUnavailable(unavailable);
     }
 
-    @RequestMapping(value = "/branch/delete/{id}/", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/unavailables/branch/delete/{id}/", method = RequestMethod.DELETE)
     void deleteBranchUnavailable(@PathVariable("id") int id){
         unavailableDAO.deleteBranchUnavailable(id);
     }
 
-    @RequestMapping(value = "/manager/delete/{id}/", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/unavailables/manager/delete/{id}/", method = RequestMethod.DELETE)
     void deleteManagerUnavailable(@PathVariable("id") int id){
         unavailableDAO.deleteManagerUnavailable(id);
     }
 
-    @RequestMapping(value = "/branch/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/unavailables/branch/update", method = RequestMethod.POST)
     void updateBranchUnavailable(@RequestBody Unavailable unavailable) {
         unavailableDAO.updateBranchUnavailable(unavailable);
     }
 
-    @RequestMapping(value = "/manager/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/unavailables/manager/update", method = RequestMethod.POST)
     void updateManagerUnavailable(@RequestBody Unavailable unavailable) {
         unavailableDAO.updateManagerUnavailable(unavailable);
     }
