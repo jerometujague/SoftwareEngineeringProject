@@ -24,12 +24,14 @@ class ManagerView extends React.Component {
             customers: [],
             branches: [],
             managers: [],
+            branchUnavailables: [],
+            managerUnavailables: [],
             appointments: [],
             loading: false,
             selectedId: 0,
         }
 
-        this.dataNeeded = ['services', 'calendar', 'customers', 'branches', 'managers', 'appointments'];
+        this.dataNeeded = ['services', 'calendar', 'customers', 'branches', 'managers', 'branchUnavailables', 'appointments'];
     }
 
     componentDidMount() {
@@ -168,6 +170,10 @@ class ManagerView extends React.Component {
                     classNames="view"
                     unmountOnExit>
                     <BranchSchedulingView
+                        branchUnavailables={this.state.branchUnavailables}
+                        branches={this.state.branches}
+                        calendar={this.state.calendar}
+                        loadData={this.loadData.bind(this)}
                         setStateValue={this.setStateValue.bind(this)} />
                 </CSSTransition>
 
