@@ -68,7 +68,13 @@ public class MailContent {
         // get appointment manager info
         String managerName = manager.getFirstName() + " " + manager.getLastName();
         String managerEmail = manager.getEmail();
-        String managerPhone = manager.getPhoneNumber();
+        String mgrPhone = manager.getPhoneNumber();
+
+        StringBuilder strPhone = new StringBuilder(mgrPhone);
+        strPhone.insert(3, '-');
+        strPhone.insert(7, '-');
+
+         String managerPhone = strPhone.toString();
 
         // get appointment note
         String note = appointment.getNote();
@@ -117,7 +123,7 @@ public class MailContent {
                      "You will be meeting with " + managerName + " at " + branchName + ".<br>" +
                      "The address is " + branchAddress + ".<br><br>";
 
-             if (!note.isEmpty()) {
+             if (note != null && !note.isEmpty()) {
                  messageBody += "You entered the following custom note: " + note + "<br><br>";
              }
 
@@ -131,7 +137,7 @@ public class MailContent {
          }
          else{ // appointment update
              messageBody = "Dear " + customerName + ",<br><br>" + "Your appointment has been changed. " +
-                     "Your new appointment regarding " +
+                     "Your appointment regarding " +
                      service + " is scheduled for " + dayOfWeek + ", " + month + " " + day + ", " + year +
                      " at " + apptTime + ".<br>" +
                      "You will be meeting with " + managerName + " at " + branchName + ".<br>" +
