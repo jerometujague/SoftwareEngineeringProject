@@ -63,8 +63,10 @@ export class Map extends React.Component {
     }
 }
 
+let cachedLocation = null;
+
 export async function distance(address) {
-    let origin = await getCurrentLocation();
+    const origin = cachedLocation ? cachedLocation : await getCurrentLocation();
 
     if (origin == null) {
         return null;
@@ -104,6 +106,7 @@ async function getCurrentLocation() {
                     lng: position.coords.longitude
                 };
 
+                cachedLocation = origin;
                 resolve(origin);
             }, () => {
                 resolve(null);
