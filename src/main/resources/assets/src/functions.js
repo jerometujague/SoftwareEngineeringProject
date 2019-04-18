@@ -1,6 +1,6 @@
 export function convertTime12to24(oldTime) {
     if (!oldTime) {
-        return '';
+        return undefined;
     }
 
     // Get AM or PM
@@ -8,7 +8,7 @@ export function convertTime12to24(oldTime) {
 
     // Check if there is AM or PM
     if (!t.match(/(a|p|A|P)(m|M)/)) {
-        return '';
+        return undefined;
     }
 
     // Cut off AM or PM
@@ -34,7 +34,11 @@ export function convertTime12to24(oldTime) {
         time = array[0] + ":00";
     }
 
-    return time.replace(/\s+/g, '');
+    time = time.replace(/\s+/g, '');
+
+    if (time.match('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$')) {
+        return time;
+    }
 }
 
 export function convertTime24to12(oldTime) {

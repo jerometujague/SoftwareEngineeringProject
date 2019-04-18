@@ -91,17 +91,15 @@ export default class AppointmentsView extends React.Component {
             }
         });
 
-        const validTime = time.match('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$');
-
         // Check if the data is valid
-        if (!branch || !manager || !customer || !validTime || !validServices || !date) {
+        if (!branch || !manager || !customer || !time || !validServices || !date) {
             const newEditorData = this.state.editorData;
 
             if (!date) {
                 newEditorData.editErrors[0] = "Invalid date";
             }
 
-            if (!validTime) {
+            if (!time) {
                 newEditorData.editErrors[1] = "Invalid time";
             }
 

@@ -54,18 +54,15 @@ export default class BranchHoursView extends React.Component {
         const branch = this.props.branches.find(b => b.name == newValues[2]);
         const dayOfWeek = convertDayToInt(newValues[3]);
 
-        const validOpenTime = openTime.match('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$');
-        const validCloseTime = closeTime.match('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$');
-
         // Check if the data is valid
-        if (!validOpenTime || !validCloseTime || !branch || !dayOfWeek) {
+        if (!openTime || !closeTime || !branch || !dayOfWeek) {
             const newEditorData = this.state.editorData;
 
-            if (!validOpenTime) {
+            if (!openTime) {
                 newEditorData.editErrors[0] = "Invalid open time";
             }
 
-            if (!validCloseTime) {
+            if (!closeTime) {
                 newEditorData.editErrors[1] = "Invalid close time";
             }
 
@@ -73,7 +70,7 @@ export default class BranchHoursView extends React.Component {
                 newEditorData.editErrors[2] = "Invalid name";
             }
 
-            if(!dayOfWeek){
+            if (!dayOfWeek) {
                 newEditorData.editErrors[3] = "Invalid day of week";
             }
 
