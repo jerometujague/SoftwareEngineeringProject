@@ -1,6 +1,15 @@
 export function convertTime12to24(oldTime) {
+    if (!oldTime) {
+        return '';
+    }
+
     // Get AM or PM
     let t = oldTime.slice(-2);
+
+    // Check if there is AM or PM
+    if (!t.match(/(a|p|A|P)(m|M)/)) {
+        return '';
+    }
 
     // Cut off AM or PM
     let time = oldTime.slice(0, oldTime.length - 2);
