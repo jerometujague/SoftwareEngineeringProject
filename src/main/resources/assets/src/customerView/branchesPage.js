@@ -3,6 +3,7 @@ import $ from 'jquery';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
+import { Map } from './map';
 
 export default class Branches extends React.Component {
     constructor(props) {
@@ -59,7 +60,7 @@ export default class Branches extends React.Component {
         return (
             <div className="page" id="branches">
                 <h2 className="pageHeader">Which location works best for you?</h2>
-                {/* <Map branches={this.state.branches}></Map> */}
+                <Map branches={this.props.branches} />
                 {
                     this.props.branches.map(branch => {
                         return (

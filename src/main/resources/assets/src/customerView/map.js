@@ -8,8 +8,8 @@ export class Map extends React.Component {
         this.mapRef = React.createRef();
     }
 
-    componentDidMount() {
-        this.loadMap();
+    async componentDidMount() {
+        await this.loadMap();
     }
 
     componentDidUpdate(prevProps) {
@@ -25,7 +25,7 @@ export class Map extends React.Component {
         const currentLocation = await getCurrentLocation();
 
         // Create the map centered on the current location
-        const map = new google.maps.Map(this.mapRef.current, { zoom: 13, center: currentLocation, disableDefaultUI: true });
+        const map = new google.maps.Map(this.mapRef.current, { disableDefaultUI: true });
 
         // Create a marker at the current location
         new google.maps.Marker({
@@ -34,14 +34,28 @@ export class Map extends React.Component {
             icon: blueDotImage,
         });
 
+        // Establish the bounds based on the markers and current location
+        const bounds = new google.maps.LatLngBounds();
+        bounds.extend(currentLocation);
+
         // Create markers for each branch
-        this.props.branches.forEach(branch => {
+        for (const branch of this.props.branches) {
             const address = branch.streetAddress + ", " + branch.city + ", " + branch.state + " " + branch.zipCode;
             const geocoder = new google.maps.Geocoder();
-            geocoder.geocode({ 'address': address }, results => {
-                new google.maps.Marker({ position: results[0].geometry.location, map: map });
+
+            // Wait for the geocoder to resolve
+            await new Promise(resolve => {
+                geocoder.geocode({ 'address': address }, results => {
+                    const location = results[0].geometry.location;
+                    new google.maps.Marker({ position: location, map: map, title: branch.name, label: { text: branch.name, color: '#3366ff' } });
+                    bounds.extend(location);
+                    resolve();
+                });
             });
-        });
+        }
+
+        // Fit the map to the bounds
+        map.fitBounds(bounds, 20);
     }
 
     render() {
