@@ -15,8 +15,41 @@ export default class Services extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            note: ''
+            note: '',
+            branches: [],
         }
+
+        this.branchPromise = this.loadBranchesWithDistance();
+    }
+
+    async loadBranchesWithDistance() {
+        // Pre load branches with distance to decrease loading time
+        let url = "/api/branches";
+
+        await $.getJSON(url, async branchesList => {
+            const newBranches = [];
+            for (const branch of branchesList) {
+                branch.distance = await distance(branch.streetAddress + ", " + branch.city + ", " + branch.state + " " + branch.zipCode);
+                newBranches.push(branch);
+            }
+
+            newBranches.sort((a, b) => {
+                if (a.distance < b.distance) {
+                    return -1;
+                } else if (a.distance > b.distance) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+
+            this.setState({
+                branches: newBranches,
+            });
+        });
+
+        // eslint-disable-next-line no-console
+        console.log('Loaded');
     }
 
     handleServiceClicked(id) {
@@ -40,6 +73,7 @@ export default class Services extends React.Component {
         }
 
         this.props.setStateValue('note', this.state.note);
+
         // Load the branches
         this.loadBranches();
     }
@@ -65,34 +99,34 @@ export default class Services extends React.Component {
             },
             url: '/api/branches',
             data: JSON.stringify(this.props.serviceIds),
-            success: (data) => this.loadBranchesWithDistance(data)
+            success: (data) => this.mergeBranches(data)
         });
     }
 
-    async loadBranchesWithDistance(branchesList) {
+    async mergeBranches(branchesList) {
+        await this.branchPromise;
+
+        // eslint-disable-next-line no-console
+        console.log(this.state.branches);
+
         const newBranches = [];
-
-        for (const branch of branchesList) {
-            // Get distance to branch from here
-            branch.distance = await distance(branch.streetAddress + ", " + branch.city + ", " + branch.state + " " + branch.zipCode);
+        this.state.branches.forEach(branch => {
+            const loadedBranch = branchesList.find(b => b.id == branch.id);
+            branch.hasService = loadedBranch.hasService;
+            branch.appointmentCount = loadedBranch.appointmentCount;
             newBranches.push(branch);
-        }
+        });
 
+        // Sort based on if the branch has the services
         newBranches.sort((a, b) => {
             if (a.hasService && !b.hasService) {
                 return -1;
             } else if (!a.hasService && b.hasService) {
                 return 1;
             } else {
-                if (a.distance < b.distance) {
-                    return -1;
-                } else if (a.distance > b.distance) {
-                    return 1;
-                } else {
-                    return 0;
-                }
+                return 0;
             }
-        })
+        });
 
         this.props.setStateValue('branches', newBranches);
         this.props.setStateValue('loading', false);
