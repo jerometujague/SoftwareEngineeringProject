@@ -53,7 +53,10 @@ export default class AppointmentSlots extends React.Component {
         return (
             <div className="page" id="appointmentSlots">
                 <h2 className="pageHeader">{"Let's find a time that works for you."}</h2>
-                <input type="date" onChange={this.handleDateChanged.bind(this)} />
+
+                <input type="date" className="dateBox" onChange={this.handleDateChanged.bind(this)} />
+                <br />
+                <br />
                 <div id="slotHolder">
                     {
                         this.props.appointmentSlots[0].length > 0
