@@ -52,3 +52,41 @@ export function getTopResults(items) {
     const countArray = Object.entries(count).map(([item, count]) => ({ item, count }));
     return countArray.sort((a, b) => b.count - a.count);
 }
+
+export function convertDayToInt(dayName) {
+    switch(dayName){
+        case 'Monday':
+            return 1;
+        case 'Tuesday':
+            return 2;
+        case 'Wednesday':
+            return 3;
+        case 'Thursday':
+            return 4;
+        case 'Friday':
+            return 5;
+        case 'Saturday':
+            return 6;
+        case 'Sunday':
+            return 7;
+    }
+}
+
+export function convertIntToDay(dayNum) {
+    switch(dayNum){
+        case 1:
+            return 'Monday';
+        case 2:
+            return 'Tuesday';
+        case 3:
+            return 'Wednesday';
+        case 4:
+            return 'Thursday';
+        case 5:
+            return 'Friday';
+        case 6:
+            return 'Saturday';
+        case 7:
+            return 'Sunday';
+    }
+}

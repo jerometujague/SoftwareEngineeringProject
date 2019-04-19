@@ -2,7 +2,7 @@ import $ from 'jquery';
 import React from 'react';
 import { CSSTransition } from 'react-transition-group';
 import { EditDialog, EditorData, EditItem } from './editDialog';
-import { getTopResults, convertTime24to12, convertTime12to24 } from '../functions';
+import { getTopResults, convertTime24to12, convertTime12to24, convertIntToDay, convertDayToInt } from '../functions';
 import HeaderFilters from './headerFilters';
 
 export default class BranchHoursView extends React.Component {
@@ -52,7 +52,7 @@ export default class BranchHoursView extends React.Component {
         const openTime = convertTime12to24(newValues[0]);
         const closeTime = convertTime12to24(newValues[1]);
         const branch = this.props.branches.find(b => b.name == newValues[2]);
-        const dayOfWeek = this.convertDayToInt(newValues[3]);
+        const dayOfWeek = convertDayToInt(newValues[3]);
 
         const validOpenTime = openTime.match('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$');
         const validCloseTime = closeTime.match('^(0[0-9]|1[0-9]|2[0-3]|[0-9]):[0-5][0-9]$');
@@ -150,44 +150,6 @@ export default class BranchHoursView extends React.Component {
         return this.props.branches.find(b => { return b.id == id }).name;
     }
 
-    convertIntToDay(dayNum) {
-        switch(dayNum){
-            case 1:
-                return 'Monday';
-            case 2:
-                return 'Tuesday';
-            case 3:
-                return 'Wednesday';
-            case 4:
-                return 'Thursday';
-            case 5:
-                return 'Friday';
-            case 6:
-                return 'Saturday';
-            case 7:
-                return 'Sunday';
-        }
-    }
-
-    convertDayToInt(dayName) {
-        switch(dayName){
-            case 'Monday':
-                return 1;
-            case 'Tuesday':
-                return 2;
-            case 'Wednesday':
-                return 3;
-            case 'Thursday':
-                return 4;
-            case 'Friday':
-                return 5;
-            case 'Saturday':
-                return 6;
-            case 'Sunday':
-                return 7;
-        }
-    }
-
     getDate(id) {
         const date = this.props.calendar.find(c => { return c.calendarId == id }).date;
         return date[1] + "-" + date[2] + "-" + String(date[0]).slice(2);
@@ -201,7 +163,7 @@ export default class BranchHoursView extends React.Component {
             getTopResults(this.props.branchHours.map(a => a.openTime[0])).map(r => convertTime24to12(r.item)),
             getTopResults(this.props.branchHours.map(a => a.closeTime[0])).map(r => convertTime24to12(r.item)),
             getTopResults(this.props.branchHours.map(b => b.branchId)).map(r => this.getBranchName(r.item)),
-            getTopResults(this.props.branchHours.map(h => h.dayOfWeek)).map(r => this.convertIntToDay(parseInt(r.item)))];
+            getTopResults(this.props.branchHours.map(h => h.dayOfWeek)).map(r => convertIntToDay(parseInt(r.item)))];
 
         const newEditItems = [
             new EditItem('Open Time', '', filterOptions[0]),
@@ -238,10 +200,10 @@ export default class BranchHoursView extends React.Component {
                                 tableData.push(new EditItem('Open Time', convertTime24to12(branchHour.openTime[0]), filterOptions[0]));
                                 tableData.push(new EditItem('Close Time', convertTime24to12(branchHour.closeTime[0]), filterOptions[1]));
                                 tableData.push(new EditItem('Branch', this.getBranchName(branchHour.branchId), newEditItems[2].options));
-                                tableData.push(new EditItem('Day Of Week', this.convertIntToDay(branchHour.dayOfWeek), filterOptions[3]));
+                                tableData.push(new EditItem('Day Of Week', convertIntToDay(branchHour.dayOfWeek), filterOptions[3]));
 
                                 // Check for filtering
-                                for (let i = 0; i < tableData.length - 1; i++) {
+                                for (let i = 0; i < tableData.length; i++) {
                                     if (this.state.filters[i].length > 0 && !this.state.filters[i].includes(tableData[i].value)) {
                                         return;
                                     }
