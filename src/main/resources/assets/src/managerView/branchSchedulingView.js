@@ -193,7 +193,7 @@ export default class BranchSchedulingView extends React.Component {
                                 tableData.push(new EditItem('Branch', this.getBranchName(branchUnavailable.referId), newEditItems[2].options));
 
                                 // Check for filtering
-                                for (let i = 0; i < tableData.length - 1; i++) {
+                                for (let i = 0; i < tableData.length; i++) {
                                     if (this.state.filters[i].length > 0 && !this.state.filters[i].includes(tableData[i].value)) {
                                         return;
                                     }
