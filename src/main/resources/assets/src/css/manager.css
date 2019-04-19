@@ -182,10 +182,11 @@ a:hover {
 
 /* Edit dialog */
 .editDialog {
-    position: absolute;
+    position: relative;
+    margin: auto;
     background-color: #eaecef;
-    padding: 5px;
-    border: 1px solid #006747;
+    padding: 10px;
+    border: 2px solid #006747;
     border-radius: 3px;
     z-index: 99;
     left: 30px;

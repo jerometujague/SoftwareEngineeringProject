@@ -208,6 +208,28 @@ input.appointmentTime:disabled {
     margin-bottom: 5px;
 }
 
+.emailConsent{
+    height: 15px;
+    width: 15px;
+}
+
+.TOS{
+    font-size: 10px;
+}
+
+div.divForm{
+    display: inline-block;
+}
+
+div.divFormr{
+    display: inline-block;
+    padding-left: 10px;
+}
+
+div.divLabel{
+    display: block;
+}
+
 input[type="submit"] {
     margin-top: 10px;
 }

@@ -169,32 +169,45 @@ export default class Info extends React.Component {
     render() {
         return (
             <div className="page">
-                <h2 className="pageHeader">Now we just need a few more details.</h2>
+                <br />
+                <h2 className="pageHeader">Customer Information </h2>
+                <h3>Now we just need a few more details.</h3>
+                <br />
                 <form>
-                    <label>
-                        First Name
-                    <input type="text" name="firstName" onChange={this.handleChange.bind(this)} />
-                        <div className="error">{this.state.errors.firstName}</div>
-                    </label>
-                    <label>
-                        Last Name
-                    <input type="text" name="lastName" onChange={this.handleChange.bind(this)} />
-                        <div className="error">{this.state.errors.lastName}</div>
-                    </label>
+                    <div className="divForm">
+                        <label className="divLabel">
+                            <p>First Name</p>
+                        <input type="text" name="firstName" placeholder="John/Jane..." onChange={this.handleChange.bind(this)} />
+                            <div className="error">{this.state.errors.firstName}</div>
+                        </label>
+                    </div>
+                    <div className="divFormr">
+                        <label className="divLabel">
+                            <p>Last Name</p>
+                        <input type="text" name="lastName" placeholder="Doe..." onChange={this.handleChange.bind(this)} />
+                            <div className="error">{this.state.errors.lastName}</div>
+                        </label>
+                    </div>
                     <br />
-                    <label>
-                        Email
-                    <input type="email" name="email" onChange={this.handleChange.bind(this)} />
-                        <div className="error">{this.state.errors.email}</div>
-                    </label>
-                    <label>
-                        Phone Number
-                    <input type="tel" name="phoneNumber" onChange={this.handleChange.bind(this)} />
+                    <div className="divForm">
+                        <label className="divLabel">
+                            <p>Email</p>
+                        <input type="email" name="email" placeholder="JJDoe@gmail.com..." onChange={this.handleChange.bind(this)} />
+                            <div className="error">{this.state.errors.email}</div>
+                        </label>
+                    </div>
+                    <div className="divFormr">
+                    <label className="divLabel">
+                        <p>Phone Number</p>
+                    <input type="tel" name="phoneNumber" placeholder="0001234567..." onChange={this.handleChange.bind(this)} />
                         <div className="error">{this.state.errors.phoneNumber}</div>
                     </label>
+                    </div>
+                    <br />
                     <label>
-                        Email consent
-                    <input type="checkbox" name="emailConsent" checked={this.state.emailConsent} onChange={this.handleChecked.bind(this)} />
+                        <p>Email Consent</p>
+                    <input type="checkbox" name="emailConsent" className="emailConsent" checked={this.state.emailConsent} onChange={this.handleChecked.bind(this)} />
+                    <p className="TOS">By marking this checkbox you agree that you are willing to recieve emails from commerce bank and agree to the terms and service.</p>
                     </label>
                 </form>
 
