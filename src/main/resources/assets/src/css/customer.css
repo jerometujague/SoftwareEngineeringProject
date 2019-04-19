@@ -230,6 +230,12 @@ div.divLabel{
     display: block;
 }
 
+input.dateBox{
+    border: 1px solid #006747;
+    border-radius: 5px;
+    font-family: "cera_proregular", Arial, sans-serif;
+}
+
 input[type="submit"] {
     margin-top: 10px;
 }

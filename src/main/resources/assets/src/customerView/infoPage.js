@@ -169,7 +169,6 @@ export default class Info extends React.Component {
     render() {
         return (
             <div className="page">
-                <br />
                 <h2 className="pageHeader">Customer Information </h2>
                 <h3>Now we just need a few more details.</h3>
                 <br />
