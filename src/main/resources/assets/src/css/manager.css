@@ -202,8 +202,29 @@ a:hover {
     height: 100%;
     width: 100%;
     background-color: black;
-    opacity: 0.5;
-    z-index: 9999;
+    z-index: 50;
+}
+
+.gray-enter {
+    opacity: 0.01;
+}
+
+.gray-enter.gray-enter-active {
+    opacity: 0.3;
+    transition: opacity 400ms ease-in;
+}
+
+.gray-enter-done {
+    opacity: 0.3;
+}
+
+.gray-exit {
+    opacity: 0.3;
+}
+
+.gray-exit.gray-exit-active {
+    opacity: 0.01;
+    transition: opacity 400ms ease-out;
 }
 
 .editItem {
