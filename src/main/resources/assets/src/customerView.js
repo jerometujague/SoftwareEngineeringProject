@@ -94,7 +94,6 @@ class CustomerView extends React.Component {
     render() {
         return (
             <div>
-                <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
                 <div id="header">
                     {this.state.page >= 2 && this.state.page <= 4 && // Show the back button when page is 2 or greater
                         <div id="backButtonHolder">
@@ -203,7 +202,6 @@ class CustomerView extends React.Component {
                         <img id="loadingImage" src={loadingImage} />
                     </div>
                 </CSSTransition>
-                </meta>
             </div>
         );
     }
