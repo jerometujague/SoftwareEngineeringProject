@@ -182,15 +182,28 @@ a:hover {
 
 /* Edit dialog */
 .editDialog {
-    position: relative;
+    position: fixed;
     margin: auto;
     background-color: #eaecef;
     padding: 10px;
     border: 2px solid #006747;
     border-radius: 3px;
     z-index: 99;
-    left: 30px;
+    top: 35% !important;
+    left: 20% !important;
+    right: 5% !important;
     /* width: 1031px; */
+}
+
+#grayout {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    opacity: 0.5;
+    z-index: 9999;
 }
 
 .editItem {
