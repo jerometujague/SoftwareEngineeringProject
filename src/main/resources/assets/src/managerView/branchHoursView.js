@@ -236,6 +236,13 @@ export default class BranchHoursView extends React.Component {
                         saveHandler={this.saveEdits.bind(this)}
                         closeHandler={this.closeEditor.bind(this)} />
                 </CSSTransition>
+                <CSSTransition // Show the gray out
+                    in={this.state.showEditDialog}
+                    timeout={400}
+                    classNames="gray"
+                    unmountOnExit>
+                    <div id="grayout"></div>
+                </CSSTransition>
             </div>
         );
     }

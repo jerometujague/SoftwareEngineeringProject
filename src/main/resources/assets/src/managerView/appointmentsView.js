@@ -281,7 +281,7 @@ export default class AppointmentsView extends React.Component {
                                             })
                                         }
                                         <td className="tableData actionStart">
-                                            <input type="submit" value="Edit" onClick={this.editAppointment.bind(this, index, appointment.id, ...tableData) } />
+                                            <input type="submit" value="Edit" onClick={this.editAppointment.bind(this, index, appointment.id, ...tableData)} />
                                         </td>
                                         <td className="tableData">
                                             <input type="submit" value="Cancel" onClick={this.cancelAppointment.bind(this, appointment.id)} />
@@ -301,6 +301,13 @@ export default class AppointmentsView extends React.Component {
                         editorData={this.state.editorData}
                         saveHandler={this.saveEdits.bind(this)}
                         closeHandler={this.closeEditor.bind(this)} />
+                </CSSTransition>
+                <CSSTransition // Show the gray out
+                    in={this.state.showEditDialog}
+                    timeout={400}
+                    classNames="gray"
+                    unmountOnExit>
+                    <div id="grayout"></div>
                 </CSSTransition>
             </div >
         )
