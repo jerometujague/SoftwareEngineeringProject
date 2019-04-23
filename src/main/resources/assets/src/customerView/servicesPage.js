@@ -26,7 +26,7 @@ export default class Services extends React.Component {
         // Pre load branches with distance to decrease loading time
         let url = "/api/branches";
 
-        await $.getJSON(url, async branchesList => {
+        await $.getJSON(url).then(async branchesList => {
             const newBranches = [];
             for (const branch of branchesList) {
                 branch.distance = await distance(branch.streetAddress + ", " + branch.city + ", " + branch.state + " " + branch.zipCode);
@@ -47,9 +47,6 @@ export default class Services extends React.Component {
                 branches: newBranches,
             });
         });
-
-        // eslint-disable-next-line no-console
-        console.log('Loaded');
     }
 
     handleServiceClicked(id) {
@@ -106,9 +103,6 @@ export default class Services extends React.Component {
     async mergeBranches(branchesList) {
         await this.branchPromise;
 
-        // eslint-disable-next-line no-console
-        console.log(this.state.branches);
-
         const newBranches = [];
         this.state.branches.forEach(branch => {
             const loadedBranch = branchesList.find(b => b.id == branch.id);
@@ -146,7 +140,7 @@ export default class Services extends React.Component {
                                 className={this.props.serviceIds.includes(service.id) ? "service selected" : "service"}
                                 onClick={this.handleServiceClicked.bind(this, service.id)}>
                                 <FontAwesomeIcon icon={icons[service.id - 1]} size="2x" fixedWidth className="serviceIcon" />
-                                {service.service}
+                                <p>{service.service}</p>
                             </button>);
                         })
                     }

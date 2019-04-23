@@ -239,3 +239,71 @@ input.dateBox{
 input[type="submit"] {
     margin-top: 10px;
 }
+
+@media only screen and (max-device-width: 500px) {
+    body {
+        font-size: 26px;
+    }
+
+    button {
+        height: 70px;
+        width: 90%;
+    }
+
+    button > p {
+        font-size: 26px;
+        text-align: right;
+        margin-right: 10px;
+    }
+
+    input[type="submit"] {
+        width: 90%;
+        height: 80px;
+    }
+
+    input {
+        font-size: 30px!important;
+    }
+
+    .serviceIcon {
+        float: left;
+        margin-left: 10px;
+    }
+
+    #services {
+        width: 100%;
+    }
+
+    #header {
+        width: 100%;
+        margin: auto 0px;
+    }
+
+    p, h1, h2, h3, h4, h5, h6 {
+        text-align: center;
+    }
+
+    .page {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .note {
+        width: 87%;
+        font-size: 18px;
+        height: 100px;
+    }
+
+    #map {
+        width: 90%;
+    }
+
+    .branch {
+        width: 90%;
+    }
+
+    #slotHolder {
+        width: 90%;
+        height: 100%;
+    }
+}
