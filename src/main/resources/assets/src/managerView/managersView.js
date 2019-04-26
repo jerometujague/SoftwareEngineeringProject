@@ -19,14 +19,14 @@ export default class ManagersView extends React.Component {
         items.pop();
         this.setState({
             showEditDialog: true,
-            editorData: new EditorData(id, items, [], index * 35 + 87),
+            editorData: new EditorData(id, items, []),
         })
     }
 
     addManager(editItems) {
         this.setState({
             showEditDialog: true,
-            editorData: new EditorData(-1, editItems, [], this.props.managers.length * 35 + 93),
+            editorData: new EditorData(-1, editItems, []),
         })
     }
 

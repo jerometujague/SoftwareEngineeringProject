@@ -59,7 +59,7 @@ export default class AppointmentsView extends React.Component {
         items.pop();
         this.setState({
             showEditDialog: true,
-            editorData: new EditorData(id, items, [], index * 35 + 125),
+            editorData: new EditorData(id, items, []),
         })
     }
 
