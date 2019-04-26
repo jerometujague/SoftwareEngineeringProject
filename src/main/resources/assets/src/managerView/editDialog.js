@@ -22,13 +22,11 @@ export class EditorData {
     * @param editId The unique id of the row being edited.
     * @param editItems The array of values of fields to edit.
     * @param editErrors The array of error messages to show for each field.
-    * @param editPosition The y position from the top of the page.
     */
-    constructor(editId, editItems, editErrors, editPosition) {
+    constructor(editId, editItems, editErrors) {
         this.editId = editId;
         this.editItems = editItems;
         this.editErrors = editErrors;
-        this.editPosition = editPosition;
     }
 }
 
@@ -129,14 +127,10 @@ export class EditDialog extends React.Component {
     render() {
         const numOptions = 12;
 
-        const styles = {
-            top: this.props.editorData.editPosition + 'px'
-        }
-
         let counter = 0;
 
         return (
-            <div className="editDialog" style={styles} key={this.props.editorData.editId} >
+            <div className="editDialog" key={this.props.editorData.editId} >
                 {
                     this.props.editorData.editItems.map((item, index) => {
                         return (

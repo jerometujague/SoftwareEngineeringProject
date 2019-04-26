@@ -33,14 +33,14 @@ export default class ServicesView extends React.Component {
     editService(index, id, service) {
         this.setState({
             showEditDialog: true,
-            editorData: new EditorData(id, [new EditItem('Service', service)], [], index * 35 + 87),
+            editorData: new EditorData(id, [new EditItem('Service', service)], []),
         })
     }
 
     addService() {
         this.setState({
             showEditDialog: true,
-            editorData: new EditorData(-1, [new EditItem('Service', '')], [], this.props.services.length * 35 + 93),
+            editorData: new EditorData(-1, [new EditItem('Service', '')], []),
         })
     }
 
