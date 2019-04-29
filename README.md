@@ -1,7 +1,7 @@
 # SoftwareEngineeringProject
 https://commercebank.azurewebsites.net
 
-![version](https://img.shields.io/badge/version-0.4.0-blue.svg)
+![version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 
 Check out the wiki for the [project roadmap](https://github.com/jerometujague/SoftwareEngineeringProject/wiki) and the [git workflow](https://github.com/jerometujague/SoftwareEngineeringProject/wiki/Git-Workflow)
 
