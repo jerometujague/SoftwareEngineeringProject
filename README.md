@@ -1,11 +1,59 @@
 # SoftwareEngineeringProject
-https://commercebank.azurewebsites.net
+**Live application**: https://commercebank.azurewebsites.net
 
 ![version](https://img.shields.io/badge/version-1.0.0-blue.svg)
 
-Check out the wiki for the [project roadmap](https://github.com/jerometujague/SoftwareEngineeringProject/wiki) and the [git workflow](https://github.com/jerometujague/SoftwareEngineeringProject/wiki/Git-Workflow)
+This is a web application for Commerce Bank that allows a customer to schedule an apppointment with the bank. It also allows managers to manager all of the information in the system.
 
-## API Documentation
+## Web pages
+* `/index.html` - Customer view for scheduling an appointment
+* `/managerView.html` - Manager view for managing information
+
+# How to build and run locally
+## Technical Prerequisites
+* Amazon Corretto 8 OpenJDK - https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/downloads-Get.html
+* Apache Maven (Project management) - https://maven.apache.org/download.cgi
+* NodeJS (Front end compiler)- https://nodejs.org/en/download/
+
+## Building and running
+```
+// Build the application
+mvn install
+
+// Run the application
+java -jar target/commercebank-1.0.0.jar
+
+// View the appliction
+Open `http://localhost:8080` in your browser
+```
+
+## Spring boot profiles
+
+There are two profiles that will change which database is used: 
+* `development` - Local Xampp MySQL database (requires setup)
+* `production` - Live server hosted MySQL database (no setup required)
+
+The default profile is set to `production`
+
+## Building the front end seperately
+While `mvn install` will compile the front end automatically, you can also commpile the front end seperately if needed
+
+```
+// Install the dependencies
+npm install
+
+// Run the webpack compiler and bundler
+npm run build
+```
+
+```
+// Or you can start a watcher that will recompile on change
+npm start
+```
+
+
+# API Documentation
+The RESTful API documentation for the back end of the application. 
 
 ### Appointments
 * [Get appointments]() : `GET /api/appointments`
@@ -53,41 +101,3 @@ Check out the wiki for the [project roadmap](https://github.com/jerometujague/So
 ### Appointment slots
 * [Get available appointment slots]() : `POST /api/appointmentSlots/{branchId}`
 * [Get available appointment slots on a specific date]() : `POST /api/appointmentSlots/{branchId}/{date}`
-
-## Development tools
-* Amazon Corretto 8 OpenJDK - https://docs.aws.amazon.com/corretto/latest/corretto-8-ug/downloads-Get.html
-* Apache Maven (Project management) - https://maven.apache.org/download.cgi
-* NodeJS (Front end/ReactJS compiler)- https://nodejs.org/en/download/
-* Xampp (For MariaDB SQL database) - https://www.apachefriends.org/download.html
-* Git - https://git-scm.com/downloads
-
-## Local development
-```
-// Clone the repository
-git clone https://github.com/jerometujague/SoftwareEngineeringProject.git
-
-// Build the application
-mvn clean install
-
-// Start the xampp MySQL database
-
-// Run the application
-java -jar target/commercebank-0.0.1-SNAPSHOT.jar
-
-// Test the appliction
-Open `http://localhost:8080` in your browser
-```
-
-## Front end development
-**Start the Webpack bundler to compile your React files and bundle the application**
-```
-// Install the dependencies
-npm install
-
-// Run the webpack bundler
-npm start
-```
-
-**Or compile the source files once**
-
-`npm run build`
