@@ -111,7 +111,7 @@ export default class ServicesView extends React.Component {
                 <table>
                     <thead>
                         <tr>
-                            <td className="headerData">Service</td>
+                            <td>Service</td>
                             <td colSpan="2"></td>
                         </tr>
                     </thead>
