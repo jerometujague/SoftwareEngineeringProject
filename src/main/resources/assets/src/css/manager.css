@@ -21,15 +21,12 @@
 /* Edit dialog */
 .editDialog {
     position: fixed;
-    margin: auto;
     background-color: #eaecef;
-    padding: 10px;
+    padding: 10px 0px;
     border: 2px solid #006747;
     border-radius: 3px;
     z-index: 99;
     top: 35% !important;
-    left: 20% !important;
-    right: 5% !important;
     text-align: center;
 }
 
@@ -52,11 +49,12 @@
     border-left: 1px solid #006747;
 }
 
-.filterHeader, .headerData {
+.filterHeader {
     cursor: pointer;
     padding-left: 10px;
     padding-right: 10px;
     user-select: none;
+    min-width: 90px;
 }
 
 .filterItemText {
@@ -71,7 +69,8 @@
 
 .masterSearchInput {
     margin-bottom: 10px;
-    width: 200px
+    width: 200px;
+    font-size: 16px;
 }
 
 .filterCheckmark {
@@ -191,7 +190,7 @@ thead {
 
 th, td {
     width: 12.5%;
-    padding: 0px 5px;
+    padding: 0px;
 }
 
 td:last-child {
@@ -273,6 +272,11 @@ details:focus {
     }
 
     /* Edit dialog */
+    .editDialog {
+        left: 3% !important;
+        right: 3% !important;
+    }
+
     .editItem input {
         display: inline-table;
         width: 90%;
@@ -299,7 +303,7 @@ details:focus {
 }
 
 /* Tablet size */
-@media only screen and (max-width: 769px) and (min-width: 479px) {
+@media only screen and (max-width: 869px) and (min-width: 479px) {
     #sideBar{
         background-color: #eaecef;
         position: fixed;
@@ -358,7 +362,8 @@ details:focus {
 
     /* Edit dialog */
     .editDialog {
-        max-width: 400px;
+        left: 20% !important;
+        right: 20% !important;
     }
 
     .editItem input {
@@ -388,7 +393,7 @@ details:focus {
 }
 
 /* Full desktop size */
-@media only screen and (min-width: 769px) {
+@media only screen and (min-width: 869px) {
     /* Sidebar */
     #sideBar {
         position: fixed;
@@ -398,6 +403,8 @@ details:focus {
         top: 0;
         left: 0;
         padding-top: 50px;
+        z-index: 99;
+        background-color: white;
     }
 
     .sideBarItem {
@@ -456,6 +463,11 @@ details:focus {
     }
 
     /* Edit dialog */
+    .editDialog {
+        left: calc(300px + 3%) !important;
+        right: 3% !important;
+    }
+
     .editItem {
         display: inline-block;
         margin: 0px 1.25%;
@@ -464,7 +476,6 @@ details:focus {
 
     .editItem input {
         width: 100%;
-        max-width: 127px;
     }
 
     input[type="submit"] {
