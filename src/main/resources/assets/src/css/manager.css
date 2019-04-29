@@ -1,21 +1,66 @@
-#sideBar {
+/* Styles that are the same across all devices */
+.filterMenu, .editOptions {
+    position: absolute !important;
+    background-clip: padding-box;
+    background-color: #fff;
+    border: 1px solid rgba(27, 31, 35, .15);
+    border-radius: 3px;
+    box-shadow: 0 3px 12px rgba(27, 31, 35, .15);
+    color: #586069;
+    margin-bottom: 20px;
+    margin-top: 4px;
+    overflow: hidden;
+    z-index: 99;
+    font-size: 14px;
+}
+
+.filterMenu {
+    width: 200px;
+}
+
+/* Edit dialog */
+.editDialog {
     position: fixed;
-    height: 100%;
-    width: 300px;
-    border-right: 1px solid #006747;
-    top: 0;
-    left: 0;
-    padding-top: 50px;
-}
-
-.sideBarItem {
-    border-bottom: 1px solid #006747;
+    margin: auto;
+    background-color: #eaecef;
     padding: 10px;
-    padding-left: 20px;
+    border: 2px solid #006747;
+    border-radius: 3px;
+    z-index: 99;
+    top: 35% !important;
+    left: 20% !important;
+    right: 5% !important;
+    text-align: center;
 }
 
-.sideBarItem:first-child {
-    border-top: 1px solid #006747;
+.editOptions {
+    width: 150px;
+}
+
+.editOptionItem {
+    border-top: 1px solid #eaecef;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+.editOptionItem:hover {
+    background-color: #006747;
+    color: white;
+}
+
+.actionStart {
+    border-left: 1px solid #006747;
+}
+
+.filterHeader, .headerData {
+    cursor: pointer;
+    padding-left: 10px;
+    padding-right: 10px;
+    user-select: none;
+}
+
+.filterItemText {
+    margin-left: 20px;
 }
 
 .sideBarItem:hover {
@@ -24,27 +69,14 @@
     color: white;
 }
 
-.selectedArrow {
-    width: 0; 
-    height: 0; 
-    border-top: 24.5px solid transparent;
-    border-bottom: 24.5px solid transparent;
-    border-left: 12px solid #006747;
-    position: relative;
-    float: right;
-    right: -23px;
-    top: -11px;
+.masterSearchInput {
+    margin-bottom: 10px;
+    width: 200px
 }
 
-.itemSelected {
-    background-color: #006747;
-    color: white;
-}
-
-.mainViewHolder {
-    position: absolute;
-    left: 300px;
-    padding: 20px;
+.filterCheckmark {
+    vertical-align: middle;
+    float: left;
 }
 
 /* View transitions */
@@ -66,135 +98,16 @@
     transition: opacity 400ms ease-out;
 }
 
-.viewHeader {
-    margin: 5px;
-    text-align: center;
-}
-
-/* Appointment view */
-.tableData {
-    padding: 3px 10px;
-}
-
-.filterHeader, .headerData {
-    cursor: pointer;
-    padding-left: 10px;
-    padding-right: 10px;
-    user-select: none;
-}
-
-.filterHeader:hover {
-    color: #006747;
-}
-
-.filterHeader:focus {
-    outline: none;
-}
-
-.filterHeader::before {
-    display: none;
-}
-
-.hasFilterItems::after {
-    border: 4px solid transparent;
-    border-top-color: currentcolor;
-    content: "";
-    display: inline-block;
-    height: 0;
-    vertical-align: -2px;
-    width: 0;
-    margin-left: 3px;
-}
-
-.filterMenu {
-    position: absolute!important;
-    background-clip: padding-box;
-    background-color: #fff;
-    border: 1px solid rgba(27,31,35,.15);
-    border-radius: 3px;
-    box-shadow: 0 3px 12px rgba(27,31,35,.15);
-    color: #586069;
-    margin-bottom: 20px;
-    margin-top: 4px;
-    overflow: hidden;
-    width: 200px;
-    z-index: 99;
-    font-size: 14px;
-}
-
-.filterInput {
-    margin: 10px;
-}
-
-.filterItem {
-    border-top: 1px solid #eaecef;
-    cursor: pointer;
-    padding: 5px 10px;
-}
-
-.filterItem:hover {
-    background-color: #006747;
-    color: white;
-}
-
-details summary::-webkit-details-marker {
-    display: none;
-}
-
-table {
-    border-collapse: collapse;
-}
-
-tr {
-    border: 1px solid #006747;
-}
-
-thead {
-    background-color: #eaecef;
-}
-
-details:focus {
-    outline: none;
-}
-
-.filterCheckmark {
-    vertical-align: middle;
-    float: left;
-}
-
-.filterItemText {
-    margin-left: 20px;
-}
-
 a:hover {
     cursor: pointer;
     color: #006747;
 }
 
-.masterSearchInput {
-    margin-bottom: 10px;
-    width: 200px
+.editError {
+    border: 2px solid red !important;
 }
 
-.actionStart {
-    border-left: 1px solid #006747;
-}
-
-/* Edit dialog */
-.editDialog {
-    position: fixed;
-    margin: auto;
-    background-color: #eaecef;
-    padding: 10px;
-    border: 2px solid #006747;
-    border-radius: 3px;
-    z-index: 99;
-    top: 35% !important;
-    left: 20% !important;
-    right: 5% !important;
-    /* width: 1031px; */
-}
-
+/* Gray out for edit dialog */
 #grayout {
     position: fixed;
     left: 0px;
@@ -227,51 +140,351 @@ a:hover {
     transition: opacity 400ms ease-out;
 }
 
-.editItem {
-    display: inline-block;
-    margin-right: 10px;
+.tableData {
+    padding: 3px 10px;
 }
 
-.editItem input {
-    max-width: 127px;
+/* Filtering */
+.filterHeader:hover {
+    color: #006747;
 }
 
-.editDialog > input {
-    margin-right: 10px;
+.filterHeader:focus {
+    outline: none;
 }
 
-.editError {
-    border: 2px solid red!important;
+.filterHeader::before {
+    display: none;
 }
 
-.editOptions {
-    position: absolute!important;
-    background-clip: padding-box;
-    background-color: #fff;
-    border: 1px solid rgba(27,31,35,.15);
-    border-radius: 3px;
-    box-shadow: 0 3px 12px rgba(27,31,35,.15);
-    color: #586069;
-    margin-bottom: 20px;
-    margin-top: 4px;
-    overflow: hidden;
-    width: 150px;
-    z-index: 99;
-    font-size: 14px;
+.filterInput {
+    margin: 10px;
 }
 
-.editOptionItem {
+.filterItem {
     border-top: 1px solid #eaecef;
     cursor: pointer;
     padding: 5px 10px;
 }
 
-.editOptionItem:hover {
+.filterItem:hover {
     background-color: #006747;
     color: white;
 }
 
-/* Services view */
-.newItemButton {
-    margin-top: 10px;
+details summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Table */
+table {
+    border-collapse: collapse;
+}
+
+tr {
+    border: 1px solid #006747;
+}
+
+thead {
+    background-color: #eaecef;
+}
+
+th, td {
+    width: 12.5%;
+    padding: 0px 5px;
+}
+
+td:last-child {
+    width: 0.01%;
+}
+
+td:nth-last-child(2) {
+    width: 0.01%;
+}
+
+details:focus {
+    outline: none;
+}
+
+/* Portrait mode phone size */
+@media only screen and (max-width: 479px) and (orientation: portrait){
+    #sideBar{
+        position: fixed;
+        display: block;
+        top:60px;
+        left:0;
+        height:100%;
+        text-align:center;
+        border-right: 1px solid #006747;
+        width: 92px;
+    }
+
+    .viewHeader {
+        display: none;
+    }
+
+    .sideBarItem {
+        display: block;
+        font-size: 3vw;
+        padding: 10px;
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .itemSelected {
+        display: inline-block;
+        color: white;
+        background-color: #006747;
+        position: fixed;
+        width: 100%;
+        height: 40px;
+        top: 0;
+        left: 0;
+        margin-top: 0;
+        text-align: center;
+        padding: 10px;
+        font-size: 18pt;
+        max-width: 100%;
+    }
+
+    .mainViewHolder {
+        margin-top: 60px;
+        padding: 3vw;
+        font-size: 3vw;
+        position: relative;
+        left: 92px;
+        width: 81.25%;
+        max-width:280px;
+        min-width: 260px;
+    }
+
+    input[type="submit"]{
+        display: block;
+        font-size: 3vw;
+        margin-left: -6px;
+        margin-right: -6px;
+    }
+
+    .newItemButton {
+        display: inline-block;
+        position: relative;
+        margin-top: 10px;
+        left: 6px;
+    }
+
+    /* Edit dialog */
+    .editItem input {
+        display: inline-table;
+        width: 90%;
+    }
+
+    .editDialog > input {
+        margin-right: 10px;
+    }
+
+    input[type="submit"]{
+        display: block;
+        margin-left: -4px;
+        margin-right: -6px;
+    }
+
+    input[type="text"]{
+        font-size:3vw;
+    }
+
+    input[value="Save"], input[value="X"]{
+        display: inline;
+        margin: 1.1%;
+    }
+}
+
+/* Tablet size */
+@media only screen and (max-width: 769px) and (min-width: 479px) {
+    #sideBar{
+        background-color: #eaecef;
+        position: fixed;
+        display: block;
+        top:0;
+        left:0;
+        width:100%;
+        text-align:center;
+    }
+
+    .viewHeader {
+        display: none;
+    }
+
+    .sideBarItem {
+        display: inline-block;
+        font-size: 1.9vw;
+        padding: 10px;
+        text-align: center;
+        margin-top: 60px;
+    }
+
+    .itemSelected {
+        color: white;
+        background-color: #006747;
+        position: fixed;
+        width: 100%;
+        height: 40px;
+        top: 0;
+        left: 0;
+        margin-top: 0;
+        text-align: center;
+        padding: 10px;
+        font-size: 18pt;
+        max-width: 100%;
+    }
+
+    .mainViewHolder {
+        margin-top: 100px;
+        padding: 20px;
+        font-size: 1.9vw;
+        text-align: center;
+    }
+
+    .newItemButton {
+        display: inline-block;
+        margin-top: 10px;
+    }
+
+    input[type="submit"]{
+        display: block;
+        font-size: 1.9vw;
+        margin-left: -6px;
+        margin-right: -6px;
+    }
+
+    /* Edit dialog */
+    .editDialog {
+        max-width: 400px;
+    }
+
+    .editItem input {
+        display: inline-table;
+        width: 90%;
+    }
+
+    .editDialog > input {
+        margin-right: 10px;
+    }
+
+    input[type="submit"]{
+        display: block;
+        margin-left: -4px;
+        margin-right: -6px;
+    }
+
+    input[type="text"]{
+        font-size:1.9vw;
+    }
+
+    input[value="Save"], input[value="X"]{
+        display: inline-block;
+        width: 20%;
+        margin: 1.1%;
+    }
+}
+
+/* Full desktop size */
+@media only screen and (min-width: 769px) {
+    /* Sidebar */
+    #sideBar {
+        position: fixed;
+        height: 100%;
+        width: 300px;
+        border-right: 1px solid #006747;
+        top: 0;
+        left: 0;
+        padding-top: 50px;
+    }
+
+    .sideBarItem {
+        border-bottom: 1px solid #006747;
+        padding: 10px 10px 10px 20px;
+    }
+
+    .sideBarItem:first-child {
+        border-top: 1px solid #006747;
+    }
+
+    .newItemButton {
+        display: inline-block;
+        position: relative;
+        margin-top: 10px;
+        left: 6px;
+    }
+
+    .selectedArrow {
+        width: 0;
+        height: 0;
+        border-top: 24.5px solid transparent;
+        border-bottom: 24.5px solid transparent;
+        border-left: 12px solid #006747;
+        position: relative;
+        float: right;
+        right: -23px;
+        top: -11px;
+    }
+
+    .itemSelected {
+        background-color: #006747;
+        color: white;
+    }
+
+    .mainViewHolder {
+        position: absolute;
+        left: 300px;
+        padding: 20px;
+    }
+
+    .viewHeader {
+        margin: 5px;
+        text-align: center;
+    }
+
+    .hasFilterItems::after {
+        border: 4px solid transparent;
+        border-top-color: currentcolor;
+        content: "";
+        display: inline-block;
+        height: 0;
+        vertical-align: -2px;
+        width: 0;
+        margin-left: 3px;
+    }
+
+    /* Edit dialog */
+    .editItem {
+        display: inline-block;
+        margin: 0px 1.25%;
+        max-width: 11%;
+    }
+
+    .editItem input {
+        width: 100%;
+        max-width: 127px;
+    }
+
+    input[type="submit"] {
+        display: block;
+        margin-left: -4px;
+        margin-right: -6px;
+    }
+
+    input[value="Save"] {
+        display: inline-block;
+        margin-left: 2%;
+        padding-left: 1.5%;
+        padding-right: 1.5%;
+    }
+
+    input[value="X"] {
+        display: inline-block;
+        margin-left: 1.5%;
+        margin-right: 1.5%;
+        padding-left: 1.5%;
+        padding-right: 1.5%;
+    }
 }
