@@ -258,7 +258,9 @@ input[type="submit"] {
 
     input[type="submit"] {
         width: 90%;
-        height: 80px;
+        min-height: 70px;
+        text-align: center;
+        white-space: normal;
     }
 
     input {
@@ -284,7 +286,7 @@ input[type="submit"] {
     }
 
     .page {
-        width: 100%;
+        width: calc(-80px + 100%);
         margin-bottom: 20px;
     }
 
@@ -302,8 +304,68 @@ input[type="submit"] {
         width: 90%;
     }
 
+    .branchData > input {
+        width: 100%!important;
+    }
+
     #slotHolder {
         width: 90%;
         height: 100%;
+    }
+
+    #slotHolder > div {
+        margin-bottom: 20px;
+    }
+
+    .timeSlots {
+        width: 100%;
+    }
+
+    .timeSlots > div {
+        width: 100%;
+    }
+
+    .appointmentTime {
+        width: 90%!important;
+        min-height: 50px!important;
+        margin-top: 5px!important;
+        font-size: 20px;
+    }
+
+    form {
+        width: 100%;
+    }
+
+    form > div {
+         margin-bottom: 10px;   
+         width: 90%;
+    }
+
+    form > div p, form > div input, form > div div {
+        width: 100%;
+    }
+
+    .consent {
+        float: left;
+    }
+
+    .divFormr {
+        padding-left: 0px!important;
+    }
+
+    .TOS {
+        width: 90%;
+    }
+
+    #backButton {
+        font-size: 24px;
+        width: 90%!important;
+        margin-left: 5%;
+        height: 50px!important;
+    }
+
+    #backButtonHolder {
+        width: 100%;
+        margin: 0px;
     }
 }
