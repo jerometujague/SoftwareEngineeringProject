@@ -1,7 +1,7 @@
 {
   "name": "software-engineering-project",
-  "version": "0.4.0",
-  "description": "* NodeJS\r * ReactJS",
+  "version": "1.0.0",
+  "description": "A commerce bank appointment scheduling application",
   "main": "index.js",
   "scripts": {
     "start": "webpack --watch --config webpack.dev.js",
