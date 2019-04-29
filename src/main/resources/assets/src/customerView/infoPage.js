@@ -204,7 +204,7 @@ export default class Info extends React.Component {
                     </div>
                     <br />
                     <label>
-                        <p>Email Consent</p>
+                        <p className="consent">Email Consent</p>
                     <input type="checkbox" name="emailConsent" className="emailConsent" checked={this.state.emailConsent} onChange={this.handleChecked.bind(this)} />
                     <p className="TOS">By marking this checkbox you agree that you are willing to recieve emails from commerce bank and agree to the terms and service.</p>
                     </label>
