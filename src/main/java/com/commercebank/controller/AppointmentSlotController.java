@@ -143,8 +143,8 @@ public class AppointmentSlotController {
                         && h.getBranchId() == branchId)
                 .findFirst();
 
-        // If the branch has hours for the day
-        if(hours.isPresent()) {
+        // If the branch has hours for the day and its not a holliday
+        if(hours.isPresent() && !calendar.get(calendarId - 1).isHoliday()) {
             // Check if the current time is past the close time for current day
             if((currentTime.isAfter(hours.get().getCloseTime()) && calendarId == todayCalendarId) || (calendarId < todayCalendarId)){
                 return appointmentSlots;
