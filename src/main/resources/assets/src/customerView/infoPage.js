@@ -69,16 +69,20 @@ export default class Info extends React.Component {
             }
         }
 
+        phoneNumber = phoneNumber.replace(/\(|\)|\s|-/g, '');
+        const validPhoneNumber = phoneNumber.length == 10;
+
         //checks for valid phone number
         if (phoneNumber !== "undefined") {
-            if (!phoneNumber.match(/^[0-9]{10}$/)) {
+            if (!validPhoneNumber) {
                 formIsValid = false;
                 errors["phoneNumber"] = "Please enter valid phone number.";
             }
         }
 
         this.setState({
-            errors: errors
+            errors: errors,
+            phoneNumber: phoneNumber,
         });
         return formIsValid;
     }
@@ -176,14 +180,14 @@ export default class Info extends React.Component {
                     <div className="divForm">
                         <label className="divLabel">
                             <p>First Name</p>
-                        <input type="text" name="firstName" placeholder="John/Jane..." onChange={this.handleChange.bind(this)} />
+                            <input type="text" name="firstName" placeholder="John/Jane..." onChange={this.handleChange.bind(this)} />
                             <div className="error">{this.state.errors.firstName}</div>
                         </label>
                     </div>
                     <div className="divFormr">
                         <label className="divLabel">
                             <p>Last Name</p>
-                        <input type="text" name="lastName" placeholder="Doe..." onChange={this.handleChange.bind(this)} />
+                            <input type="text" name="lastName" placeholder="Doe..." onChange={this.handleChange.bind(this)} />
                             <div className="error">{this.state.errors.lastName}</div>
                         </label>
                     </div>
@@ -191,22 +195,22 @@ export default class Info extends React.Component {
                     <div className="divForm">
                         <label className="divLabel">
                             <p>Email</p>
-                        <input type="email" name="email" placeholder="JJDoe@gmail.com..." onChange={this.handleChange.bind(this)} />
+                            <input type="email" name="email" placeholder="JJDoe@gmail.com..." onChange={this.handleChange.bind(this)} />
                             <div className="error">{this.state.errors.email}</div>
                         </label>
                     </div>
                     <div className="divFormr">
-                    <label className="divLabel">
-                        <p>Phone Number</p>
-                    <input type="tel" name="phoneNumber" placeholder="0001234567..." onChange={this.handleChange.bind(this)} />
-                        <div className="error">{this.state.errors.phoneNumber}</div>
-                    </label>
+                        <label className="divLabel">
+                            <p>Phone Number</p>
+                            <input type="tel" name="phoneNumber" placeholder="(555) 555-5555..." onChange={this.handleChange.bind(this)} />
+                            <div className="error">{this.state.errors.phoneNumber}</div>
+                        </label>
                     </div>
                     <br />
                     <label>
                         <p className="consent">Email Consent</p>
-                    <input type="checkbox" name="emailConsent" className="emailConsent" checked={this.state.emailConsent} onChange={this.handleChecked.bind(this)} />
-                    <p className="TOS">By marking this checkbox you agree that you are willing to recieve emails from commerce bank and agree to the terms and service.</p>
+                        <input type="checkbox" name="emailConsent" className="emailConsent" checked={this.state.emailConsent} onChange={this.handleChecked.bind(this)} />
+                        <p className="TOS">By marking this checkbox you agree that you are willing to recieve emails from commerce bank and agree to the terms and service.</p>
                     </label>
                 </form>
 
